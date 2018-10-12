@@ -1,5 +1,5 @@
 v2.1.8
-- NEW: Add FbMetadbHandleList RemoveAttachImages method.
+- NEW: Add FbMetadbHandleList RemoveAttachedImages method.
 - FIX: There are no longer any limitations managing attached images.
        Working with the playing file is now supported. Thanks to Peter
        for the new SDK release and the help I needed!
