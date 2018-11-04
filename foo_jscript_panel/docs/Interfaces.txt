@@ -1754,7 +1754,7 @@ interface IFbMetadbHandleList {
 		AddRange(handle_list); (void)
 		/*
 		Example:
-		handle_list.Add(fb.GetLibraryItems());
+		handle_list.AddRange(fb.GetLibraryItems());
 		*/
 
 		AttachImage(image_path[, art_id]) (void)
