@@ -1149,7 +1149,7 @@ interface IJSUtils {
 
 interface IFbWindow {
 	Properties:
-		window.DlgCode(); (int) (read, write)
+		window.DlgCode(); (uint) (read, write)
 		/*
 		See flags.txt > With window.DlgCode
 
@@ -1157,13 +1157,13 @@ interface IFbWindow {
 		window.DlgCode(DLGC_WANTALLKEYS);
 		*/
 
-		window.ID; (read) (int)
+		window.ID; (uint) (read)
 		/*
 		Required in fb.CheckClipboardContents, fb.GetClipboardContents, utils.ColourPicker, utils.GetAlbumArtAsync,
 		utils.InputBox, utils.LoadImageAsync, etc.
 		*/
 
-		window.InstanceType; (int)
+		window.InstanceType; (uint) (read)
 		/*
 		Returns 0 if using Columns UI, 1 if using default UI.
 		You need this to determine which GetFontXXX and GetColourXXX methods to use, assuming you want to support both interfaces.
@@ -1179,10 +1179,10 @@ interface IFbWindow {
 
 		window.Height; (int) (read)
 
-		window.MaxHeight; (int) (read, write)
-		window.MaxWidth; (int) (read, write)
-		window.MinHeight; (int) (read, write)
-		window.MinWidth; (int) (read, write)
+		window.MaxHeight; (uint) (read, write)
+		window.MaxWidth; (uint) (read, write)
+		window.MinHeight; (uint) (read, write)
+		window.MinWidth; (uint) (read, write)
 		// The previous 4 methods can be used to lock the panel size. Do not use if panels are contained within Panel Stack Splitter (Columns UI component).
 
 		window.Name; (string) (read)
@@ -1381,7 +1381,7 @@ interface IGdiFont {
 	*/
 
 	Properties:
-		Height (int) (read)
+		Height (uint) (read)
 		/*
 		Example:
 		console.log(my_font.Height); // 15
@@ -1416,8 +1416,8 @@ interface IGdiFont {
 
 interface IGdiBitmap {
 	Properties:
-		Height (int) (read)
-		Width (int) (read)
+		Height (uint) (read)
+		Width (uint) (read)
 
 	Methods:
 		ApplyAlpha(alpha); (IGdiBitmap)
@@ -1433,8 +1433,8 @@ interface IGdiBitmap {
 
 			interface IGdiRawBitmap {
 				Properties:
-					Width; (int) (read)
-					Height; (int) (read)
+					Width; (uint) (read)
+					Height; (uint) (read)
 
 				Methods:
 					Dispose(); (void)
@@ -1464,10 +1464,10 @@ interface IGdiBitmap {
 		See docs\helpers.txt for "toRGB" function.
 		*/
 
-		GetGraphics();
+		GetGraphics(); (IGdiGraphics)
 		// Don't forget to use ReleaseGraphics() after operations on IGdiGraphics interface is done.
 
-		ReleaseGraphics(IGdiGraphics); (IGdiGraphics)
+		ReleaseGraphics(IGdiGraphics); (void)
 
 		Resize(w, h[, mode]); (IGdiBitmap)
 		// mode: default 0. See flags.txt > InterpolationMode
@@ -1786,7 +1786,7 @@ interface IFbMetadbHandleList {
 
 		BSearch(handle); (int)
 		/*
-		Must be sorted, faster than Find()
+		Must be sorted with Sort(), faster than Find().
 		Returns - 1 on failure.
 		*/
 
@@ -1827,8 +1827,7 @@ interface IFbMetadbHandleList {
 
 		Find(handle); (int)
 		/*
-		If sorted, use BSearch instead.
-
+		Slower than BSearch but original handle list is not modified and actual position is returned if found.
 		Returns -1 on failure.
 		*/
 
@@ -1857,7 +1856,7 @@ interface IFbMetadbHandleList {
 
 		MakeDifference(handle_list); (void)
 		/*
-		Must be sorted.
+		Must be sorted with Sort().
 
 		Example:
 		var one = plman.GetPlaylistItems(0);
@@ -1872,7 +1871,7 @@ interface IFbMetadbHandleList {
 
 		MakeIntersection(handle_list); (void)
 		/*
-		Must be sorted.
+		Must be sorted with Sort().
 
 		Example:
 		var one = plman.GetPlaylistItems(0);
@@ -1887,7 +1886,7 @@ interface IFbMetadbHandleList {
 
 		MakeUnion(handle_list); (void)
 		/*
-		Must be sorted.
+		Must be sorted with Sort().
 
 		Example:
 		var one = plman.GetPlaylistItems(0);
