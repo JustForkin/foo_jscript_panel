@@ -535,7 +535,15 @@ interface IGdiUtils {
 		gdi.Font(name, size_px[, style]); (IGdiFont)
 		/*
 		size_px: See helpers.txt > Point2Pixel function for conversions.
-		style: default 0. See flags.txt > FontStyle
+		style: default 0, can be combined.
+
+		0: Regular
+		1: Bold
+		2: Italic
+		3: BoldItalic
+		4: Underline
+		8: Strikeout
+
 		Returns null if font not present. Avoid using inside on_paint.
 		*/
 
@@ -1022,7 +1030,14 @@ interface IJSUtils {
 		utils.GetAlbumArtAsync(window_id, handle[, art_id, need_stub, only_embed, no_load]); (uint)
 		/*
 		window_id: window.ID
-		art_id: default 0. See flags.txt > AlbumArtId
+		art_id: default 0.
+
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
+
 		need_stub: boolean, default true.
 		only_embed: boolean, default false.
 		no_load: boolean, default false. If true, "image" parameter will be null in on_get_album_art_done callback.
@@ -1031,7 +1046,13 @@ interface IJSUtils {
 
 		utils.GetAlbumArtEmbedded(rawpath[, art_id]); (IGdiBitmap)
 		/*
-		art_id: default 0. See flags.txt > AlbumArtId
+		art_id: default 0.
+
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
 
 		Example:
 		var img = utils.GetAlbumArtEmbedded(fb.GetNowPlaying().RawPath, 0);
@@ -1039,7 +1060,14 @@ interface IJSUtils {
 
 		utils.GetAlbumArtV2(handle[, art_id, need_stub]); (IGdiBitmap)
 		/*
-		art_id: default 0. See flags.txt > AlbumArtId
+		art_id: default 0.
+
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
+
 		need stub: boolean, default true.
 		See samples\basic\GetAlbumArtV2.txt
 		*/
@@ -1304,24 +1332,50 @@ interface IFbWindow {
 			}
 
 		window.GetColourCUI(type[, client_guid]); (uint)
+		/*
+		type:
+
+		0: text
+		1: selection_text
+		2: inactive_selection_text
+		3: background
+		4: selection_background
+		5: inactive_selection_background
+		6: active_item_frame
+		*/
+
 		window.GetColourDUI(type); (uint)
+		/*
+		type:
+
+		0: text
+		1: background
+		2: highlight
+		3: selection
+		*/
 
 		window.GetFontCUI(type[, client_guid]); (IGdiFont)
+		/*
+		type:
+
+		0: items
+		1: labels
+
+		Returns null on failure.
+		*/
+
 		window.GetFontDUI(type); (IGdiFont)
 		/*
 		type:
-		See flags.txt > Used in window.GetFontXXX()
-		client_guid: default "".
-		See flags.txt > Used in GetFontCUI() as client_guid.
-		This returns null if the component was unable to determine your font.
-		To avoid errors when trying to use the font or access its properties, you
-		should use code something like this...
 
-		var font = window.GetFontDUI(0);
-		if (!font) {
-			console.log("Unable to determine your default font. Using Segoe UI instead.");
-			font = gdi.Font("Segoe UI", 12);
-		}
+		0: default
+		1: tabs
+		2: lists
+		3: playlists
+		4: statusbar
+		5: console
+
+		Returns null on failure.
 		*/
 
 		window.NotifyOthers(name, info); (void)
@@ -1403,7 +1457,13 @@ interface IGdiFont {
 		/*
 		Example:
 		console.log(my_font.Style);
-		See flags.txt > FontStyle
+
+		0: Regular
+		1: Bold
+		2: Italic
+		3: BoldItalic
+		4: Underline
+		8: Strikeout
 		*/
 
 	Methods:
@@ -1469,8 +1529,20 @@ interface IGdiBitmap {
 
 		ReleaseGraphics(IGdiGraphics); (void)
 
-		Resize(w, h[, mode]); (IGdiBitmap)
-		// mode: default 0. See flags.txt > InterpolationMode
+		Resize(w, h[, interpolation_mode]); (IGdiBitmap)
+		/*
+		interpolation_mode: default 0.
+
+		-1: Invalid
+		0: Default
+		1: LowQuality
+		2: HighQuality
+		3: Bilinear
+		4: Bicubic
+		5: NearestNeighbor
+		6: HighQualityBilinear
+		7: HighQualityBicubic
+		*/
 
 		RotateFlip(mode); (void)
 		// mode. See flags.txt > RotateFlipType
@@ -1523,12 +1595,12 @@ interface IGdiGraphics {
 		gr.DrawPolygon(colour, line_width, points); (void)
 		// points: An array.
 
-		gr.DrawString(str, IGdiFont, colour, x, y, w, h[, flags]); (void)
-		// flags: default 0. See flags.txt > StringFormatFlags
-
 		gr.DrawRect(x, y, w, h, line_width, colour); (void)
 
 		gr.DrawRoundRect(x, y, w, h, arc_width, arc_height, line_width, colour); (void)
+
+		gr.DrawString(str, IGdiFont, colour, x, y, w, h[, flags]); (void)
+		// flags: default 0. See flags.txt > StringFormatFlags
 
 		gr.EstimateLineWrap(str, IGdiFont, max_width); (VBArray)
 		/*
@@ -1607,13 +1679,43 @@ interface IGdiGraphics {
 			}
 
 		gr.SetInterpolationMode(mode); (void)
-		// See flags.txt > InterpolationMode
+		/*
+		mode:
+
+		-1: Invalid
+		0: Default
+		1: LowQuality
+		2: HighQuality
+		3: Bilinear
+		4: Bicubic
+		5: NearestNeighbor
+		6: HighQualityBilinear
+		7: HighQualityBicubic
+		*/
 
 		gr.SetSmoothingMode(mode); (void)
-		// See flags.txt > SmoothingMode
+		/*
+		mode:
+
+		-1: Invalid
+		0: Default
+		1: HighSpeed
+		2: HighQuality
+		3: None
+		4: AntiAlias
+		*/
 
 		gr.SetTextRenderingHint(mode); (void)
-		// See flags.txt > TextRenderingHint
+		/*
+		mode:
+
+		0: SystemDefault
+		1: SingleBitPerPixelGridFit
+		2: SingleBitPerPixel
+		3: AntiAliasGridFit
+		4: AntiAlias
+		5: ClearTypeGridFit
+		*/
 }
 
 interface IFbMetadbHandle {
@@ -1760,9 +1862,15 @@ interface IFbMetadbHandleList {
 		AttachImage(image_path[, art_id]) (void)
 		/*
 		image_path: path to an existing image
-		art_id: default 0. See flags.txt > AlbumArtId
+		art_id: default 0.
 
-		Any other errors such as invalid path, corrupt image, target file type not supporting
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
+
+		Any errors such as invalid path, corrupt image, target file type not supporting
 		embedded art, etc should all silently fail. A progress dialog will be shown for larger file
 		selections. Any existing artwork of the specified type will be overwritten - there is no need to
 		remove it first.
@@ -1923,7 +2031,15 @@ interface IFbMetadbHandleList {
 		RemoveAll(); (void)
 
 		RemoveAttachedImage([art_id]); (void)
-		// art_id: default 0. See flags.txt > AlbumArtId
+		/*
+		art_id: default 0.
+
+		0: front
+		1: back
+		2: disc
+		3: icon
+		4: artist
+		*/
 
 		RemoveAttachedImages(); (void)
 		// Removes all attached images.
