@@ -5,15 +5,13 @@
 // CUI panel instance
 static uie::window_factory<js_panel_window_cui> g_js_panel_wndow_cui;
 
-DWORD js_panel_window_cui::GetColourCUI(unsigned type, const GUID& guid)
+DWORD js_panel_window_cui::GetColourCUI(unsigned type)
 {
 	if (type <= cui::colours::colour_active_item_frame)
 	{
-		cui::colours::helper helper(guid);
-
+		cui::colours::helper helper(pfc::guid_null);
 		return helpers::convert_colorref_to_argb(helper.get_colour((cui::colours::colour_identifier_t)type));
 	}
-
 	return 0;
 }
 
@@ -22,28 +20,19 @@ DWORD js_panel_window_cui::GetColourDUI(unsigned type)
 	return 0;
 }
 
-HFONT js_panel_window_cui::GetFontCUI(unsigned type, const GUID& guid)
+HFONT js_panel_window_cui::GetFontCUI(unsigned type)
 {
-	if (guid == pfc::guid_null)
+	if (type <= cui::fonts::font_type_labels)
 	{
-		if (type <= cui::fonts::font_type_labels)
+		try
 		{
-			try
-			{
-				return static_api_ptr_t<cui::fonts::manager>()->get_font((cui::fonts::font_type_t)type);
-			}
-			catch (exception_service_not_found&)
-			{
-				return uCreateIconFont();
-			}
+			return static_api_ptr_t<cui::fonts::manager>()->get_font((cui::fonts::font_type_t)type);
+		}
+		catch (exception_service_not_found&)
+		{
+			return uCreateIconFont();
 		}
 	}
-	else
-	{
-		cui::fonts::helper helper(guid);
-		return helper.get_font();
-	}
-
 	return NULL;
 }
 

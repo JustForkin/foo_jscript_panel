@@ -1331,7 +1331,7 @@ interface IFbWindow {
 					// Check x, y positions have changed from last time otherwise it will flicker
 			}
 
-		window.GetColourCUI(type[, client_guid]); (uint)
+		window.GetColourCUI(type); (uint)
 		/*
 		type:
 
@@ -1354,7 +1354,7 @@ interface IFbWindow {
 		3: selection
 		*/
 
-		window.GetFontCUI(type[, client_guid]); (IGdiFont)
+		window.GetFontCUI(type); (IGdiFont)
 		/*
 		type:
 

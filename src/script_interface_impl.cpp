@@ -2822,26 +2822,12 @@ STDMETHODIMP FbWindow::CreateTooltip(BSTR name, float pxSize, int style, IFbTool
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::GetColourCUI(UINT type, BSTR guidstr, int* p)
+STDMETHODIMP FbWindow::GetColourCUI(UINT type, int* p)
 {
 	if (!p) return E_POINTER;
 	if (m_host->GetInstanceType() != HostComm::KInstanceTypeCUI) return E_NOTIMPL;
 
-	GUID guid;
-
-	if (!*guidstr)
-	{
-		memcpy(&guid, &pfc::guid_null, sizeof(guid));
-	}
-	else
-	{
-		if (CLSIDFromString(guidstr, &guid) != NOERROR)
-		{
-			return E_INVALIDARG;
-		}
-	}
-
-	*p = m_host->GetColourCUI(type, guid);
+	*p = m_host->GetColourCUI(type);
 	return S_OK;
 }
 
@@ -2854,28 +2840,13 @@ STDMETHODIMP FbWindow::GetColourDUI(UINT type, int* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::GetFontCUI(UINT type, BSTR guidstr, IGdiFont** pp)
+STDMETHODIMP FbWindow::GetFontCUI(UINT type, IGdiFont** pp)
 {
 	if (!pp) return E_POINTER;
 	if (m_host->GetInstanceType() != HostComm::KInstanceTypeCUI) return E_NOTIMPL;
 
-	GUID guid;
-
-	if (!*guidstr)
-	{
-		memcpy(&guid, &pfc::guid_null, sizeof(guid));
-	}
-	else
-	{
-		if (CLSIDFromString(guidstr, &guid) != NOERROR)
-		{
-			return E_INVALIDARG;
-		}
-	}
-
-	HFONT hFont = m_host->GetFontCUI(type, guid);
-
 	*pp = NULL;
+	HFONT hFont = m_host->GetFontCUI(type);
 
 	if (hFont)
 	{
@@ -2887,10 +2858,9 @@ STDMETHODIMP FbWindow::GetFontCUI(UINT type, BSTR guidstr, IGdiFont** pp)
 		else
 		{
 			if (font) delete font;
-			*pp = NULL;
+			font = NULL;
 		}
 	}
-
 	return S_OK;
 }
 
