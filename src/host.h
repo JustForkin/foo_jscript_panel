@@ -1,9 +1,8 @@
 #pragma once
-
-#include "script_preprocessor.h"
-#include "script_interface_impl.h"
 #include "config.h"
 #include "script_callback_invoker.h"
+#include "script_interface_impl.h"
+#include "script_preprocessor.h"
 
 // Smart pointers for Active Scripting
 _COM_SMARTPTR_TYPEDEF(IActiveScriptParse, IID_IActiveScriptParse);
@@ -70,8 +69,7 @@ public:
 	bool HasError();
 	bool Ready();
 
-	HRESULT GenerateSourceContext(const wchar_t* path, const wchar_t* code, DWORD& source_context);
-	HRESULT InitScriptEngineByName(const wchar_t* engineName);
+	HRESULT InitScriptEngineByName(const char* name);
 	HRESULT Initialize();
 	HRESULT InvokeCallback(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
 	HRESULT ProcessImportedScripts(script_preprocessor& preprocessor, IActiveScriptParsePtr& parser);
@@ -90,6 +88,7 @@ public:
 	STDMETHOD_(ULONG, Release)();
 
 	void Finalize();
+	void GenerateSourceContext(pfc::string8 path, DWORD& source_context);
 	void ReportError(IActiveScriptError* err);
 	void Stop();
 

@@ -87,21 +87,20 @@ public:
 	script_preprocessor(const wchar_t* script)
 	{
 		PFC_ASSERT(script != NULL);
-		m_is_ok = preprocess(script);
+		preprocess(script);
 	}
 
-	HRESULT process_import(const t_script_info& info, t_script_list& scripts);
-	bool process_script_info(t_script_info& info);
+	void process_import(const t_script_info& info, t_script_list& scripts);
+	void process_script_info(t_script_info& info);
 
 private:
-	bool preprocess(const wchar_t* script);
 	bool scan_directive_and_value(const wchar_t*& p, const wchar_t* pend);
 	bool scan_value(const wchar_t*& p, const wchar_t* pend);
-	bool expand_var(pfc::array_t<wchar_t>& out);
 	bool extract_preprocessor_block(const wchar_t* script, int& block_begin, int& block_end);
+	void expand_var(pfc::array_t<wchar_t>& out);
+	void preprocess(const wchar_t* script);
 
 	pfc::array_t<wchar_t> m_directive_buffer;
 	pfc::array_t<wchar_t> m_value_buffer;
 	pfc::list_t<t_directive_value> m_directive_value_list;
-	bool m_is_ok;
 };

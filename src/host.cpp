@@ -43,16 +43,6 @@ HWND HostComm::GetHWND()
 	return m_hwnd;
 }
 
-INT HostComm::GetHeight()
-{
-	return m_height;
-}
-
-INT HostComm::GetWidth()
-{
-	return m_width;
-}
-
 POINT& HostComm::MaxSize()
 {
 	return m_max_size;
@@ -63,14 +53,14 @@ POINT& HostComm::MinSize()
 	return m_min_size;
 }
 
-UINT& HostComm::DlgCode()
+int HostComm::GetHeight()
 {
-	return m_dlg_code;
+	return m_height;
 }
 
-UINT HostComm::GetInstanceType()
+int HostComm::GetWidth()
 {
-	return m_instance_type;
+	return m_width;
 }
 
 panel_tooltip_param_ptr& HostComm::PanelTooltipParam()
@@ -81,6 +71,16 @@ panel_tooltip_param_ptr& HostComm::PanelTooltipParam()
 t_script_info& HostComm::ScriptInfo()
 {
 	return m_script_info;
+}
+
+t_size& HostComm::DlgCode()
+{
+	return m_dlg_code;
+}
+
+t_size HostComm::GetInstanceType()
+{
+	return m_instance_type;
 }
 
 void HostComm::Redraw()
@@ -224,32 +224,12 @@ bool ScriptHost::Ready()
 	return m_engine_inited && m_script_engine;
 }
 
-HRESULT ScriptHost::GenerateSourceContext(const wchar_t* path, const wchar_t* code, DWORD& source_context)
-{
-	pfc::stringcvt::string_wide_from_utf8_fast name, guidString;
-	HRESULT hr = S_OK;
-	t_size len = wcslen(code);
-
-	if (!path)
-	{
-		if (m_host->ScriptInfo().name.is_empty())
-			name.convert(pfc::print_guid(m_host->GetGUID()));
-		else
-			name.convert(m_host->ScriptInfo().name);
-
-		guidString.convert(pfc::print_guid(m_host->GetGUID()));
-	}
-
-	source_context = m_lastSourceContext++;
-	return hr;
-}
-
-HRESULT ScriptHost::InitScriptEngineByName(const wchar_t* engineName)
+HRESULT ScriptHost::InitScriptEngineByName(const char* name)
 {
 	HRESULT hr = E_FAIL;
 	const DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
 
-	if (helpers::supports_chakra() && wcscmp(engineName, L"Chakra") == 0)
+	if (helpers::supports_chakra() && strcmp(name, "Chakra") == 0)
 	{
 		static const CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
 		hr = m_script_engine.CreateInstance(jscript9clsid, NULL, classContext);
@@ -280,19 +260,16 @@ HRESULT ScriptHost::Initialize()
 
 	m_has_error = false;
 
-	HRESULT hr = S_OK;
-	IActiveScriptParsePtr parser;
-	pfc::stringcvt::string_wide_from_utf8_fast wname(m_host->get_script_engine());
 	pfc::stringcvt::string_wide_from_utf8_fast wcode(m_host->get_script_code());
 	script_preprocessor preprocessor(wcode.get_ptr());
 	preprocessor.process_script_info(m_host->ScriptInfo());
 
-	hr = InitScriptEngineByName(wname);
+	IActiveScriptParsePtr parser;
+	HRESULT hr = InitScriptEngineByName(m_host->get_script_engine());
 
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptSite(this);
 	if (SUCCEEDED(hr)) hr = m_script_engine->QueryInterface(&parser);
 	if (SUCCEEDED(hr)) hr = parser->InitNew();
-
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"window", SCRIPTITEM_ISVISIBLE);
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"gdi", SCRIPTITEM_ISVISIBLE);
 	if (SUCCEEDED(hr)) hr = m_script_engine->AddNamedItem(L"fb", SCRIPTITEM_ISVISIBLE);
@@ -302,12 +279,12 @@ HRESULT ScriptHost::Initialize()
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptState(SCRIPTSTATE_CONNECTED);
 	if (SUCCEEDED(hr)) hr = m_script_engine->GetScriptDispatch(NULL, &m_script_root);
 	if (SUCCEEDED(hr)) hr = ProcessImportedScripts(preprocessor, parser);
-
-	DWORD source_context = 0;
-	if (SUCCEEDED(hr)) hr = GenerateSourceContext(NULL, wcode, source_context);
-	m_contextToPathMap[source_context] = "<main>";
-
-	if (SUCCEEDED(hr)) hr = parser->ParseScriptText(wcode.get_ptr(), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+	if (SUCCEEDED(hr))
+	{
+		DWORD source_context;
+		GenerateSourceContext("<main>", source_context);
+		hr = parser->ParseScriptText(wcode.get_ptr(), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+	}
 
 	if (SUCCEEDED(hr))
 	{
@@ -319,7 +296,7 @@ HRESULT ScriptHost::Initialize()
 		m_has_error = true;
 	}
 
-	m_callback_invoker.init(m_script_root);
+	m_callback_invoker.Init(m_script_root);
 	return hr;
 }
 
@@ -332,7 +309,7 @@ HRESULT ScriptHost::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc, 
 
 	try
 	{
-		hr = m_callback_invoker.invoke(callbackId, argv, argc, ret);
+		hr = m_callback_invoker.Invoke(callbackId, argv, argc, ret);
 	}
 	catch (std::exception& e)
 	{
@@ -355,19 +332,17 @@ HRESULT ScriptHost::InvokeCallback(int callbackId, VARIANTARG* argv, UINT argc, 
 
 HRESULT ScriptHost::ProcessImportedScripts(script_preprocessor& preprocessor, IActiveScriptParsePtr& parser)
 {
-	// processing "@import"
 	script_preprocessor::t_script_list scripts;
-	HRESULT hr = preprocessor.process_import(m_host->ScriptInfo(), scripts);
+	preprocessor.process_import(m_host->ScriptInfo(), scripts);
+	HRESULT hr = S_OK;
 
 	for (t_size i = 0; i < scripts.get_count(); ++i)
 	{
+		pfc::string8 path = pfc::stringcvt::string_utf8_from_wide(scripts[i].path.get_ptr());
 		DWORD source_context;
-
-		if (SUCCEEDED(hr)) hr = GenerateSourceContext(scripts[i].path.get_ptr(), scripts[i].code.get_ptr(), source_context);
-		if (FAILED(hr)) break;
-
-		m_contextToPathMap[source_context] = pfc::stringcvt::string_utf8_from_wide(scripts[i].path.get_ptr());
+		GenerateSourceContext(path, source_context);
 		hr = parser->ParseScriptText(scripts[i].code.get_ptr(), NULL, NULL, NULL, source_context, 0, SCRIPTTEXT_HOSTMANAGESSOURCE | SCRIPTTEXT_ISVISIBLE, NULL, NULL);
+		if (FAILED(hr)) break;
 	}
 
 	return hr;
@@ -516,7 +491,7 @@ void ScriptHost::Finalize()
 	}
 
 	m_contextToPathMap.remove_all();
-	m_callback_invoker.reset();
+	m_callback_invoker.Reset();
 
 	if (m_script_engine)
 	{
@@ -527,6 +502,12 @@ void ScriptHost::Finalize()
 	{
 		m_script_root.Release();
 	}
+}
+
+void ScriptHost::GenerateSourceContext(pfc::string8 path, DWORD& source_context)
+{
+	source_context = m_lastSourceContext++;
+	m_contextToPathMap[source_context] = path;
 }
 
 void ScriptHost::ReportError(IActiveScriptError* err)

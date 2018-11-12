@@ -84,12 +84,22 @@ ScriptCallbackInvoker::ScriptCallbackInvoker()
 
 ScriptCallbackInvoker::~ScriptCallbackInvoker()
 {
-	reset();
+	Reset();
 }
 
-void ScriptCallbackInvoker::init(IDispatch* pActiveScriptRoot)
+HRESULT ScriptCallbackInvoker::Invoke(int callbackId, VARIANTARG* argv, UINT argc, VARIANT* ret)
 {
-	reset();
+	if (!m_activeScriptRoot) return E_POINTER;
+	DISPPARAMS param = { argv, NULL, argc, 0 };
+	int dispId;
+	if (!m_callbackInvokerMap.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
+	if (dispId == DISPID_UNKNOWN) return DISP_E_MEMBERNOTFOUND;
+	return m_activeScriptRoot->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, NULL, NULL);
+}
+
+void ScriptCallbackInvoker::Init(IDispatch* pActiveScriptRoot)
+{
+	Reset();
 	if (!pActiveScriptRoot) return;
 
 	m_activeScriptRoot = pActiveScriptRoot;
@@ -108,12 +118,7 @@ void ScriptCallbackInvoker::init(IDispatch* pActiveScriptRoot)
 	}
 }
 
-HRESULT ScriptCallbackInvoker::invoke(int callbackId, VARIANTARG* argv, UINT argc, VARIANT* ret)
+void ScriptCallbackInvoker::Reset()
 {
-	if (!m_activeScriptRoot) return E_POINTER;
-	DISPPARAMS param = { argv, NULL, argc, 0 };
-	int dispId;
-	if (!m_callbackInvokerMap.query(callbackId, dispId)) return DISP_E_MEMBERNOTFOUND;
-	if (dispId == DISPID_UNKNOWN) return DISP_E_MEMBERNOTFOUND;
-	return m_activeScriptRoot->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &param, ret, NULL, NULL);
+	m_callbackInvokerMap.remove_all();
 }
