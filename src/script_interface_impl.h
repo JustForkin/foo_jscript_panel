@@ -191,7 +191,7 @@ public:
 	STDMETHODIMP FindPlaybackQueueItemIndex(IFbMetadbHandle* handle, UINT playlistIndex, UINT playlistItemIndex, int* outIndex);
 	STDMETHODIMP FindPlaylist(BSTR name, int* outPlaylistIndex);
 	STDMETHODIMP FlushPlaybackQueue();
-	STDMETHODIMP GetPlaybackQueueContents(VARIANT* outContents);
+	STDMETHODIMP GetPlaybackQueueContents(VARIANT* p);
 	STDMETHODIMP GetPlaybackQueueHandles(IFbMetadbHandleList** outItems);
 	STDMETHODIMP GetPlayingItemLocation(IFbPlayingItemLocation** outPlayingLocation);
 	STDMETHODIMP GetPlaylistFocusItemIndex(UINT playlistIndex, int* outPlaylistItemIndex);
@@ -285,9 +285,9 @@ protected:
 	virtual void FinalRelease();
 
 public:
-	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* pp);
-	STDMETHODIMP EvalWithMetadb(IFbMetadbHandle* handle, BSTR* pp);
-	STDMETHODIMP EvalWithMetadbs(IFbMetadbHandleList* handles, VARIANT* pp);
+	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* p);
+	STDMETHODIMP EvalWithMetadb(IFbMetadbHandle* handle, BSTR* p);
+	STDMETHODIMP EvalWithMetadbs(IFbMetadbHandleList* handles, VARIANT* p);
 	STDMETHODIMP get__ptr(void** pp);
 };
 
@@ -468,7 +468,7 @@ public:
 	STDMETHODIMP ApplyMask(IGdiBitmap* mask, VARIANT_BOOL* p);
 	STDMETHODIMP Clone(float x, float y, float w, float h, IGdiBitmap** pp);
 	STDMETHODIMP CreateRawBitmap(IGdiRawBitmap** pp);
-	STDMETHODIMP GetColourScheme(UINT count, VARIANT* outArray);
+	STDMETHODIMP GetColourScheme(UINT count, VARIANT* p);
 	STDMETHODIMP GetColourSchemeJSON(UINT count, BSTR* p);
 	STDMETHODIMP GetGraphics(IGdiGraphics** pp);
 	STDMETHODIMP ReleaseGraphics(IGdiGraphics* p);

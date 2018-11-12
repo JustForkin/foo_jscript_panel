@@ -92,7 +92,7 @@ __interface IGdiBitmap : IGdiObj
 	STDMETHOD(ApplyMask)(IGdiBitmap* mask, [out, retval] VARIANT_BOOL* p);
 	STDMETHOD(Clone)(float x, float y, float w, float h, [out, retval] IGdiBitmap** pp);
 	STDMETHOD(CreateRawBitmap)([out, retval] IGdiRawBitmap** pp);
-	STDMETHOD(GetColourScheme)(UINT count, [out, retval] VARIANT* outArray);
+	STDMETHOD(GetColourScheme)(UINT count, [out, retval] VARIANT* p);
 	STDMETHOD(GetColourSchemeJSON)(UINT count, [out, retval] BSTR* p);
 	STDMETHOD(GetGraphics)([out, retval] __interface IGdiGraphics** pp);
 	STDMETHOD(ReleaseGraphics)(__interface IGdiGraphics* p);
@@ -272,9 +272,9 @@ __interface IFbMetadbHandleList : IDisposable
 ]
 __interface IFbTitleFormat : IDisposable
 {
-	STDMETHOD(Eval)([defaultvalue(0)] VARIANT_BOOL force, [out, retval] BSTR* pp);
-	STDMETHOD(EvalWithMetadb)(IFbMetadbHandle* handle, [out, retval] BSTR* pp);
-	STDMETHOD(EvalWithMetadbs)(IFbMetadbHandleList* handles, [out, retval] VARIANT* pp);
+	STDMETHOD(Eval)([defaultvalue(0)] VARIANT_BOOL force, [out, retval] BSTR* p);
+	STDMETHOD(EvalWithMetadb)(IFbMetadbHandle* handle, [out, retval] BSTR* p);
+	STDMETHOD(EvalWithMetadbs)(IFbMetadbHandleList* handles, [out, retval] VARIANT* p);
 	[propget] STDMETHOD(_ptr)([out, retval] void** pp);
 };
 
@@ -600,7 +600,7 @@ __interface IFbPlaylistManager : IDispatch
 	STDMETHOD(FindPlaybackQueueItemIndex)(IFbMetadbHandle* handle, UINT playlistIndex, UINT playlistItemIndex, [out, retval] int* outIndex);
 	STDMETHOD(FindPlaylist)(BSTR name, [out, retval] int* outPlaylistIndex);
 	STDMETHOD(FlushPlaybackQueue)();
-	STDMETHOD(GetPlaybackQueueContents)([out, retval] VARIANT* outContents);
+	STDMETHOD(GetPlaybackQueueContents)([out, retval] VARIANT* p);
 	STDMETHOD(GetPlaybackQueueHandles)([out, retval] IFbMetadbHandleList** outItems);
 	STDMETHOD(GetPlayingItemLocation)([out, retval] __interface IFbPlayingItemLocation** outPlayingLocation);
 	STDMETHOD(GetPlaylistFocusItemIndex)(UINT playlistIndex, [out, retval] int* outPlaylistItemIndex);
