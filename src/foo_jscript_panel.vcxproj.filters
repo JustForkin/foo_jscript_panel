@@ -238,6 +238,9 @@
     <None Include="default.js">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="default.api">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="foo_jscript_panel.rc">

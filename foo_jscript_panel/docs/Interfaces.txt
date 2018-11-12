@@ -1331,7 +1331,7 @@ interface IFbWindow {
 					// Check x, y positions have changed from last time otherwise it will flicker
 			}
 
-		window.GetColourCUI(type); (uint)
+		window.GetColourCUI(type); (int)
 		/*
 		type:
 
@@ -1344,7 +1344,7 @@ interface IFbWindow {
 		6: active_item_frame
 		*/
 
-		window.GetColourDUI(type); (uint)
+		window.GetColourDUI(type); (int)
 		/*
 		type:
 
