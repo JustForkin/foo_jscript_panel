@@ -1,9 +1,10 @@
 #include "stdafx.h"
+#include "host_timer_dispatcher.h"
 #include "js_panel_window.h"
-#include "ui_conf.h"
-#include "ui_property.h"
 #include "panel_manager.h"
 #include "popup_msg.h"
+#include "ui_conf.h"
+#include "ui_property.h"
 
 js_panel_window::js_panel_window() :
 	m_script_host(new ScriptHost(this)),

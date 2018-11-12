@@ -1,6 +1,8 @@
 #pragma once
-
+#include "helpers.h"
 #include "host.h"
+#include "host_drop_target.h"
+#include "user_message.h"
 
 class js_panel_window : public HostComm, public ui_helpers::container_window
 {

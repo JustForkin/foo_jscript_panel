@@ -3,9 +3,6 @@
 #include "script_preprocessor.h"
 #include "script_interface_impl.h"
 #include "config.h"
-#include "user_message.h"
-#include "host_drop_target.h"
-#include "host_timer_dispatcher.h"
 #include "script_callback_invoker.h"
 
 // Smart pointers for Active Scripting
@@ -29,12 +26,11 @@ protected:
 	bool m_paint_pending;
 	bool m_suppress_drawing;
 	int m_height;
-	int m_instance_type;
 	int m_width;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 	t_script_info m_script_info;
-	t_size m_accuracy;
 	t_size m_dlg_code;
+	t_size m_instance_type;
 	ui_selection_holder::ptr m_selection_holder;
 
 public:
@@ -53,15 +49,12 @@ public:
 	int GetWidth();
 	panel_tooltip_param_ptr& PanelTooltipParam();
 	t_script_info& ScriptInfo();
-	unsigned SetInterval(IDispatch* func, int delay);
-	unsigned SetTimeout(IDispatch* func, int delay);
 	t_size& DlgCode();
 	t_size GetInstanceType();
 	virtual DWORD GetColourCUI(unsigned type, const GUID& guid) = 0;
 	virtual DWORD GetColourDUI(unsigned type) = 0;
 	virtual HFONT GetFontCUI(unsigned type, const GUID& guid) = 0;
 	virtual HFONT GetFontDUI(unsigned type) = 0;
-	void ClearIntervalOrTimeout(UINT timerId);
 	void Redraw();
 	void RefreshBackground(LPRECT lprcUpdate = NULL);
 	void Repaint(bool force = false);
@@ -123,53 +116,4 @@ private:
 		COM_QI_ENTRY(IActiveScriptSite)
 		COM_QI_ENTRY(IActiveScriptSiteWindow)
 	END_COM_QI_IMPL()
-};
-
-class FbWindow : public IDispatchImpl3<IFbWindow>
-{
-protected:
-	FbWindow(HostComm* p);
-	virtual ~FbWindow();
-
-public:
-	STDMETHODIMP ClearInterval(UINT intervalID);
-	STDMETHODIMP ClearTimeout(UINT timeoutID);
-	STDMETHODIMP CreatePopupMenu(IMenuObj** pp);
-	STDMETHODIMP CreateThemeManager(BSTR classid, IThemeManager** pp);
-	STDMETHODIMP CreateTooltip(BSTR name, float pxSize, int style, IFbTooltip** pp);
-	STDMETHODIMP GetColourCUI(UINT type, BSTR guidstr, int* p);
-	STDMETHODIMP GetColourDUI(UINT type, int* p);
-	STDMETHODIMP GetFontCUI(UINT type, BSTR guidstr, IGdiFont** pp);
-	STDMETHODIMP GetFontDUI(UINT type, IGdiFont** pp);
-	STDMETHODIMP GetProperty(BSTR name, VARIANT defaultval, VARIANT* p);
-	STDMETHODIMP NotifyOthers(BSTR name, VARIANT info);
-	STDMETHODIMP Reload();
-	STDMETHODIMP Repaint(VARIANT_BOOL force);
-	STDMETHODIMP RepaintRect(LONG x, LONG y, LONG w, LONG h, VARIANT_BOOL force);
-	STDMETHODIMP SetCursor(UINT id);
-	STDMETHODIMP SetInterval(IDispatch* func, int delay, UINT* outIntervalID);
-	STDMETHODIMP SetProperty(BSTR name, VARIANT val);
-	STDMETHODIMP SetTimeout(IDispatch* func, int delay, UINT* outTimeoutID);
-	STDMETHODIMP ShowConfigure();
-	STDMETHODIMP ShowProperties();
-	STDMETHODIMP get_DlgCode(UINT* p);
-	STDMETHODIMP get_Height(INT* p);
-	STDMETHODIMP get_ID(UINT* p);
-	STDMETHODIMP get_InstanceType(UINT* p);
-	STDMETHODIMP get_IsTransparent(VARIANT_BOOL* p);
-	STDMETHODIMP get_IsVisible(VARIANT_BOOL* p);
-	STDMETHODIMP get_MaxHeight(UINT* p);
-	STDMETHODIMP get_MaxWidth(UINT* p);
-	STDMETHODIMP get_MinHeight(UINT* p);
-	STDMETHODIMP get_MinWidth(UINT* p);
-	STDMETHODIMP get_Name(BSTR* p);
-	STDMETHODIMP get_Width(INT* p);
-	STDMETHODIMP put_DlgCode(UINT code);
-	STDMETHODIMP put_MaxHeight(UINT height);
-	STDMETHODIMP put_MaxWidth(UINT width);
-	STDMETHODIMP put_MinHeight(UINT height);
-	STDMETHODIMP put_MinWidth(UINT width);
-
-private:
-	HostComm* m_host;
 };

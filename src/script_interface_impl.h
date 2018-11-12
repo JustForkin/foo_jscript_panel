@@ -1,8 +1,21 @@
 #pragma once
-
-#include "script_interface.h"
 #include "com_tools.h"
-#include "helpers.h"
+#include "script_interface.h"
+
+struct panel_tooltip_param
+{
+	HWND tooltip_hwnd;
+	SIZE tooltip_size;
+	BSTR font_name;
+	float font_size;
+	int font_style;
+
+	panel_tooltip_param() : tooltip_hwnd(0)
+	{
+	}
+};
+
+typedef std::shared_ptr<panel_tooltip_param> panel_tooltip_param_ptr;
 
 class ContextMenuManager : public IDisposableImpl4<IContextMenuManager>
 {
@@ -278,21 +291,6 @@ public:
 	STDMETHODIMP get__ptr(void** pp);
 };
 
-struct panel_tooltip_param
-{
-	HWND tooltip_hwnd;
-	SIZE tooltip_size;
-	BSTR font_name;
-	float font_size;
-	int font_style;
-
-	panel_tooltip_param() : tooltip_hwnd(0)
-	{
-	}
-};
-
-typedef std::shared_ptr<panel_tooltip_param> panel_tooltip_param_ptr;
-
 class FbTooltip : public IDisposableImpl4<IFbTooltip>
 {
 protected:
@@ -407,6 +405,57 @@ public:
 	STDMETHODIMP put_ReplaygainMode(UINT p);
 	STDMETHODIMP put_StopAfterCurrent(VARIANT_BOOL p);
 	STDMETHODIMP put_Volume(float value);
+};
+
+class HostComm;
+
+class FbWindow : public IDispatchImpl3<IFbWindow>
+{
+protected:
+	FbWindow(HostComm* p);
+	virtual ~FbWindow();
+
+public:
+	STDMETHODIMP ClearInterval(UINT intervalID);
+	STDMETHODIMP ClearTimeout(UINT timeoutID);
+	STDMETHODIMP CreatePopupMenu(IMenuObj** pp);
+	STDMETHODIMP CreateThemeManager(BSTR classid, IThemeManager** pp);
+	STDMETHODIMP CreateTooltip(BSTR name, float pxSize, int style, IFbTooltip** pp);
+	STDMETHODIMP GetColourCUI(UINT type, BSTR guidstr, int* p);
+	STDMETHODIMP GetColourDUI(UINT type, int* p);
+	STDMETHODIMP GetFontCUI(UINT type, BSTR guidstr, IGdiFont** pp);
+	STDMETHODIMP GetFontDUI(UINT type, IGdiFont** pp);
+	STDMETHODIMP GetProperty(BSTR name, VARIANT defaultval, VARIANT* p);
+	STDMETHODIMP NotifyOthers(BSTR name, VARIANT info);
+	STDMETHODIMP Reload();
+	STDMETHODIMP Repaint(VARIANT_BOOL force);
+	STDMETHODIMP RepaintRect(LONG x, LONG y, LONG w, LONG h, VARIANT_BOOL force);
+	STDMETHODIMP SetCursor(UINT id);
+	STDMETHODIMP SetInterval(IDispatch* func, int delay, UINT* outIntervalID);
+	STDMETHODIMP SetProperty(BSTR name, VARIANT val);
+	STDMETHODIMP SetTimeout(IDispatch* func, int delay, UINT* outTimeoutID);
+	STDMETHODIMP ShowConfigure();
+	STDMETHODIMP ShowProperties();
+	STDMETHODIMP get_DlgCode(UINT* p);
+	STDMETHODIMP get_Height(INT* p);
+	STDMETHODIMP get_ID(UINT* p);
+	STDMETHODIMP get_InstanceType(UINT* p);
+	STDMETHODIMP get_IsTransparent(VARIANT_BOOL* p);
+	STDMETHODIMP get_IsVisible(VARIANT_BOOL* p);
+	STDMETHODIMP get_MaxHeight(UINT* p);
+	STDMETHODIMP get_MaxWidth(UINT* p);
+	STDMETHODIMP get_MinHeight(UINT* p);
+	STDMETHODIMP get_MinWidth(UINT* p);
+	STDMETHODIMP get_Name(BSTR* p);
+	STDMETHODIMP get_Width(INT* p);
+	STDMETHODIMP put_DlgCode(UINT code);
+	STDMETHODIMP put_MaxHeight(UINT height);
+	STDMETHODIMP put_MaxWidth(UINT width);
+	STDMETHODIMP put_MinHeight(UINT height);
+	STDMETHODIMP put_MinWidth(UINT width);
+
+private:
+	HostComm* m_host;
 };
 
 class GdiBitmap : public GdiObj<IGdiBitmap, Gdiplus::Bitmap>
