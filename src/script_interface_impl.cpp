@@ -1789,19 +1789,12 @@ void FbTitleFormat::FinalRelease()
 	m_obj.release();
 }
 
-STDMETHODIMP FbTitleFormat::Eval(VARIANT_BOOL force, BSTR* p)
+STDMETHODIMP FbTitleFormat::Eval(BSTR* p)
 {
 	if (m_obj.is_empty() || !p) return E_POINTER;
 
 	pfc::string8_fast text;
-
-	if (!playback_control::get()->playback_format_title(NULL, text, m_obj, NULL, playback_control::display_level_all) && force != VARIANT_FALSE)
-	{
-		metadb_handle_ptr handle;
-		metadb::get()->handle_create(handle, make_playable_location("file://C:\\________.ogg", 0));
-		handle->format_title(NULL, text, m_obj, NULL);
-	}
-
+	playback_control::get()->playback_format_title(NULL, text, m_obj, NULL, playback_control::display_level_all);
 	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(text));
 	return S_OK;
 }
@@ -2216,19 +2209,13 @@ STDMETHODIMP FbUtils::GetDSPPresets(BSTR* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::GetFocusItem(VARIANT_BOOL force, IFbMetadbHandle** pp)
+STDMETHODIMP FbUtils::GetFocusItem(IFbMetadbHandle** pp)
 {
 	if (!pp) return E_POINTER;
 
 	*pp = NULL;
 	metadb_handle_ptr metadb;
-	auto api = playlist_manager::get();
-
-	if (!api->activeplaylist_get_focus_item_handle(metadb) && force != VARIANT_FALSE)
-	{
-		api->activeplaylist_get_item_handle(metadb, 0);
-	}
-	if (metadb.is_valid())
+	if (playlist_manager::get()->activeplaylist_get_focus_item_handle(metadb))
 	{
 		*pp = new com_object_impl_t<FbMetadbHandle>(metadb);
 	}
@@ -2939,15 +2926,15 @@ STDMETHODIMP FbWindow::Reload()
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::Repaint(VARIANT_BOOL force)
+STDMETHODIMP FbWindow::Repaint()
 {
-	m_host->Repaint(force != FALSE);
+	m_host->Repaint();
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::RepaintRect(LONG x, LONG y, LONG w, LONG h, VARIANT_BOOL force)
+STDMETHODIMP FbWindow::RepaintRect(int x, int y, int w, int h)
 {
-	m_host->RepaintRect(x, y, w, h, force != FALSE);
+	m_host->RepaintRect(x, y, w, h);
 	return S_OK;
 }
 

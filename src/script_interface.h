@@ -272,7 +272,7 @@ __interface IFbMetadbHandleList : IDisposable
 ]
 __interface IFbTitleFormat : IDisposable
 {
-	STDMETHOD(Eval)([defaultvalue(0)] VARIANT_BOOL force, [out, retval] BSTR* p);
+	STDMETHOD(Eval)([out, retval] BSTR* p);
 	STDMETHOD(EvalWithMetadb)(IFbMetadbHandle* handle, [out, retval] BSTR* p);
 	STDMETHOD(EvalWithMetadbs)(IFbMetadbHandleList* handles, [out, retval] VARIANT* p);
 	[propget] STDMETHOD(_ptr)([out, retval] void** pp);
@@ -377,7 +377,7 @@ __interface IFbUtils : IDispatch
 	STDMETHOD(Exit)();
 	STDMETHOD(GetClipboardContents)(UINT window_id, [out, retval] IFbMetadbHandleList** pp);
 	STDMETHOD(GetDSPPresets)([out, retval] BSTR* p);
-	STDMETHOD(GetFocusItem)([defaultvalue(-1)] VARIANT_BOOL force, [out, retval] IFbMetadbHandle** pp);
+	STDMETHOD(GetFocusItem)([out, retval] IFbMetadbHandle** pp);
 	STDMETHOD(GetLibraryItems)([out, retval] IFbMetadbHandleList** outItems);
 	STDMETHOD(GetLibraryRelativePath)(IFbMetadbHandle* handle, [out, retval] BSTR* p);
 	STDMETHOD(GetNowPlaying)([out, retval] IFbMetadbHandle** pp);
@@ -485,8 +485,8 @@ __interface IFbWindow : IDispatch
 	STDMETHOD(GetProperty)(BSTR name, [optional] VARIANT defaultval, [out, retval] VARIANT* p);
 	STDMETHOD(NotifyOthers)(BSTR name, VARIANT info);
 	STDMETHOD(Reload)();
-	STDMETHOD(Repaint)([defaultvalue(0)] VARIANT_BOOL force);
-	STDMETHOD(RepaintRect)(LONG x, LONG y, LONG w, LONG h, [defaultvalue(0)] VARIANT_BOOL force);
+	STDMETHOD(Repaint)();
+	STDMETHOD(RepaintRect)(int x, int y, int w, int h);
 	STDMETHOD(SetCursor)(UINT id);
 	STDMETHOD(SetInterval)(IDispatch* func, int delay, [out, retval] UINT* outIntervalID);
 	STDMETHOD(SetProperty)(BSTR name, VARIANT val);

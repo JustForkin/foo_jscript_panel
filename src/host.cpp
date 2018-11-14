@@ -157,24 +157,17 @@ void HostComm::RefreshBackground(LPRECT lprcUpdate)
 	SetWindowRgn(m_hwnd, NULL, FALSE);
 	m_suppress_drawing = false;
 	if (get_edge_style()) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
-	Repaint(true);
+	m_paint_pending = true;
+	RedrawWindow(m_hwnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
-void HostComm::Repaint(bool force)
+void HostComm::Repaint()
 {
 	m_paint_pending = true;
-
-	if (force)
-	{
-		RedrawWindow(m_hwnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-	}
-	else
-	{
-		InvalidateRect(m_hwnd, NULL, FALSE);
-	}
+	InvalidateRect(m_hwnd, NULL, FALSE);
 }
 
-void HostComm::RepaintRect(LONG x, LONG y, LONG w, LONG h, bool force)
+void HostComm::RepaintRect(int x, int y, int w, int h)
 {
 	RECT rc;
 	rc.left = x;
@@ -183,15 +176,7 @@ void HostComm::RepaintRect(LONG x, LONG y, LONG w, LONG h, bool force)
 	rc.bottom = y + h;
 
 	m_paint_pending = true;
-
-	if (force)
-	{
-		RedrawWindow(m_hwnd, &rc, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-	}
-	else
-	{
-		InvalidateRect(m_hwnd, &rc, FALSE);
-	}
+	InvalidateRect(m_hwnd, &rc, FALSE);
 }
 
 ScriptHost::ScriptHost(HostComm* host)

@@ -283,12 +283,8 @@ interface IFbUtils {
 		fb.SetDSPPreset(1); // changes to the 2nd entry in the example above
 		*/
 
-		fb.GetFocusItem([force]); (IFbMetadbHandle)
-		/*
-		force: boolean, default true.
-		When true, it will use the first item of the active playlist if it is unable to get the focus item.
-		Returns null on failure.
-		*/
+		fb.GetFocusItem(); (IFbMetadbHandle)
+		// Returns the focused item from the active playlist or null on failure.
 
 		fb.GetLibraryItems(); (IFbMetadbHandleList)
 		// Returns all Media Library items as a handle list.
@@ -491,13 +487,8 @@ interface IFbUtils {
 				Methods:
 					Dispose(); (void)
 
-					Eval([force]); (string)
+					Eval(); (string)
 					/*
-					force: boolean, default false.
-					If true, you can process text that doesn't contain
-					title formatting even when foobar2000 isn't playing. When playing, you
-					should always get a result.
-
 					Always use Eval when you want dynamic info such as %playback_time%, %bitrate% etc.
 					EvalWithMetadb(fb.GetNowplaying()) will not give the results you want.
 					Example:
@@ -1388,13 +1379,10 @@ interface IFbWindow {
 		window.Reload(); (void)
 		// reload panel
 
-		window.Repaint([force]); (void)
-		// force: boolean, default false.
+		window.Repaint(); (void)
 
-		window.RepaintRect(x, y, w, h[, force]); (void)
+		window.RepaintRect(x, y, w, h); (void)
 		/*
-		force: boolean, default false.
-
 		Use this instead of window.Repaint on frequently updated areas
 		such as time, bitrate, seekbar, etc.
 		*/

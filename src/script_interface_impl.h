@@ -285,7 +285,7 @@ protected:
 	virtual void FinalRelease();
 
 public:
-	STDMETHODIMP Eval(VARIANT_BOOL force, BSTR* p);
+	STDMETHODIMP Eval(BSTR* p);
 	STDMETHODIMP EvalWithMetadb(IFbMetadbHandle* handle, BSTR* p);
 	STDMETHODIMP EvalWithMetadbs(IFbMetadbHandleList* handles, VARIANT* p);
 	STDMETHODIMP get__ptr(void** pp);
@@ -352,7 +352,7 @@ public:
 	STDMETHODIMP Exit();
 	STDMETHODIMP GetClipboardContents(UINT window_id, IFbMetadbHandleList** pp);
 	STDMETHODIMP GetDSPPresets(BSTR* p);
-	STDMETHODIMP GetFocusItem(VARIANT_BOOL force, IFbMetadbHandle** pp);
+	STDMETHODIMP GetFocusItem(IFbMetadbHandle** pp);
 	STDMETHODIMP GetLibraryItems(IFbMetadbHandleList** outItems);
 	STDMETHODIMP GetLibraryRelativePath(IFbMetadbHandle* handle, BSTR* p);
 	STDMETHODIMP GetNowPlaying(IFbMetadbHandle** pp);
@@ -428,8 +428,8 @@ public:
 	STDMETHODIMP GetProperty(BSTR name, VARIANT defaultval, VARIANT* p);
 	STDMETHODIMP NotifyOthers(BSTR name, VARIANT info);
 	STDMETHODIMP Reload();
-	STDMETHODIMP Repaint(VARIANT_BOOL force);
-	STDMETHODIMP RepaintRect(LONG x, LONG y, LONG w, LONG h, VARIANT_BOOL force);
+	STDMETHODIMP Repaint();
+	STDMETHODIMP RepaintRect(int x, int y, int w, int h);
 	STDMETHODIMP SetCursor(UINT id);
 	STDMETHODIMP SetInterval(IDispatch* func, int delay, UINT* outIntervalID);
 	STDMETHODIMP SetProperty(BSTR name, VARIANT val);

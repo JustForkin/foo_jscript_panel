@@ -4,11 +4,7 @@
 #include "script_interface_impl.h"
 #include "script_preprocessor.h"
 
-// Smart pointers for Active Scripting
 _COM_SMARTPTR_TYPEDEF(IActiveScriptParse, IID_IActiveScriptParse);
-_COM_SMARTPTR_TYPEDEF(IProcessDebugManager, IID_IProcessDebugManager);
-_COM_SMARTPTR_TYPEDEF(IDebugDocumentHelper, IID_IDebugDocumentHelper);
-_COM_SMARTPTR_TYPEDEF(IDebugApplication, IID_IDebugApplication);
 
 class HostComm : public js_panel_vars
 {
@@ -56,8 +52,8 @@ public:
 	virtual HFONT GetFontDUI(unsigned type) = 0;
 	void Redraw();
 	void RefreshBackground(LPRECT lprcUpdate = NULL);
-	void Repaint(bool force = false);
-	void RepaintRect(LONG x, LONG y, LONG w, LONG h, bool force = false);
+	void Repaint();
+	void RepaintRect(int x, int y, int w, int h);
 };
 
 class ScriptHost : public IActiveScriptSite, public IActiveScriptSiteWindow
