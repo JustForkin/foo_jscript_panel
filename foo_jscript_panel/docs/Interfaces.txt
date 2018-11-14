@@ -1717,7 +1717,7 @@ interface IFbMetadbHandle {
 		console.log(handle.RawPath); // file://D:\SomeSong.flac
 		*/
 
-		SubSong; (int) (read)
+		SubSong; (uint) (read)
 
 		FileSize; (LONGLONG) (read) // Requires a system with IE9 or later to work properly.
 

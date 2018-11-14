@@ -1,3 +1,16 @@
+v2.2.0
+- CHG: The window.DlgCode property has been removed.
+- CHG: The "force" argument has been removed from the following methods:
+       FbTitleFormat Eval()
+       fb.GetFocusItem()
+       window.Repaint()
+       window.RepaintRect(x, y, w, h)
+- CHG: The "client_guid" argument has been removed from the following methods:
+       window.GetColourCUI(type)
+       window.GetFontCUI(type)
+
+https://github.com/marc2k3/foo_jscript_panel/wiki/Breaking-Changes
+
 v2.1.8
 - NEW: Add FbMetadbHandleList RemoveAttachedImages method.
 - FIX: There are no longer any limitations managing attached images.
