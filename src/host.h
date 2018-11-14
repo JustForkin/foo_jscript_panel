@@ -24,7 +24,6 @@ protected:
 	int m_width;
 	panel_tooltip_param_ptr m_panel_tooltip_param_ptr;
 	t_script_info m_script_info;
-	t_size m_dlg_code;
 	t_size m_instance_type;
 	ui_selection_holder::ptr m_selection_holder;
 

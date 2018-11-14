@@ -13,7 +13,6 @@ HostComm::HostComm()
 	, m_suppress_drawing(false)
 	, m_paint_pending(false)
 	, m_instance_type(KInstanceTypeCUI)
-	, m_dlg_code(0)
 	, m_script_info(get_config_guid())
 	, m_panel_tooltip_param_ptr(new panel_tooltip_param)
 {
