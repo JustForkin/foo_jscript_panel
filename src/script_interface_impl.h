@@ -436,7 +436,6 @@ public:
 	STDMETHODIMP SetTimeout(IDispatch* func, int delay, UINT* outTimeoutID);
 	STDMETHODIMP ShowConfigure();
 	STDMETHODIMP ShowProperties();
-	STDMETHODIMP get_DlgCode(UINT* p);
 	STDMETHODIMP get_Height(INT* p);
 	STDMETHODIMP get_ID(UINT* p);
 	STDMETHODIMP get_InstanceType(UINT* p);
@@ -448,7 +447,6 @@ public:
 	STDMETHODIMP get_MinWidth(UINT* p);
 	STDMETHODIMP get_Name(BSTR* p);
 	STDMETHODIMP get_Width(INT* p);
-	STDMETHODIMP put_DlgCode(UINT code);
 	STDMETHODIMP put_MaxHeight(UINT height);
 	STDMETHODIMP put_MaxWidth(UINT width);
 	STDMETHODIMP put_MinHeight(UINT height);

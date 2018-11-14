@@ -44,7 +44,6 @@ public:
 	int GetWidth();
 	panel_tooltip_param_ptr& PanelTooltipParam();
 	t_script_info& ScriptInfo();
-	t_size& DlgCode();
 	t_size GetInstanceType();
 	virtual DWORD GetColourCUI(unsigned type) = 0;
 	virtual DWORD GetColourDUI(unsigned type) = 0;

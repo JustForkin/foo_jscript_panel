@@ -2978,14 +2978,6 @@ STDMETHODIMP FbWindow::ShowProperties()
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::get_DlgCode(UINT* p)
-{
-	if (!p) return E_POINTER;
-
-	*p = m_host->DlgCode();
-	return S_OK;
-}
-
 STDMETHODIMP FbWindow::get_Height(INT* p)
 {
 	if (!p) return E_POINTER;
@@ -3077,12 +3069,6 @@ STDMETHODIMP FbWindow::get_Width(INT* p)
 	if (!p) return E_POINTER;
 
 	*p = m_host->GetWidth();
-	return S_OK;
-}
-
-STDMETHODIMP FbWindow::put_DlgCode(UINT code)
-{
-	m_host->DlgCode() = code;
 	return S_OK;
 }
 

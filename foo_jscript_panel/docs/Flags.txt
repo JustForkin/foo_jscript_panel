@@ -102,20 +102,6 @@ var FILE_ATTRIBUTE_NOT_CONTENT_INDEXED = 0x00002000;
 var FILE_ATTRIBUTE_ENCRYPTED           = 0x00004000;
 //var FILE_ATTRIBUTE_VIRTUAL           = 0x00010000; // do not use
 
-// With window.DlgCode, can be combined.
-// If you don't know what they mean, igonre them.
-var DLGC_WANTARROWS            = 0x0001;     /* Control wants arrow keys         */
-var DLGC_WANTTAB               = 0x0002;     /* Control wants tab keys           */
-var DLGC_WANTALLKEYS           = 0x0004;     /* Control wants all keys           */
-var DLGC_WANTMESSAGE           = 0x0004;     /* Pass message to control          */
-var DLGC_HASSETSEL             = 0x0008;     /* Understands EM_SETSEL message    */
-var DLGC_DEFPUSHBUTTON         = 0x0010;     /* Default pushbutton               */
-var DLGC_UNDEFPUSHBUTTON       = 0x0020;     /* Non-default pushbutton           */
-var DLGC_RADIOBUTTON           = 0x0040;     /* Radio button                     */
-var DLGC_WANTCHARS             = 0x0080;     /* Want WM_CHAR messages            */
-var DLGC_STATIC                = 0x0100;     /* Static item: don't include       */
-var DLGC_BUTTON                = 0x2000;     /* Button item: can be checked      */
-
 // Used with utils.IsKeyPressed()
 var VK_BACK = 0x08;
 var VK_TAB = 0x09;

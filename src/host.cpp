@@ -73,11 +73,6 @@ t_script_info& HostComm::ScriptInfo()
 	return m_script_info;
 }
 
-t_size& HostComm::DlgCode()
-{
-	return m_dlg_code;
-}
-
 t_size HostComm::GetInstanceType()
 {
 	return m_instance_type;
