@@ -2232,22 +2232,6 @@ STDMETHODIMP FbUtils::GetLibraryItems(IFbMetadbHandleList** outItems)
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::GetLibraryRelativePath(IFbMetadbHandle* handle, BSTR* p)
-{
-	if (!p) return E_POINTER;
-
-	metadb_handle* ptr = NULL;
-	handle->get__ptr((void**)&ptr);
-	pfc::string8_fast temp;
-	if (!library_manager::get()->get_relative_path(ptr, temp))
-	{
-		temp = "";
-	}
-
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(temp));
-	return S_OK;
-}
-
 STDMETHODIMP FbUtils::GetNowPlaying(IFbMetadbHandle** pp)
 {
 	if (!pp) return E_POINTER;

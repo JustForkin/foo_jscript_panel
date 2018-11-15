@@ -379,7 +379,6 @@ __interface IFbUtils : IDispatch
 	STDMETHOD(GetDSPPresets)([out, retval] BSTR* p);
 	STDMETHOD(GetFocusItem)([out, retval] IFbMetadbHandle** pp);
 	STDMETHOD(GetLibraryItems)([out, retval] IFbMetadbHandleList** outItems);
-	STDMETHOD(GetLibraryRelativePath)(IFbMetadbHandle* handle, [out, retval] BSTR* p);
 	STDMETHOD(GetNowPlaying)([out, retval] IFbMetadbHandle** pp);
 	STDMETHOD(GetOutputDevices)([out, retval] BSTR* p);
 	STDMETHOD(GetQueryItems)(IFbMetadbHandleList* handles, BSTR query, [out, retval] IFbMetadbHandleList** pp);

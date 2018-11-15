@@ -30,7 +30,6 @@ fb.GetClipboardContents(window_id)
 fb.GetDSPPresets();
 fb.GetFocusItem()
 fb.GetLibraryItems()
-fb.GetLibraryRelativePath(handle)
 fb.GetNowPlaying()
 fb.GetOutputDevices()
 fb.GetQueryItems(handle_list, query)
