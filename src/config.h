@@ -32,9 +32,7 @@ class prop_kv_config
 {
 public:
 	typedef prop_kv_config t_self;
-	typedef pfc::string_simple t_key;
-	typedef _variant_t t_val;
-	typedef pfc::map_t<t_key, t_val, pfc::comparator_stricmp_ascii> t_map;
+	typedef pfc::map_t<pfc::string_simple, _variant_t, pfc::comparator_stricmp_ascii> t_map;
 
 	t_map& get_val()
 	{

@@ -71,7 +71,7 @@ public:
 	}
 
 private:
-	T * m_data;
+	T* m_data;
 };
 
 class panel_manager
@@ -134,7 +134,7 @@ public:
 		ui_selection_manager_v2::get()->unregister_callback(this);
 	}
 
-	virtual void on_changed(t_replaygain_config const& cfg);
+	virtual void on_changed(const t_replaygain_config& cfg);
 	virtual void on_selection_changed(metadb_handle_list_cref p_selection);
 	virtual void outputConfigChanged();
 };

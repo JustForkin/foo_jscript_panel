@@ -29,7 +29,7 @@ struct t_sci_prop_set;
 struct t_style_to_key_table
 {
 	int style_num;
-	const char * key;
+	const char* key;
 };
 
 class CScriptEditorCtrl : public CScintillaCtrl
@@ -51,10 +51,10 @@ public:
 	IndentationStatus GetIndentState(int line);
 	unsigned int GetLinePartsInStyle(int line, int style1, int style2, SString sv[], int len);
 	bool RangeIsAllWhitespace(int start, int end);
-	DWORD GetPropertyColor(const char * key, bool * key_exist = NULL);
+	DWORD GetPropertyColor(const char* key, bool* key_exist = NULL);
 	void Init();
-	void LoadProperties(const pfc::list_t<t_sci_prop_set> & data);
-	void SetContent(const char * text, bool clear_undo_buffer = false);
+	void LoadProperties(const pfc::list_t<t_sci_prop_set>& data);
+	void SetContent(const char* text, bool clear_undo_buffer = false);
 	void RestoreDefaultStyle();
 	void SetJScript();
 	void TrackWidth();
@@ -70,8 +70,8 @@ public:
 	int IndentOfBlock(int line);
 	void AutomaticIndentation(char ch);
 	bool FindBraceMatchPos(int &braceAtCaret, int &braceOpposite);
-	const char * GetNearestWord(const char *wordStart, int searchLen, SString wordCharacters = NULL, int wordIndex = -1);
-	bool GetNearestWords(pfc::string_base & out, const char * wordStart, int searchLen, const char *separators);
+	const char* GetNearestWord(const char* wordStart, int searchLen, SString wordCharacters = NULL, int wordIndex = -1);
+	bool GetNearestWords(pfc::string_base& out, const char* wordStart, int searchLen, const char* separators);
 	void SetIndentation(int line, int indent);
 
 	// Message map and handlers

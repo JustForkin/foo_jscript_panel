@@ -26,7 +26,7 @@ const t_prop_set_init_table prop_sets_init_table[] =
 
 cfg_sci_prop_sets g_sci_prop_sets(g_guid_jsp_prop_sets, prop_sets_init_table);
 
-void cfg_sci_prop_sets::get_data_raw(stream_writer * p_stream, abort_callback & p_abort)
+void cfg_sci_prop_sets::get_data_raw(stream_writer* p_stream, abort_callback& p_abort)
 {
 	try
 	{
@@ -42,7 +42,7 @@ void cfg_sci_prop_sets::get_data_raw(stream_writer * p_stream, abort_callback & 
 	}
 }
 
-void cfg_sci_prop_sets::set_data_raw(stream_reader * p_stream, t_size p_sizehint, abort_callback & p_abort)
+void cfg_sci_prop_sets::set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort)
 {
 	t_str_to_str_map data_map;
 	pfc::string8_fast key, val;
@@ -75,7 +75,7 @@ void cfg_sci_prop_sets::reset()
 	}
 }
 
-void cfg_sci_prop_sets::export_to_file(const char * filename)
+void cfg_sci_prop_sets::export_to_file(const char* filename)
 {
 	pfc::string8_fast_aggressive content;
 
@@ -89,7 +89,7 @@ void cfg_sci_prop_sets::export_to_file(const char * filename)
 	helpers::write_file(filename, content);
 }
 
-void cfg_sci_prop_sets::import_from_file(const char * filename)
+void cfg_sci_prop_sets::import_from_file(const char* filename)
 {
 	typedef pfc::chain_list_v2_t<pfc::string8_fast> t_string_chain_list;
 	t_string_chain_list lines;
@@ -107,13 +107,13 @@ void cfg_sci_prop_sets::import_from_file(const char * filename)
 		if (iter->get_length() > 0)
 		{
 			int len = iter->get_length();
-			const char * ptr = iter->get_ptr();
+			const char* ptr = iter->get_ptr();
 
 			// Comment or length two small, skip
 			if (*ptr == '#' || len <= 3)
 				continue;
 
-			const char * delim = strchr(ptr, '=');
+			const char* delim = strchr(ptr, '=');
 
 			if ((!delim) || (delim - ptr + 1 > len))
 				continue;
@@ -145,7 +145,7 @@ void cfg_sci_prop_sets::init_data(const t_prop_set_init_table * p_default)
 	}
 }
 
-void cfg_sci_prop_sets::merge_data(const t_str_to_str_map & data_map)
+void cfg_sci_prop_sets::merge_data(const t_str_to_str_map& data_map)
 {
 	pfc::string8_fast val;
 

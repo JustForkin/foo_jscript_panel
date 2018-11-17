@@ -4,7 +4,7 @@
 
 bool prop_kv_config::get_config_item(const char* p_key, VARIANT& p_out)
 {
-	t_val val;
+	_variant_t val;
 
 	if (m_map.query(p_key, val))
 	{
@@ -61,7 +61,7 @@ void prop_kv_config::g_load(t_map& data, stream_reader* reader, abort_callback& 
 		for (t_size i = 0; i < count; ++i)
 		{
 			pfc::string8_fast key;
-			t_val val;
+			_variant_t val;
 			VARTYPE vt;
 			int cbRead = 0;
 
@@ -203,13 +203,13 @@ void prop_kv_config::save(stream_writer* writer, abort_callback& abort) const th
 
 void prop_kv_config::set_config_item(const char* p_key, const VARIANT& p_val)
 {
-	if (!g_is_allowed_type(p_val.vt))
+	if (g_is_allowed_type(p_val.vt))
 	{
-		m_map.remove(p_key);
+		m_map[p_key] = p_val;
 	}
 	else
 	{
-		m_map[p_key] = p_val;
+		m_map.remove(p_key);
 	}
 }
 
@@ -264,7 +264,9 @@ void js_panel_vars::get_default_script_code(pfc::string_base& out)
 	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_SCRIPT), "SCRIPT");
 
 	if (pures)
-		out.set_string(reinterpret_cast<const char *>(pures->GetPointer()), pures->GetSize());
+	{
+		out.set_string(reinterpret_cast<const char*>(pures->GetPointer()), pures->GetSize());
+	}
 }
 
 t_edge_style& js_panel_vars::get_edge_style()

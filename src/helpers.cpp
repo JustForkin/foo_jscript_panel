@@ -473,7 +473,7 @@ namespace helpers
 			// UTF8?
 			else if (pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF)
 			{
-				const char* pSource = (const char *)(pAddr + 3);
+				const char* pSource = (const char*)(pAddr + 3);
 				t_size len = dwFileSize - 3;
 
 				content.set_string(pSource, len);
@@ -483,7 +483,7 @@ namespace helpers
 
 		if (!status)
 		{
-			const char* pSource = (const char *)(pAddr);
+			const char* pSource = (const char*)(pAddr);
 			t_size pSourceSize = dwFileSize;
 
 			t_size tmp = detect_charset(path);
@@ -557,7 +557,7 @@ namespace helpers
 			// UTF8-BOM?
 			else if (pAddr[0] == 0xEF && pAddr[1] == 0xBB && pAddr[2] == 0xBF)
 			{
-				const char* pSource = (const char *)(pAddr + 3);
+				const char* pSource = (const char*)(pAddr + 3);
 				t_size pSourceSize = dwFileSize - 3;
 
 				const t_size size = pfc::stringcvt::estimate_utf8_to_wide_quick(pSource, pSourceSize);
@@ -569,7 +569,7 @@ namespace helpers
 
 		if (!status)
 		{
-			const char* pSource = (const char *)(pAddr);
+			const char* pSource = (const char*)(pAddr);
 			t_size pSourceSize = dwFileSize;
 
 			t_size tmp = detect_charset(pfc::stringcvt::string_utf8_from_wide(path));
@@ -769,7 +769,7 @@ namespace helpers
 			return 0;
 		}
 
-		hr = lang->DetectInputCodepage(MLDETECTCP_NONE, 0, const_cast<char *>(text.get_ptr()), &textSize, encodings, &encodingCount);
+		hr = lang->DetectInputCodepage(MLDETECTCP_NONE, 0, const_cast<char*>(text.get_ptr()), &textSize, encodings, &encodingCount);
 
 		if (FAILED(hr)) return 0;
 

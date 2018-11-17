@@ -36,7 +36,7 @@ const t_style_to_key_table js_style_table[] =
 	{ -1, NULL },
 };
 
-static bool IsSymIncludes(const StyleAndWords & symbols, const SString value)
+static bool IsSymIncludes(const StyleAndWords& symbols, const SString value)
 {
 	if (symbols.IsEmpty())
 	{
@@ -46,11 +46,11 @@ static bool IsSymIncludes(const StyleAndWords & symbols, const SString value)
 	{
 		// Set of symbols separated by spaces
 		t_size lenVal = value.length();
-		const char *symbol = symbols.words.c_str();
+		const char* symbol = symbols.words.c_str();
 
 		while (symbol)
 		{
-			const char *symbolEnd = strchr(symbol, ' ');
+			const char* symbolEnd = strchr(symbol, ' ');
 			t_size lenSymbol = strlen(symbol);
 
 			if (symbolEnd)
@@ -122,11 +122,9 @@ static int int_from_hex_byte(const char* hex_byte)
 
 struct StringComparePartialNC
 {
-	StringComparePartialNC(t_size len_) : len(len_)
-	{
-	}
+	StringComparePartialNC(t_size len_) : len(len_) {}
 
-	int operator()(const char * s1, const char * s2) const
+	int operator()(const char* s1, const char* s2) const
 	{
 		t_size len1 = pfc::strlen_max_t(s1, len);
 		t_size len2 = pfc::strlen_max_t(s2, len);
@@ -139,7 +137,7 @@ struct StringComparePartialNC
 
 struct StringCompareSpecial
 {
-	int operator()(const char * s1, const char * s2) const
+	int operator()(const char* s1, const char* s2) const
 	{
 		int result = _stricmp(s1, s2);
 
@@ -155,9 +153,9 @@ struct StringCompareSpecial
 	}
 };
 
-static t_size LengthWord(const char * word, char otherSeparator)
+static t_size LengthWord(const char* word, char otherSeparator)
 {
-	const char *endWord = 0;
+	const char* endWord = 0;
 	// Find an otherSeparator
 
 	if (otherSeparator)
@@ -188,7 +186,7 @@ static t_size LengthWord(const char * word, char otherSeparator)
 	return endWord - word;
 }
 
-static DWORD ParseHex(const char * hex)
+static DWORD ParseHex(const char* hex)
 {
 	// len('#000000') = 7
 	if (pfc::strlen_max(hex, 8) == 8)
@@ -201,18 +199,18 @@ static DWORD ParseHex(const char * hex)
 	return RGB(r, g, b);
 }
 
-static bool ParseStyle(const char * p_definition, t_sci_editor_style & p_style)
+static bool ParseStyle(const char* p_definition, t_sci_editor_style& p_style)
 {
 	if (p_definition == 0 || !*p_definition)
 		return false;
 
-	char * val = _strdup(p_definition);
-	char * opt = val;
+	char* val = _strdup(p_definition);
+	char* opt = val;
 
 	while (opt)
 	{
 		// Find attribute separator
-		char * cpComma = strchr(opt, ',');
+		char* cpComma = strchr(opt, ',');
 
 		if (cpComma)
 		{
@@ -221,7 +219,7 @@ static bool ParseStyle(const char * p_definition, t_sci_editor_style & p_style)
 		}
 
 		// Find attribute name/value separator
-		char * colon = strchr(opt, ':');
+		char* colon = strchr(opt, ':');
 
 		if (colon)
 		{
@@ -563,7 +561,7 @@ void CScriptEditorCtrl::FillFunctionDefinition(int pos)
 		}
 
 		// Should get current api definition
-		const char * word = GetNearestWord(m_szCurrentCallTipWord.get_ptr(),
+		const char* word = GetNearestWord(m_szCurrentCallTipWord.get_ptr(),
 			m_szCurrentCallTipWord.get_length(),
 			"_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", m_nCurrentCallTip);
 
@@ -802,7 +800,7 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int &braceAtCaret, int &braceOpposite)
 	return isInside;
 }
 
-const char * CScriptEditorCtrl::GetNearestWord(const char *wordStart, int searchLen, SString wordCharacters, int wordIndex)
+const char* CScriptEditorCtrl::GetNearestWord(const char* wordStart, int searchLen, SString wordCharacters, int wordIndex)
 {
 	if (m_apis.get_count() == 0)
 		return false;
@@ -832,7 +830,7 @@ const char * CScriptEditorCtrl::GetNearestWord(const char *wordStart, int search
 		// Finds first word in a series of equal words
 		for (t_size i = start; i <= end; ++i)
 		{
-			const char * word = m_apis[i];
+			const char* word = m_apis[i];
 
 			if (!wordCharacters.contains(word[searchLen]))
 			{
@@ -849,7 +847,7 @@ const char * CScriptEditorCtrl::GetNearestWord(const char *wordStart, int search
 	return NULL;
 }
 
-bool CScriptEditorCtrl::GetNearestWords(pfc::string_base & out, const char * wordStart, int searchLen, const char *separators)
+bool CScriptEditorCtrl::GetNearestWords(pfc::string_base& out, const char* wordStart, int searchLen, const char* separators)
 {
 	out.reset();
 
@@ -897,7 +895,7 @@ bool CScriptEditorCtrl::GetNearestWords(pfc::string_base & out, const char * wor
 	return status;
 }
 
-DWORD CScriptEditorCtrl::GetPropertyColor(const char * key, bool * key_exist)
+DWORD CScriptEditorCtrl::GetPropertyColor(const char* key, bool* key_exist)
 {
 	pfc::array_t<char> buff;
 	int len = GetPropertyExpanded(key, 0); // Get property len
@@ -973,7 +971,7 @@ void CScriptEditorCtrl::Init()
 	LoadProperties(g_sci_prop_sets.val());
 }
 
-void CScriptEditorCtrl::LoadProperties(const pfc::list_t<t_sci_prop_set> & data)
+void CScriptEditorCtrl::LoadProperties(const pfc::list_t<t_sci_prop_set>& data)
 {
 	for (t_size i = 0; i < data.get_count(); ++i)
 	{
@@ -981,7 +979,7 @@ void CScriptEditorCtrl::LoadProperties(const pfc::list_t<t_sci_prop_set> & data)
 	}
 }
 
-void CScriptEditorCtrl::SetContent(const char * text, bool clear_undo_buffer)
+void CScriptEditorCtrl::SetContent(const char* text, bool clear_undo_buffer)
 {
 	SetText(text);
 	ConvertEOLs(SC_EOL_CRLF);
@@ -1090,7 +1088,7 @@ void CScriptEditorCtrl::TrackWidth()
 
 void CScriptEditorCtrl::SetAllStylesFromTable(const t_style_to_key_table table[])
 {
-	const char * key = NULL;
+	const char* key = NULL;
 
 	for (int i = 0; table[i].style_num != -1; ++i)
 	{
@@ -1234,7 +1232,7 @@ void CScriptEditorCtrl::ReadAPI()
 	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
 
 	if (pures)
-		content = reinterpret_cast<const char *>(pures->GetPointer()), pures->GetSize();
+		content = reinterpret_cast<const char*>(pures->GetPointer()), pures->GetSize();
 
 	pfc::string_list_impl temp;
 	pfc::splitStringByLines(temp, content);
@@ -1285,7 +1283,7 @@ LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmn)
 
 LRESULT CScriptEditorCtrl::OnCharAdded(LPNMHDR pnmh)
 {
-	SCNotification * notification = (SCNotification *)pnmh;
+	SCNotification* notification = (SCNotification*)pnmh;
 	int ch = notification->ch;
 	Sci_CharacterRange crange = GetSelection();
 	int selStart = crange.cpMin;

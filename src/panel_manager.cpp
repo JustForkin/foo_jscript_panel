@@ -110,7 +110,7 @@ void my_initquit::on_selection_changed(metadb_handle_list_cref p_selection)
 	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_SELECTION_CHANGED);
 }
 
-void my_initquit::on_changed(t_replaygain_config const& cfg)
+void my_initquit::on_changed(const t_replaygain_config& cfg)
 {
 	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_REPLAYGAIN_MODE_CHANGED, (WPARAM)cfg.m_source_mode);
 }

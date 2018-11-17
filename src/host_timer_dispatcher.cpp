@@ -125,7 +125,7 @@ unsigned HostTimerDispatcher::createTimer(HWND hWnd, unsigned delay, bool isRepe
 
 	m_timerMap.emplace(id, new HostTimer(hWnd, id, delay, isRepeated));
 
-	auto & curTask = m_taskMap.emplace(id, new HostTimerTask(pDisp, id));
+	auto& curTask = m_taskMap.emplace(id, new HostTimerTask(pDisp, id));
 	curTask.first->second->acquire();
 
 	if (!m_timerMap[id]->start(m_hTimerQueue))
