@@ -1,5 +1,6 @@
 v2.2.0
 - CHG: The window.DlgCode property has been removed.
+- CHG: fb.GetLibraryRelativePath() has been removed. Use the handle list method.
 - CHG: The "force" argument has been removed from the following methods:
        FbTitleFormat Eval()
        fb.GetFocusItem()
