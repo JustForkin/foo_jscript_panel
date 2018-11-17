@@ -93,12 +93,7 @@ void js_panel_window_dui::g_get_name(pfc::string_base& out)
 	out = JSP_NAME;
 }
 
-DWORD js_panel_window_dui::GetColourCUI(unsigned type)
-{
-	return 0;
-}
-
-DWORD js_panel_window_dui::GetColourDUI(unsigned type)
+DWORD js_panel_window_dui::GetColourUI(unsigned type)
 {
 	const GUID* guids[] = {
 		&ui_color_text,
@@ -125,12 +120,7 @@ GUID js_panel_window_dui::get_subclass()
 	return g_get_subclass();
 }
 
-HFONT js_panel_window_dui::GetFontCUI(unsigned type)
-{
-	return NULL;
-}
-
-HFONT js_panel_window_dui::GetFontDUI(unsigned type)
+HFONT js_panel_window_dui::GetFontUI(unsigned type)
 {
 	const GUID* guids[] = {
 		&ui_font_default,

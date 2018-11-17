@@ -11,12 +11,10 @@ public:
 	static pfc::string8 g_get_description();
 	static ui_element_config::ptr g_get_default_configuration();
 	static void g_get_name(pfc::string_base& out);
-	virtual DWORD GetColourCUI(unsigned type);
-	virtual DWORD GetColourDUI(unsigned type);
+	virtual DWORD GetColourUI(unsigned type);
 	virtual GUID get_guid();
 	virtual GUID get_subclass();
-	virtual HFONT GetFontCUI(unsigned type);
-	virtual HFONT GetFontDUI(unsigned type);
+	virtual HFONT GetFontUI(unsigned type);
 	virtual HWND get_wnd();
 	virtual LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 	virtual bool edit_mode_context_menu_get_description(unsigned p_id, unsigned p_id_base, pfc::string_base& p_out);

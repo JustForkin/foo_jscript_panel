@@ -5,7 +5,7 @@
 // CUI panel instance
 static uie::window_factory<js_panel_window_cui> g_js_panel_wndow_cui;
 
-DWORD js_panel_window_cui::GetColourCUI(unsigned type)
+DWORD js_panel_window_cui::GetColourUI(unsigned type)
 {
 	if (type <= cui::colours::colour_active_item_frame)
 	{
@@ -16,12 +16,7 @@ DWORD js_panel_window_cui::GetColourCUI(unsigned type)
 	return 0;
 }
 
-DWORD js_panel_window_cui::GetColourDUI(unsigned type)
-{
-	return 0;
-}
-
-HFONT js_panel_window_cui::GetFontCUI(unsigned type)
+HFONT js_panel_window_cui::GetFontUI(unsigned type)
 {
 	if (type <= cui::fonts::font_type_labels)
 	{
@@ -34,11 +29,6 @@ HFONT js_panel_window_cui::GetFontCUI(unsigned type)
 			return uCreateIconFont();
 		}
 	}
-	return NULL;
-}
-
-HFONT js_panel_window_cui::GetFontDUI(unsigned type)
-{
 	return NULL;
 }
 

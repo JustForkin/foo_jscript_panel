@@ -3,10 +3,8 @@
 class js_panel_window_cui : public js_panel_window, public uie::window, public cui::fonts::common_callback, public cui::colours::common_callback
 {
 protected:
-	virtual DWORD GetColourCUI(unsigned type);
-	virtual DWORD GetColourDUI(unsigned type);
-	virtual HFONT GetFontCUI(unsigned type);
-	virtual HFONT GetFontDUI(unsigned type);
+	virtual DWORD GetColourUI(unsigned type);
+	virtual HFONT GetFontUI(unsigned type);
 	virtual HWND create_or_transfer_window(HWND parent, const uie::window_host_ptr& host, const ui_helpers::window_position_t& p_position);
 	virtual HWND get_wnd() const;
 	virtual LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);

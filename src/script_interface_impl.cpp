@@ -2731,7 +2731,7 @@ STDMETHODIMP FbWindow::GetColourCUI(UINT type, int* p)
 	if (!p) return E_POINTER;
 	if (m_host->GetInstanceType() != HostComm::KInstanceTypeCUI) return E_NOTIMPL;
 
-	*p = m_host->GetColourCUI(type);
+	*p = m_host->GetColourUI(type);
 	return S_OK;
 }
 
@@ -2740,7 +2740,7 @@ STDMETHODIMP FbWindow::GetColourDUI(UINT type, int* p)
 	if (!p) return E_POINTER;
 	if (m_host->GetInstanceType() != HostComm::KInstanceTypeDUI) return E_NOTIMPL;
 
-	*p = m_host->GetColourDUI(type);
+	*p = m_host->GetColourUI(type);
 	return S_OK;
 }
 
@@ -2750,8 +2750,7 @@ STDMETHODIMP FbWindow::GetFontCUI(UINT type, IGdiFont** pp)
 	if (m_host->GetInstanceType() != HostComm::KInstanceTypeCUI) return E_NOTIMPL;
 
 	*pp = NULL;
-	HFONT hFont = m_host->GetFontCUI(type);
-
+	HFONT hFont = m_host->GetFontUI(type);
 	if (hFont)
 	{
 		Gdiplus::Font* font = new Gdiplus::Font(m_host->GetHDC(), hFont);
@@ -2773,9 +2772,8 @@ STDMETHODIMP FbWindow::GetFontDUI(UINT type, IGdiFont** pp)
 	if (!pp) return E_POINTER;
 	if (m_host->GetInstanceType() != HostComm::KInstanceTypeDUI) return E_NOTIMPL;
 
-	HFONT hFont = m_host->GetFontDUI(type);
 	*pp = NULL;
-
+	HFONT hFont = m_host->GetFontUI(type);
 	if (hFont)
 	{
 		Gdiplus::Font* font = new Gdiplus::Font(m_host->GetHDC(), hFont);
@@ -2786,10 +2784,9 @@ STDMETHODIMP FbWindow::GetFontDUI(UINT type, IGdiFont** pp)
 		else
 		{
 			if (font) delete font;
-			*pp = NULL;
+			font = NULL;
 		}
 	}
-
 	return S_OK;
 }
 
