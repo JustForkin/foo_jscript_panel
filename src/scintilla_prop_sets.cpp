@@ -37,9 +37,7 @@ void cfg_sci_prop_sets::get_data_raw(stream_writer* p_stream, abort_callback& p_
 			p_stream->write_string(m_data[i].val, p_abort);
 		}
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 }
 
 void cfg_sci_prop_sets::set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort)

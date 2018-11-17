@@ -23,9 +23,7 @@ HostComm::HostComm()
 	m_min_size.y = 0;
 }
 
-HostComm::~HostComm()
-{
-}
+HostComm::~HostComm() {}
 
 GUID HostComm::GetGUID()
 {
@@ -185,13 +183,9 @@ ScriptHost::ScriptHost(HostComm* host)
 	, m_dwRef(1)
 	, m_engine_inited(false)
 	, m_has_error(false)
-	, m_lastSourceContext(0)
-{
-}
+	, m_lastSourceContext(0) {}
 
-ScriptHost::~ScriptHost()
-{
-}
+ScriptHost::~ScriptHost() {}
 
 bool ScriptHost::HasError()
 {

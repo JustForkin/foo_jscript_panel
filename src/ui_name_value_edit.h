@@ -4,9 +4,7 @@
 class CNameValueEdit : public CDialogImpl<CNameValueEdit>
 {
 public:
-	CNameValueEdit(const char* p_name, const char* p_value) : m_name(p_name), m_value(p_value)
-	{
-	}
+	CNameValueEdit(const char* p_name, const char* p_value) : m_name(p_name), m_value(p_value) {}
 
 	BEGIN_MSG_MAP(CNameValueEdit)
 		MSG_WM_INITDIALOG(OnInitDialog)

@@ -93,9 +93,7 @@ namespace stats
 				}
 				return ret;
 			}
-			catch (exception_io_data)
-			{
-			}
+			catch (exception_io_data) {}
 		}
 		return fields();
 	}

@@ -56,9 +56,7 @@ class popup_msg
 public:
 	struct action : delay_loader_action
 	{
-		action(const char* p_msg, const char* p_title) : msg_(p_msg), title_(p_title)
-		{
-		}
+		action(const char* p_msg, const char* p_title) : msg_(p_msg), title_(p_title) {}
 
 		pfc::string_simple msg_, title_;
 

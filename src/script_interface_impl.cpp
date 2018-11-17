@@ -491,9 +491,7 @@ STDMETHODIMP FbMetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
 			data = tmp;
 		}
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 
 	if (data.is_valid())
 	{
@@ -974,9 +972,7 @@ STDMETHODIMP FbPlaybackQueueItem::get_PlaylistItemIndex(int* outPlaylistItemInde
 	return S_OK;
 }
 
-FbPlayingItemLocation::FbPlayingItemLocation(bool isValid, t_size playlistIndex, t_size playlistItemIndex) : m_isValid(isValid), m_playlistIndex(playlistIndex), m_playlistItemIndex(playlistItemIndex)
-{
-}
+FbPlayingItemLocation::FbPlayingItemLocation(bool isValid, t_size playlistIndex, t_size playlistItemIndex) : m_isValid(isValid), m_playlistIndex(playlistIndex), m_playlistItemIndex(playlistItemIndex) {}
 
 STDMETHODIMP FbPlayingItemLocation::get_IsValid(VARIANT_BOOL* outIsValid)
 {
@@ -1492,7 +1488,7 @@ STDMETHODIMP FbPlaylistManager::SortByFormat(UINT playlistIndex, BSTR pattern, V
 	if (!outSuccess) return E_POINTER;
 
 	pfc::stringcvt::string_utf8_from_wide upattern(pattern);
-	*outSuccess = TO_VARIANT_BOOL(playlist_manager::get()->playlist_sort_by_format(playlistIndex, upattern.is_empty() ? nullptr : upattern.get_ptr(), selOnly != VARIANT_FALSE));
+	*outSuccess = TO_VARIANT_BOOL(playlist_manager::get()->playlist_sort_by_format(playlistIndex, upattern.is_empty() ? NULL : upattern.get_ptr(), selOnly != VARIANT_FALSE));
 	return S_OK;
 }
 
@@ -3015,9 +3011,7 @@ STDMETHODIMP FbWindow::put_MinWidth(UINT width)
 	return S_OK;
 }
 
-GdiBitmap::GdiBitmap(Gdiplus::Bitmap* p) : GdiObj<IGdiBitmap, Gdiplus::Bitmap>(p)
-{
-}
+GdiBitmap::GdiBitmap(Gdiplus::Bitmap* p) : GdiObj<IGdiBitmap, Gdiplus::Bitmap>(p) {}
 
 STDMETHODIMP GdiBitmap::ApplyAlpha(BYTE alpha, IGdiBitmap** pp)
 {
@@ -3423,9 +3417,7 @@ STDMETHODIMP GdiFont::get_Style(int* p)
 	return S_OK;
 }
 
-GdiGraphics::GdiGraphics() : GdiObj<IGdiGraphics, Gdiplus::Graphics>(NULL)
-{
-}
+GdiGraphics::GdiGraphics() : GdiObj<IGdiGraphics, Gdiplus::Graphics>(NULL) {}
 
 void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath& gp, Gdiplus::RectF& rect, float arc_width, float arc_height)
 {
@@ -3999,9 +3991,7 @@ STDMETHODIMP GdiUtils::LoadImageAsync(UINT window_id, BSTR path, UINT* p)
 		else
 			delete task;
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 
 	*p = cookie;
 	return S_OK;
@@ -4463,11 +4453,8 @@ STDMETHODIMP JSUtils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL wr
 {
 	if (!p) return E_POINTER;
 
-	if (filename == nullptr || content == nullptr)
-	{
-		*p = VARIANT_FALSE;
-	}
-	else
+	*p = VARIANT_FALSE;
+	if (content != NULL)
 	{
 		*p = TO_VARIANT_BOOL(helpers::write_file(pfc::stringcvt::string_utf8_from_wide(filename), pfc::stringcvt::string_utf8_from_wide(content), write_bom != VARIANT_FALSE));
 	}
@@ -4502,9 +4489,7 @@ STDMETHODIMP MainMenuManager::BuildMenu(IMenuObj* p, int base_id, int count)
 	{
 		m_mm->generate_menu_win32((HMENU)menuid, base_id, count, mainmenu_manager::flag_show_shortcuts);
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 
 	return S_OK;
 }

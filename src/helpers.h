@@ -171,9 +171,7 @@ namespace helpers
 			IGdiBitmap* bitmap;
 			pfc::stringcvt::string_wide_from_utf8 image_path;
 
-			t_param(IFbMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path)
-			{
-			}
+			t_param(IFbMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path) {}
 
 			~t_param()
 			{
@@ -211,9 +209,7 @@ namespace helpers
 			IGdiBitmap* bitmap;
 			_bstr_t path;
 
-			t_param(int p_cookie, IGdiBitmap* p_bitmap, BSTR p_path) : cookie(p_cookie), bitmap(p_bitmap), path(p_path)
-			{
-			}
+			t_param(int p_cookie, IGdiBitmap* p_bitmap, BSTR p_path) : cookie(p_cookie), bitmap(p_bitmap), path(p_path) {}
 
 			~t_param()
 			{
@@ -222,9 +218,7 @@ namespace helpers
 			}
 		};
 
-		load_image_async(HWND notify_wnd, BSTR path) : m_notify_hwnd(notify_wnd), m_path(path)
-		{
-		}
+		load_image_async(HWND notify_wnd, BSTR path) : m_notify_hwnd(notify_wnd), m_path(path) {}
 
 	private:
 		virtual void run();
@@ -235,9 +229,7 @@ namespace helpers
 	class js_process_locations : public process_locations_notify
 	{
 	public:
-		js_process_locations(bool to_select, t_size base, t_size playlist) : m_to_select(to_select), m_base(base), m_playlist(playlist)
-		{
-		}
+		js_process_locations(bool to_select, t_size base, t_size playlist) : m_to_select(to_select), m_base(base), m_playlist(playlist) {}
 
 		void on_completion(metadb_handle_list_cref p_items)
 		{
@@ -255,9 +247,7 @@ namespace helpers
 			}
 		}
 
-		void on_aborted()
-		{
-		}
+		void on_aborted() {}
 
 	private:
 		bool m_to_select;

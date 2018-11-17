@@ -95,9 +95,7 @@ namespace helpers
 					ret = new com_object_impl_t<GdiBitmap>(bitmap);
 				}
 			}
-			catch (...)
-			{
-			}
+			catch (...) {}
 		}
 		*pp = ret;
 		return S_OK;
@@ -129,9 +127,7 @@ namespace helpers
 					album_art_data_ptr data = aaeiv2_stub->query(what, abort);
 					ret = query_album_art(aaeiv2_stub, what, no_load, image_path_ptr);
 				}
-				catch (...)
-				{
-				}
+				catch (...) {}
 			}
 		}
 

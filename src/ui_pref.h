@@ -4,9 +4,7 @@
 class CDialogPref : public CDialogImpl<CDialogPref>, public CWinDataExchange<CDialogPref>, public preferences_page_instance
 {
 public:
-	CDialogPref(preferences_page_callback::ptr callback) : m_callback(callback)
-	{
-	}
+	CDialogPref(preferences_page_callback::ptr callback) : m_callback(callback) {}
 
 	BEGIN_DDX_MAP(CDialogPref)
 		DDX_CONTROL_HANDLE(IDC_LIST_EDITOR_PROP, m_props)

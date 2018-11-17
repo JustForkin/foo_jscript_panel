@@ -451,7 +451,7 @@ void js_panel_window::execute_context_menu_command(int id, int id_base)
 	case 2:
 	{
 		pfc::stringcvt::string_os_from_utf8 folder(helpers::get_fb2k_component_path());
-		ShellExecute(nullptr, _T("open"), folder, nullptr, nullptr, SW_SHOW);
+		ShellExecute(NULL, _T("open"), folder, NULL, NULL, SW_SHOW);
 	}
 	break;
 	case 3:
@@ -477,7 +477,7 @@ bool js_panel_window::script_load()
 	m_max_size.x = INT_MAX;
 	m_max_size.y = INT_MAX;
 	m_min_size.x = 0;
-	m_min_size.x = 0;
+	m_min_size.y = 0;
 	PostMessage(m_hwnd, UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_all);
 
 	HRESULT hr = m_script_host->Initialize();

@@ -63,36 +63,6 @@ js_panel_window_dui::~js_panel_window_dui()
 	t_parent::destroy();
 }
 
-GUID js_panel_window_dui::g_get_guid()
-{
-	return g_guid_jsp_window_dui;
-}
-
-GUID js_panel_window_dui::g_get_subclass()
-{
-	return ui_element_subclass_utility;
-}
-
-pfc::string8 js_panel_window_dui::g_get_description()
-{
-	return "Customisable panel with JScript scripting support.";
-}
-
-ui_element_config::ptr js_panel_window_dui::g_get_default_configuration()
-{
-	ui_element_config_builder builder;
-	js_panel_vars vars;
-
-	vars.reset_config();
-	vars.save_config(&builder.m_stream, abort_callback_dummy());
-	return builder.finish(g_get_guid());
-}
-
-void js_panel_window_dui::g_get_name(pfc::string_base& out)
-{
-	out = JSP_NAME;
-}
-
 DWORD js_panel_window_dui::GetColourUI(unsigned type)
 {
 	const GUID* guids[] = {
@@ -108,6 +78,16 @@ DWORD js_panel_window_dui::GetColourUI(unsigned type)
 	}
 
 	return 0;
+}
+
+GUID js_panel_window_dui::g_get_guid()
+{
+	return g_guid_jsp_window_dui;
+}
+
+GUID js_panel_window_dui::g_get_subclass()
+{
+	return ui_element_subclass_utility;
 }
 
 GUID js_panel_window_dui::get_guid()
@@ -177,6 +157,21 @@ bool js_panel_window_dui::edit_mode_context_menu_test(const POINT& p_point, bool
 	return true;
 }
 
+pfc::string8 js_panel_window_dui::g_get_description()
+{
+	return "Customisable panel with JScript scripting support.";
+}
+
+ui_element_config::ptr js_panel_window_dui::g_get_default_configuration()
+{
+	ui_element_config_builder builder;
+	js_panel_vars vars;
+
+	vars.reset_config();
+	vars.save_config(&builder.m_stream, abort_callback_dummy());
+	return builder.finish(g_get_guid());
+}
+
 ui_element_config::ptr js_panel_window_dui::get_configuration()
 {
 	ui_element_config_builder builder;
@@ -195,6 +190,16 @@ void js_panel_window_dui::edit_mode_context_menu_command(const POINT& p_point, b
 	execute_context_menu_command(p_id, p_id_base);
 }
 
+void js_panel_window_dui::g_get_name(pfc::string_base& out)
+{
+	out = JSP_NAME;
+}
+
+void js_panel_window_dui::initialize_window(HWND parent)
+{
+	create(parent);
+}
+
 void js_panel_window_dui::notify(const GUID& p_what, t_size p_param1, const void* p_param2, t_size p_param2size)
 {
 	if (p_what == ui_element_notify_edit_mode_changed)
@@ -211,6 +216,16 @@ void js_panel_window_dui::notify(const GUID& p_what, t_size p_param1, const void
 	}
 }
 
+void js_panel_window_dui::notify_is_edit_mode_changed(bool enabled)
+{
+	m_is_edit_mode = enabled;
+}
+
+void js_panel_window_dui::notify_size_limit_changed(LPARAM lp)
+{
+	m_callback->on_min_max_info_change();
+}
+
 void js_panel_window_dui::set_configuration(ui_element_config::ptr data)
 {
 	ui_element_config_parser parser(data);
@@ -222,19 +237,4 @@ void js_panel_window_dui::set_configuration(ui_element_config::ptr data)
 	{
 		update_script();
 	}
-}
-
-void js_panel_window_dui::initialize_window(HWND parent)
-{
-	create(parent);
-}
-
-void js_panel_window_dui::notify_size_limit_changed(LPARAM lp)
-{
-	m_callback->on_min_max_info_change();
-}
-
-void js_panel_window_dui::notify_is_edit_mode_changed(bool enabled)
-{
-	m_is_edit_mode = enabled;
 }

@@ -121,9 +121,7 @@ void prop_kv_config::g_load(t_map& data, stream_reader* reader, abort_callback& 
 			data[key] = val;
 		}
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 }
 
 void prop_kv_config::g_save(const t_map& data, stream_writer* writer, abort_callback& abort) throw()
@@ -186,9 +184,7 @@ void prop_kv_config::g_save(const t_map& data, stream_writer* writer, abort_call
 			}
 		}
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 }
 
 void prop_kv_config::load(stream_reader* reader, abort_callback& abort) throw()
@@ -333,7 +329,5 @@ void js_panel_vars::save_config(stream_writer* writer, abort_callback& abort) co
 		writer->write_string(m_script_code, abort);
 		writer->write_object_t(m_pseudo_transparent, abort);
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 }
