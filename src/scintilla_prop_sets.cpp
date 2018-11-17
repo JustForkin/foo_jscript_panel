@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "scintilla_prop_sets.h"
 #include "helpers.h"
+#include "scintilla_prop_sets.h"
 
 const t_prop_set_init_table prop_sets_init_table[] =
 {

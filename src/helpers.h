@@ -1,7 +1,8 @@
 #pragma once
-#include "json.hpp"
 #include "script_interface.h"
 #include "thread_pool.h"
+
+#include <json.hpp>
 
 using json = nlohmann::json;
 

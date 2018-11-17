@@ -1,7 +1,7 @@
 #include "stdafx.h"
+#include "ui_name_value_edit.h"
 #include "ui_pref.h"
 #include "scintilla_prop_sets.h"
-#include "ui_name_value_edit.h"
 
 BOOL CDialogPref::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 {

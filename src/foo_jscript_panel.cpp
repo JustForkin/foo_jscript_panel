@@ -1,8 +1,7 @@
 #include "stdafx.h"
-#include "thread_pool.h"
-#include "popup_msg.h"
 #include "panel_manager.h"
-#include "user_message.h"
+#include "popup_msg.h"
+#include "thread_pool.h"
 
 // Script TypeLib
 ITypeLibPtr g_typelib;

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "editorctrl.h"
 #include "resource.h"
 

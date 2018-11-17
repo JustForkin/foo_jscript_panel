@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "script_preprocessor.h"
 #include "helpers.h"
+#include "script_preprocessor.h"
 
 bool script_preprocessor::scan_directive_and_value(const wchar_t*& p, const wchar_t* pend)
 {

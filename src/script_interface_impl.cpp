@@ -3,14 +3,15 @@
 #include "helpers.h"
 #include "host.h"
 #include "host_timer_dispatcher.h"
-#include "kmeans.h"
 #include "panel_manager.h"
 #include "popup_msg.h"
 #include "script_interface_impl.h"
-#include "stackblur.h"
 #include "stats.h"
 #include "ui_input_box.h"
-#include "user_message.h"
+
+#include <kmeans.h>
+#include <stackblur.h>
+
 #include <map>
 #include <vector>
 #include <algorithm>

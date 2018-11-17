@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "host_timer_dispatcher.h"
 #include "js_panel_window.h"
-#include "panel_manager.h"
 #include "popup_msg.h"
 #include "ui_conf.h"
 #include "ui_property.h"

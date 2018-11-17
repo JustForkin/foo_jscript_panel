@@ -1,10 +1,9 @@
 #include "stdafx.h"
-#include "ui_conf.h"
 #include "js_panel_window.h"
-#include "ui_goto.h"
+#include "ui_conf.h"
 #include "ui_find.h"
+#include "ui_goto.h"
 #include "ui_replace.h"
-#include "helpers.h"
 
 LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {

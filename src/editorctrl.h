@@ -2,10 +2,10 @@
 // Copyright 1998-2005 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 #pragma once
-
-#include "wtlscintilla.h"
-#include "SString.h"
 #include "user_message.h"
+
+#include <SString.h>
+#include <wtlscintilla.h>
 
 enum IndentationStatus
 {
