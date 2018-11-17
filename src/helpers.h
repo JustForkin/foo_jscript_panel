@@ -1,8 +1,7 @@
 #pragma once
-
-#include "thread_pool.h"
-#include "script_interface.h"
 #include "json.hpp"
+#include "script_interface.h"
+#include "thread_pool.h"
 
 using json = nlohmann::json;
 
@@ -21,7 +20,8 @@ namespace helpers
 	};
 
 	COLORREF convert_argb_to_colorref(DWORD argb);
-	DWORD convert_colorref_to_argb(DWORD color);
+	DWORD convert_colorref_to_argb(COLORREF color);
+	GUID convert_artid_to_guid(t_size art_id);
 	HBITMAP create_hbitmap_from_gdiplus_bitmap(Gdiplus::Bitmap* bitmap_ptr);
 	HRESULT get_album_art_embedded(BSTR rawpath, IGdiBitmap** pp, t_size art_id);
 	HRESULT get_album_art_v2(const metadb_handle_ptr& handle, IGdiBitmap** pp, t_size art_id, bool need_stub, bool no_load = false, pfc::string_base* image_path_ptr = NULL);
@@ -36,16 +36,15 @@ namespace helpers
 	bool read_file(const char* path, pfc::string_base& content);
 	bool read_file_wide(unsigned codepage, const wchar_t* path, pfc::array_t<wchar_t>& content);
 	bool supports_chakra();
-	bool write_file(const char* path, const pfc::string_base& content, bool write_bom = true);
-	const GUID convert_artid_to_guid(t_size art_id);
+	bool write_file(const char* path, const char* content, bool write_bom = true);
 	int get_encoder_clsid(const WCHAR* format, CLSID* pClsid);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);
-	int get_text_width(HDC hdc, LPCTSTR text, int len);
+	int get_text_width(HDC hdc, const wchar_t* text, int len);
 	int is_wrap_char(wchar_t current, wchar_t next);
-	pfc::string8 iterator_to_string8(json::iterator j);
 	pfc::string8_fast get_fb2k_component_path();
 	pfc::string8_fast get_fb2k_path();
 	pfc::string8_fast get_profile_path();
+	pfc::string8_fast iterator_to_string8(json::iterator j);
 	t_size detect_charset(const char* fileName);
 	t_size get_colour_from_variant(VARIANT v);
 	void build_mainmenu_group_map(pfc::map_t<GUID, mainmenu_group::ptr>& p_group_guid_text_map);

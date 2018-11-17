@@ -42,9 +42,7 @@ protected:
 class type_info_cache_holder
 {
 public:
-	type_info_cache_holder() : m_type_info(NULL)
-	{
-	}
+	type_info_cache_holder() : m_type_info(NULL) {}
 
 	void set_type_info(ITypeInfo* type_info)
 	{
@@ -93,13 +91,8 @@ protected:
 		}
 	}
 
-	virtual ~MyIDispatchImpl<T>()
-	{
-	}
-
-	virtual void FinalRelease()
-	{
-	}
+	virtual ~MyIDispatchImpl<T>() {}
+	virtual void FinalRelease() {}
 
 public:
 	STDMETHOD(GetTypeInfoCount)(unsigned int* n)
@@ -140,13 +133,8 @@ class IDispatchImpl3 : public MyIDispatchImpl<T>
 	END_COM_QI_IMPL()
 
 protected:
-	IDispatchImpl3<T>()
-	{
-	}
-
-	virtual ~IDispatchImpl3<T>()
-	{
-	}
+	IDispatchImpl3<T>() {}
+	virtual ~IDispatchImpl3<T>() {}
 };
 
 //-- IDisposable impl -- [T] [IDisposable] [IDispatch] [IUnknown]
@@ -161,13 +149,8 @@ class IDisposableImpl4 : public MyIDispatchImpl<T>
 	END_COM_QI_IMPL()
 
 protected:
-	IDisposableImpl4<T>()
-	{
-	}
-
-	virtual ~IDisposableImpl4()
-	{
-	}
+	IDisposableImpl4<T>() {}
+	virtual ~IDisposableImpl4() {}
 
 public:
 	STDMETHODIMP Dispose()
@@ -189,15 +172,9 @@ class GdiObj : public MyIDispatchImpl<T>
 	END_COM_QI_IMPL()
 
 protected:
-	T2* m_ptr;
+	GdiObj<T, T2>(T2* p) : m_ptr(p) {}
 
-	GdiObj<T, T2>(T2* p) : m_ptr(p)
-	{
-	}
-
-	virtual ~GdiObj<T, T2>()
-	{
-	}
+	virtual ~GdiObj<T, T2>() {}
 
 	virtual void FinalRelease()
 	{
@@ -207,6 +184,8 @@ protected:
 			m_ptr = NULL;
 		}
 	}
+
+	T2* m_ptr;
 
 public:
 	// Default Dispose
@@ -265,9 +244,7 @@ private:
 			AddRef_();
 	}
 
-	virtual ~com_object_impl_t()
-	{
-	}
+	virtual ~com_object_impl_t() {}
 };
 
 template <class T>

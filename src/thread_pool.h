@@ -16,9 +16,7 @@ class simple_thread
 public:
 	PFC_DECLARE_EXCEPTION(exception_creation, pfc::exception, "Could not create thread");
 
-	simple_thread() : m_thread(INVALID_HANDLE_VALUE)
-	{
-	}
+	simple_thread() : m_thread(INVALID_HANDLE_VALUE) {}
 
 	~simple_thread()
 	{
@@ -49,9 +47,7 @@ private:
 class simple_thread_worker : public simple_thread
 {
 public:
-	simple_thread_worker()
-	{
-	}
+	simple_thread_worker() {}
 
 	virtual ~simple_thread_worker()
 	{

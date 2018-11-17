@@ -6,9 +6,7 @@
 HostDropTarget::HostDropTarget(js_panel_window* host)
 	: IDropTargetImpl(host->GetHWND())
 	, m_host(host)
-	, m_action(new com_object_impl_t<DropSourceAction, true>())
-{
-}
+	, m_action(new com_object_impl_t<DropSourceAction, true>()) {}
 
 HostDropTarget::~HostDropTarget()
 {
@@ -80,13 +78,13 @@ HRESULT HostDropTarget::OnDrop(IDataObject* pDataObj, DWORD grfKeyState, POINTL 
 	HRESULT hr = ole_interaction::get()->parse_dataobject(pDataObj, droppedData);
 	if (SUCCEEDED(hr))
 	{
-		int playlist = m_action->Playlist();
+		t_size playlist = m_action->Playlist();
 		t_size base = m_action->Base();
 		bool to_select = m_action->ToSelect();
 
 		droppedData.to_handles_async_ex(playlist_incoming_item_filter_v2::op_flag_delay_ui,
 			core_api::get_main_window(),
-			new service_impl_t<helpers::js_process_locations>(to_select, base, playlist));
+			fb2k::service_new<helpers::js_process_locations>(to_select, base, playlist));
 	}
 
 	*pdwEffect = m_action->Effect();

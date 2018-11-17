@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "drop_source_impl.h"
+#include "drop_impl.h"
 #include "helpers.h"
 #include "host.h"
 #include "host_timer_dispatcher.h"
@@ -15,14 +15,8 @@
 #include <vector>
 #include <algorithm>
 
-ContextMenuManager::ContextMenuManager()
-{
-}
-
-ContextMenuManager::~ContextMenuManager()
-{
-}
-
+ContextMenuManager::ContextMenuManager() {}
+ContextMenuManager::~ContextMenuManager() {}
 void ContextMenuManager::FinalRelease()
 {
 	m_cm.release();
@@ -75,13 +69,8 @@ DropSourceAction::DropSourceAction()
 	Reset();
 }
 
-DropSourceAction::~DropSourceAction()
-{
-}
-
-void DropSourceAction::FinalRelease()
-{
-}
+DropSourceAction::~DropSourceAction() {}
+void DropSourceAction::FinalRelease() {}
 
 DWORD& DropSourceAction::Effect()
 {
@@ -143,13 +132,8 @@ STDMETHODIMP DropSourceAction::put_ToSelect(VARIANT_BOOL select)
 	return S_OK;
 }
 
-FbFileInfo::FbFileInfo(file_info_impl* p_info_ptr) : m_info_ptr(p_info_ptr)
-{
-}
-
-FbFileInfo::~FbFileInfo()
-{
-}
+FbFileInfo::FbFileInfo(file_info_impl* p_info_ptr) : m_info_ptr(p_info_ptr) {}
+FbFileInfo::~FbFileInfo() {}
 
 void FbFileInfo::FinalRelease()
 {
@@ -262,17 +246,9 @@ STDMETHODIMP FbFileInfo::get__ptr(void** pp)
 	return S_OK;
 }
 
-FbMetadbHandle::FbMetadbHandle(const metadb_handle_ptr& src) : m_handle(src)
-{
-}
-
-FbMetadbHandle::FbMetadbHandle(metadb_handle* src) : m_handle(src)
-{
-}
-
-FbMetadbHandle::~FbMetadbHandle()
-{
-}
+FbMetadbHandle::FbMetadbHandle(const metadb_handle_ptr& src) : m_handle(src) {}
+FbMetadbHandle::FbMetadbHandle(metadb_handle* src) : m_handle(src) {}
+FbMetadbHandle::~FbMetadbHandle() {}
 
 void FbMetadbHandle::FinalRelease()
 {
@@ -458,13 +434,8 @@ STDMETHODIMP FbMetadbHandle::get__ptr(void** pp)
 	return S_OK;
 }
 
-FbMetadbHandleList::FbMetadbHandleList(metadb_handle_list_cref handles) : m_handles(handles)
-{
-}
-
-FbMetadbHandleList::~FbMetadbHandleList()
-{
-}
+FbMetadbHandleList::FbMetadbHandleList(metadb_handle_list_cref handles) : m_handles(handles) {}
+FbMetadbHandleList::~FbMetadbHandleList() {}
 
 void FbMetadbHandleList::FinalRelease()
 {
@@ -495,23 +466,20 @@ STDMETHODIMP FbMetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
 	GUID what = helpers::convert_artid_to_guid(art_id);
 	abort_callback_dummy abort;
 	album_art_data_ptr data;
-	bool ok = false;
 
 	try
 	{
 		file::ptr file;
-		pfc::stringcvt::string_utf8_from_wide realPath(image_path);
-		pfc::string8 canPath;
-		filesystem::g_get_canonical_path(realPath, canPath);
-		if (!filesystem::g_is_remote_or_unrecognized(canPath))
+		pfc::string8 can_path;
+		filesystem::g_get_canonical_path(pfc::stringcvt::string_utf8_from_wide(image_path), can_path);
+		if (!filesystem::g_is_remote_or_unrecognized(can_path))
 		{
-			filesystem::g_open(file, canPath, filesystem::open_mode_read, abort);
+			filesystem::g_open(file, can_path, filesystem::open_mode_read, abort);
 		}
 		if (file.is_valid())
 		{
-			service_ptr_t<album_art_data_impl> tmp = new service_impl_t<album_art_data_impl>;
+			auto tmp = fb2k::service_new<album_art_data_impl>();
 			tmp->from_stream(file.get_ptr(), t_size(file->get_size_ex(abort)), abort);
-			ok = true;
 			data = tmp;
 		}
 	}
@@ -519,9 +487,9 @@ STDMETHODIMP FbMetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
 	{
 	}
 
-	if (ok)
+	if (data.is_valid())
 	{
-		threaded_process_callback::ptr cb = new service_impl_t<helpers::embed_thread>(0, data, m_handles, what);
+		auto cb = fb2k::service_new<helpers::embed_thread>(0, data, m_handles, what);
 		threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Embedding images...");
 	}
 	return S_OK;
@@ -801,7 +769,7 @@ STDMETHODIMP FbMetadbHandleList::RemoveAttachedImage(UINT art_id)
 
 	GUID what = helpers::convert_artid_to_guid(art_id);
 
-	threaded_process_callback::ptr cb = new service_impl_t<helpers::embed_thread>(1, album_art_data_ptr(), m_handles, what);
+	auto cb = fb2k::service_new<helpers::embed_thread>(1, album_art_data_ptr(), m_handles, what);
 	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
 	return S_OK;
 }
@@ -811,7 +779,7 @@ STDMETHODIMP FbMetadbHandleList::RemoveAttachedImages()
 	t_size count = m_handles.get_count();
 	if (count == 0) return E_POINTER;
 
-	threaded_process_callback::ptr cb = new service_impl_t<helpers::embed_thread>(2, album_art_data_ptr(), m_handles, pfc::guid_null);
+	auto cb = fb2k::service_new<helpers::embed_thread>(2, album_art_data_ptr(), m_handles, pfc::guid_null);
 	threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Removing images...");
 	return S_OK;
 }
@@ -956,9 +924,7 @@ STDMETHODIMP FbMetadbHandleList::put_Item(UINT index, IFbMetadbHandle* handle)
 	return E_INVALIDARG;
 }
 
-FbPlaybackQueueItem::FbPlaybackQueueItem()
-{
-}
+FbPlaybackQueueItem::FbPlaybackQueueItem() {}
 
 FbPlaybackQueueItem::FbPlaybackQueueItem(const t_playback_queue_item& playbackQueueItem)
 {
@@ -967,9 +933,7 @@ FbPlaybackQueueItem::FbPlaybackQueueItem(const t_playback_queue_item& playbackQu
 	m_playback_queue_item.m_item = playbackQueueItem.m_item;
 }
 
-FbPlaybackQueueItem::~FbPlaybackQueueItem()
-{
-}
+FbPlaybackQueueItem::~FbPlaybackQueueItem() {}
 
 void FbPlaybackQueueItem::FinalRelease()
 {
@@ -1038,13 +1002,8 @@ STDMETHODIMP FbPlayingItemLocation::get_PlaylistItemIndex(int* outPlaylistItemIn
 	return S_OK;
 }
 
-FbPlaylistManager::FbPlaylistManager() : m_fbPlaylistRecyclerManager(NULL)
-{
-}
-
-FbPlaylistManager::~FbPlaylistManager()
-{
-}
+FbPlaylistManager::FbPlaylistManager() : m_fbPlaylistRecyclerManager(NULL) {}
+FbPlaylistManager::~FbPlaylistManager() {}
 
 STDMETHODIMP FbPlaylistManager::AddItemToPlaybackQueue(IFbMetadbHandle* handle)
 {
@@ -1750,9 +1709,7 @@ FbProfiler::FbProfiler(const char* p_name) : m_name(p_name)
 	m_timer.start();
 }
 
-FbProfiler::~FbProfiler()
-{
-}
+FbProfiler::~FbProfiler() {}
 
 STDMETHODIMP FbProfiler::Print()
 {
@@ -1780,9 +1737,7 @@ FbTitleFormat::FbTitleFormat(BSTR expr)
 	titleformat_compiler::get()->compile_safe(m_obj, uexpr);
 }
 
-FbTitleFormat::~FbTitleFormat()
-{
-}
+FbTitleFormat::~FbTitleFormat() {}
 
 void FbTitleFormat::FinalRelease()
 {
@@ -1901,9 +1856,7 @@ FbTooltip::FbTooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_pt
 	m_panel_tooltip_param_ptr->tooltip_size.cy = -1;
 }
 
-FbTooltip::~FbTooltip()
-{
-}
+FbTooltip::~FbTooltip() {}
 
 void FbTooltip::FinalRelease()
 {
@@ -1994,13 +1947,8 @@ STDMETHODIMP FbTooltip::TrackPosition(int x, int y)
 	return S_OK;
 }
 
-FbUiSelectionHolder::FbUiSelectionHolder(const ui_selection_holder::ptr& holder) : m_holder(holder)
-{
-}
-
-FbUiSelectionHolder::~FbUiSelectionHolder()
-{
-}
+FbUiSelectionHolder::FbUiSelectionHolder(const ui_selection_holder::ptr& holder) : m_holder(holder) {}
+FbUiSelectionHolder::~FbUiSelectionHolder() {}
 
 void FbUiSelectionHolder::FinalRelease()
 {
@@ -2027,13 +1975,8 @@ STDMETHODIMP FbUiSelectionHolder::SetSelection(IFbMetadbHandleList* handles)
 	return S_OK;
 }
 
-FbUtils::FbUtils()
-{
-}
-
-FbUtils::~FbUtils()
-{
-}
+FbUtils::FbUtils() {}
+FbUtils::~FbUtils() {}
 
 STDMETHODIMP FbUtils::AcquireUiSelectionHolder(IFbUiSelectionHolder** outHolder)
 {
@@ -2286,7 +2229,7 @@ STDMETHODIMP FbUtils::GetQueryItems(IFbMetadbHandleList* handles, BSTR query, IF
 
 	try
 	{
-		filter = search_filter_manager_v2::get()->create_ex(uquery, new service_impl_t<completion_notify_dummy>(), search_filter_manager_v2::KFlagSuppressNotify);
+		filter = search_filter_manager_v2::get()->create_ex(uquery, fb2k::service_new<completion_notify_dummy>(), search_filter_manager_v2::KFlagSuppressNotify);
 	}
 	catch (...)
 	{
@@ -2729,13 +2672,8 @@ STDMETHODIMP FbUtils::put_Volume(float value)
 	return S_OK;
 }
 
-FbWindow::FbWindow(HostComm* p) : m_host(p)
-{
-}
-
-FbWindow::~FbWindow()
-{
-}
+FbWindow::FbWindow(HostComm* p) : m_host(p) {}
+FbWindow::~FbWindow() {}
 
 STDMETHODIMP FbWindow::ClearInterval(UINT intervalID)
 {
@@ -3431,13 +3369,8 @@ STDMETHODIMP GdiBitmap::get_Width(UINT* p)
 	return S_OK;
 }
 
-GdiFont::GdiFont(Gdiplus::Font* p, HFONT hFont, bool managed) : GdiObj<IGdiFont, Gdiplus::Font>(p), m_hFont(hFont), m_managed(managed)
-{
-}
-
-GdiFont:: ~GdiFont()
-{
-}
+GdiFont::GdiFont(Gdiplus::Font* p, HFONT hFont, bool managed) : GdiObj<IGdiFont, Gdiplus::Font>(p), m_hFont(hFont), m_managed(managed) {}
+GdiFont:: ~GdiFont() {}
 
 void GdiFont::FinalRelease()
 {
@@ -3952,9 +3885,7 @@ GdiRawBitmap::GdiRawBitmap(Gdiplus::Bitmap* p_bmp)
 	m_hbmpold = SelectBitmap(m_hdc, m_hbmp);
 }
 
-GdiRawBitmap::~GdiRawBitmap()
-{
-}
+GdiRawBitmap::~GdiRawBitmap() {}
 
 void GdiRawBitmap::FinalRelease()
 {
@@ -3996,13 +3927,8 @@ STDMETHODIMP GdiRawBitmap::get__Handle(HDC* p)
 	return S_OK;
 }
 
-GdiUtils::GdiUtils()
-{
-}
-
-GdiUtils::~GdiUtils()
-{
-}
+GdiUtils::GdiUtils() {}
+GdiUtils::~GdiUtils() {}
 
 STDMETHODIMP GdiUtils::CreateImage(int w, int h, IGdiBitmap** pp)
 {
@@ -4088,13 +4014,8 @@ STDMETHODIMP GdiUtils::LoadImageAsync(UINT window_id, BSTR path, UINT* p)
 	return S_OK;
 }
 
-JSConsole::JSConsole()
-{
-}
-
-JSConsole::~JSConsole()
-{
-}
+JSConsole::JSConsole() {}
+JSConsole::~JSConsole() {}
 
 STDMETHODIMP JSConsole::Log(SAFEARRAY* p)
 {
@@ -4131,13 +4052,8 @@ STDMETHODIMP JSConsole::Log(SAFEARRAY* p)
 	return S_OK;
 }
 
-JSUtils::JSUtils()
-{
-}
-
-JSUtils::~JSUtils()
-{
-}
+JSUtils::JSUtils() {}
+JSUtils::~JSUtils() {}
 
 STDMETHODIMP JSUtils::CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOOL* p)
 {
@@ -4565,9 +4481,7 @@ STDMETHODIMP JSUtils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL wr
 	}
 	else
 	{
-		pfc::string8_fast filename8 = pfc::stringcvt::string_utf8_from_wide(filename);
-		pfc::string8_fast content8 = pfc::stringcvt::string_utf8_from_wide(content);
-		*p = TO_VARIANT_BOOL(helpers::write_file(filename8, content8, write_bom != VARIANT_FALSE));
+		*p = TO_VARIANT_BOOL(helpers::write_file(pfc::stringcvt::string_utf8_from_wide(filename), pfc::stringcvt::string_utf8_from_wide(content), write_bom != VARIANT_FALSE));
 	}
 	return S_OK;
 }
@@ -4580,13 +4494,8 @@ STDMETHODIMP JSUtils::get_Version(UINT* v)
 	return S_OK;
 }
 
-MainMenuManager::MainMenuManager()
-{
-}
-
-MainMenuManager::~MainMenuManager()
-{
-}
+MainMenuManager::MainMenuManager() {}
+MainMenuManager::~MainMenuManager() {}
 
 void MainMenuManager::FinalRelease()
 {
@@ -4654,13 +4563,8 @@ STDMETHODIMP MainMenuManager::Init(BSTR root_name)
 	return E_INVALIDARG;
 }
 
-MeasureStringInfo::MeasureStringInfo(float x, float y, float w, float h, int l, int c) : m_x(x), m_y(y), m_w(w), m_h(h), m_l(l), m_c(c)
-{
-}
-
-MeasureStringInfo::~MeasureStringInfo()
-{
-}
+MeasureStringInfo::MeasureStringInfo(float x, float y, float w, float h, int l, int c) : m_x(x), m_y(y), m_w(w), m_h(h), m_l(l), m_c(c) {}
+MeasureStringInfo::~MeasureStringInfo() {}
 
 STDMETHODIMP MeasureStringInfo::get_chars(int* p)
 {
@@ -4715,9 +4619,7 @@ MenuObj::MenuObj(HWND wnd_parent) : m_wnd_parent(wnd_parent), m_has_detached(fal
 	m_hMenu = ::CreatePopupMenu();
 }
 
-MenuObj::~MenuObj()
-{
-}
+MenuObj::~MenuObj() {}
 
 void MenuObj::FinalRelease()
 {
@@ -4803,9 +4705,7 @@ ThemeManager::ThemeManager(HWND hwnd, BSTR classlist) : m_theme(NULL), m_partid(
 	if (!m_theme) throw pfc::exception_invalid_params();
 }
 
-ThemeManager::~ThemeManager()
-{
-}
+ThemeManager::~ThemeManager() {}
 
 void ThemeManager::FinalRelease()
 {

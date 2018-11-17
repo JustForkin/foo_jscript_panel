@@ -272,10 +272,7 @@ HostTimer::HostTimer(HWND hWnd, unsigned id, unsigned delay, bool isRepeated)
 	m_isStopped = false;
 }
 
-HostTimer::~HostTimer()
-{
-
-}
+HostTimer::~HostTimer() {}
 
 bool HostTimer::start(HANDLE hTimerQueue)
 {

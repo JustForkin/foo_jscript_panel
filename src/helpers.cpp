@@ -12,7 +12,7 @@ namespace helpers
 		return RGB(argb >> RED_SHIFT, argb >> GREEN_SHIFT, argb >> BLUE_SHIFT);
 	}
 
-	DWORD convert_colorref_to_argb(DWORD color)
+	DWORD convert_colorref_to_argb(COLORREF color)
 	{
 		// COLORREF : 0x00bbggrr
 		// ARGB : 0xaarrggbb
@@ -20,6 +20,23 @@ namespace helpers
 			(GetGValue(color) << GREEN_SHIFT) |
 			(GetBValue(color) << BLUE_SHIFT) |
 			0xff000000;
+	}
+
+	GUID convert_artid_to_guid(t_size art_id)
+	{
+		const GUID* guids[] = {
+			&album_art_ids::cover_front,
+			&album_art_ids::cover_back,
+			&album_art_ids::disc,
+			&album_art_ids::icon,
+			&album_art_ids::artist,
+		};
+
+		if (art_id < _countof(guids))
+		{
+			return *guids[art_id];
+		}
+		return *guids[0];
 	}
 
 	HBITMAP create_hbitmap_from_gdiplus_bitmap(Gdiplus::Bitmap* bitmap_ptr)
@@ -99,7 +116,6 @@ namespace helpers
 		try
 		{
 			aaeiv2 = aamv2->open(pfc::list_single_ref_t<metadb_handle_ptr>(handle), pfc::list_single_ref_t<GUID>(what), abort);
-
 			ret = query_album_art(aaeiv2, what, no_load, image_path_ptr);
 		}
 		catch (...)
@@ -159,7 +175,7 @@ namespace helpers
 			album_art_path_list::ptr pathlist = extractor->query_paths(what, abort);
 			if (pathlist->get_count() > 0)
 			{
-				image_path_ptr->set_string(pathlist->get_path(0));
+				image_path_ptr->set_string(file_path_display(pathlist->get_path(0)));
 			}
 		}
 		return ret;
@@ -271,7 +287,9 @@ namespace helpers
 		{
 			node->get_display(text, flags);
 			if (!text.is_empty())
+			{
 				path.add_string(text);
+			}
 		}
 
 		switch (type)
@@ -289,14 +307,18 @@ namespace helpers
 		case mainmenu_node::type_group:
 		{
 			if (!text.is_empty())
+			{
 				path.add_char('/');
+			}
 
 			for (t_size i = 0; i < node->get_children_count(); ++i)
 			{
 				mainmenu_node::ptr child = node->get_child(i);
 
 				if (execute_mainmenu_command_recur_v2(child, path, p_name, p_name_len))
+				{
 					return true;
+				}
 			}
 		}
 		break;
@@ -578,9 +600,10 @@ namespace helpers
 		return RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\{16d51579-a30b-4c8b-a276-0ff4dc41e755}", 0, KEY_READ, &hKey) == ERROR_SUCCESS;
 	}
 
-	bool write_file(const char* path, const pfc::string_base& content, bool write_bom)
+	bool write_file(const char* path, const char* content, bool write_bom)
 	{
 		int offset = write_bom ? 3 : 0;
+		t_size len = strlen(content);
 		HANDLE hFile = uCreateFile(path, GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
 		if (hFile == INVALID_HANDLE_VALUE)
@@ -588,7 +611,7 @@ namespace helpers
 			return false;
 		}
 
-		HANDLE hFileMapping = uCreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, content.get_length() + offset, NULL);
+		HANDLE hFileMapping = uCreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, len + offset, NULL);
 
 		if (hFileMapping == NULL)
 		{
@@ -610,29 +633,12 @@ namespace helpers
 			const BYTE utf8_bom[] = { 0xef, 0xbb, 0xbf };
 			memcpy(pAddr, utf8_bom, 3);
 		}
-		memcpy(pAddr + offset, content.get_ptr(), content.get_length());
+		memcpy(pAddr + offset, content, len);
 
 		UnmapViewOfFile(pAddr);
 		CloseHandle(hFileMapping);
 		CloseHandle(hFile);
 		return true;
-	}
-
-	const GUID convert_artid_to_guid(t_size art_id)
-	{
-		const GUID* guids[] = {
-			&album_art_ids::cover_front,
-			&album_art_ids::cover_back,
-			&album_art_ids::disc,
-			&album_art_ids::icon,
-			&album_art_ids::artist,
-		};
-
-		if (art_id < _countof(guids))
-		{
-			return *guids[art_id];
-		}
-		return *guids[0];
 	}
 
 	int get_encoder_clsid(const WCHAR* format, CLSID* pClsid)
@@ -673,10 +679,9 @@ namespace helpers
 		return size.cy;
 	}
 
-	int get_text_width(HDC hdc, LPCTSTR text, int len)
+	int get_text_width(HDC hdc, const wchar_t* text, int len)
 	{
 		SIZE size;
-
 		GetTextExtentPoint32(hdc, text, len, &size);
 		return size.cx;
 	}
@@ -703,42 +708,36 @@ namespace helpers
 		return currentAlphaNum == 0 || iswalnum(next) == 0;
 	}
 
-	pfc::string8 iterator_to_string8(json::iterator j)
-	{
-		std::string value = j.value().type() == json::value_t::string ? j.value().get<std::string>() : j.value().dump();
-		return value.c_str();
-	}
-
 	pfc::string8_fast get_fb2k_component_path()
 	{
 		pfc::string8_fast path;
-
 		uGetModuleFileName(core_api::get_my_instance(), path);
 		path = pfc::string_directory(path);
 		path.add_char('\\');
-
 		return path;
 	}
 
 	pfc::string8_fast get_fb2k_path()
 	{
 		pfc::string8_fast path;
-
 		uGetModuleFileName(NULL, path);
 		path = pfc::string_directory(path);
 		path.add_char('\\');
-
 		return path;
 	}
 
 	pfc::string8_fast get_profile_path()
 	{
 		pfc::string8_fast path;
-
 		path = file_path_display(core_api::get_profile_path());
 		path.fix_dir_separator('\\');
-
 		return path;
+	}
+
+	pfc::string8_fast iterator_to_string8(json::iterator j)
+	{
+		std::string value = j.value().type() == json::value_t::string ? j.value().get<std::string>() : j.value().dump();
+		return value.c_str();
 	}
 
 	t_size detect_charset(const char* fileName)
@@ -944,7 +943,9 @@ namespace helpers
 			{
 				get_album_art_embedded(m_rawpath, &bitmap, m_art_id);
 				if (bitmap)
-					image_path = m_handle->get_path();
+				{
+					image_path = file_path_display(m_handle->get_path());
+				}
 			}
 			else
 			{
@@ -954,7 +955,7 @@ namespace helpers
 			handle = new com_object_impl_t<FbMetadbHandle>(m_handle);
 		}
 
-		t_param param(handle, m_art_id, bitmap, image_path.is_empty() ? "" : file_path_display(image_path));
+		t_param param(handle, m_art_id, bitmap, image_path);
 		SendMessage(m_notify_hwnd, CALLBACK_UWM_ON_GET_ALBUM_ART_DONE, 0, (LPARAM)&param);
 	}
 

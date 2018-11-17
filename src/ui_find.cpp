@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "ui_find.h"
 #include "ui_conf.h"
+#include "ui_find.h"
 
 LRESULT CDialogFind::OnCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 {

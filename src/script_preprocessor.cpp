@@ -282,14 +282,11 @@ void script_preprocessor::process_import(const t_script_info& info, t_script_lis
 			expand_var(val.value);
 
 			pfc::array_t<wchar_t> code;
-			bool success = helpers::read_file_wide(CP_ACP, val.value.get_ptr(), code);
-
-			if (success)
+			if (helpers::read_file_wide(CP_ACP, val.value.get_ptr(), code))
 			{
 				t_script_code script;
 				script.path = val.value;
 				script.code = code;
-
 				scripts.add_item(script);
 			}
 			else

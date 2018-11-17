@@ -56,9 +56,7 @@ LRESULT CDialogProperty::OnExportBnClicked(WORD wNotifyCode, WORD wID, HWND hWnd
 			filesystem::g_open_write_new(io, path, abort);
 			prop_kv_config::g_save(m_dup_prop_map, io.get_ptr(), abort);
 		}
-		catch (...)
-		{
-		}
+		catch (...) {}
 	}
 	return 0;
 }
@@ -78,9 +76,7 @@ LRESULT CDialogProperty::OnImportBnClicked(WORD wNotifyCode, WORD wID, HWND hWnd
 			prop_kv_config::g_load(m_dup_prop_map, io.get_ptr(), abort);
 			LoadProperties(false);
 		}
-		catch (...)
-		{
-		}
+		catch (...) {}
 	}
 	return 0;
 }
@@ -107,7 +103,7 @@ LRESULT CDialogProperty::OnPinItemChanged(LPNMHDR pnmh)
 
 	if (m_dup_prop_map.have_item(uname))
 	{
-		prop_kv_config::t_val& val = m_dup_prop_map[uname];
+		_variant_t& val = m_dup_prop_map[uname];
 		_variant_t var;
 
 		if (pnpi->prop->GetValue(&var))

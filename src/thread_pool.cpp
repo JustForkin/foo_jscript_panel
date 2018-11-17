@@ -38,9 +38,7 @@ unsigned simple_thread::entry()
 	{
 		threadProc();
 	}
-	catch (...)
-	{
-	}
+	catch (...) {}
 	return 0;
 }
 
@@ -190,9 +188,7 @@ void simple_thread_pool::add_worker_(simple_thread_worker* worker)
 class simple_thread_worker_remover : public main_thread_callback
 {
 public:
-	simple_thread_worker_remover(simple_thread_worker* worker) : worker_(worker)
-	{
-	}
+	simple_thread_worker_remover(simple_thread_worker* worker) : worker_(worker) {}
 
 	virtual void callback_run()
 	{
@@ -211,5 +207,5 @@ void simple_thread_pool::remove_worker_(simple_thread_worker* worker)
 	if (num_workers_ == 0)
 		SetEvent(empty_worker_);
 
-	main_thread_callback_manager::get()->add_callback(new service_impl_t<simple_thread_worker_remover>(worker));
+	main_thread_callback_manager::get()->add_callback(fb2k::service_new<simple_thread_worker_remover>(worker));
 }

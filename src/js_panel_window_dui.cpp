@@ -22,7 +22,7 @@ public:
 	ui_element_instance::ptr instantiate(HWND parent, ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback)
 	{
 		PFC_ASSERT(cfg->get_guid() == get_guid());
-		service_nnptr_t<ui_element_instance_impl_helper> item = new service_impl_t<ui_element_instance_impl_helper>(cfg, callback);
+		auto item = fb2k::service_new<ui_element_instance_impl_helper>(cfg, callback);
 		item->initialize_window(parent);
 		return item;
 	}
@@ -44,9 +44,7 @@ private:
 	class ui_element_instance_impl_helper : public TImpl
 	{
 	public:
-		ui_element_instance_impl_helper(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : TImpl(cfg, callback)
-		{
-		}
+		ui_element_instance_impl_helper(ui_element_config::ptr cfg, ui_element_instance_callback::ptr callback) : TImpl(cfg, callback) {}
 	};
 };
 

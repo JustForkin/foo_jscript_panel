@@ -1,7 +1,5 @@
 #pragma once
 
-class HostComm;
-
 struct t_directive_value
 {
 	typedef pfc::array_t<wchar_t> t_array;
@@ -9,15 +7,8 @@ struct t_directive_value
 	t_array directive;
 	t_array value;
 
-	t_directive_value()
-	{
-	}
-
-	t_directive_value(const t_array& p_directive, const t_array& p_value) :
-		directive(p_directive),
-		value(p_value)
-	{
-	}
+	t_directive_value() {}
+	t_directive_value(const t_array& p_directive, const t_array& p_value) : directive(p_directive), value(p_value) {}
 };
 
 struct t_script_info
@@ -32,9 +23,7 @@ struct t_script_info
 	pfc::string_simple author;
 	t_uint32 feature_mask;
 
-	t_script_info(GUID& guid_ref) : m_guid_ref(guid_ref)
-	{
-	}
+	t_script_info(GUID& guid_ref) : m_guid_ref(guid_ref) {}
 
 	void clear()
 	{

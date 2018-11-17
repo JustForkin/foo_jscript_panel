@@ -12,6 +12,7 @@ DWORD js_panel_window_cui::GetColourCUI(unsigned type)
 		cui::colours::helper helper(pfc::guid_null);
 		return helpers::convert_colorref_to_argb(helper.get_colour((cui::colours::colour_identifier_t)type));
 	}
+
 	return 0;
 }
 
@@ -82,9 +83,7 @@ LRESULT js_panel_window_cui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 			static_api_ptr_t<cui::fonts::manager>()->register_common_callback(this);
 			static_api_ptr_t<cui::colours::manager>()->register_common_callback(this);
 		}
-		catch (...)
-		{
-		}
+		catch (...) {}
 		break;
 
 	case WM_DESTROY:
@@ -93,9 +92,7 @@ LRESULT js_panel_window_cui::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM l
 			static_api_ptr_t<cui::fonts::manager>()->deregister_common_callback(this);
 			static_api_ptr_t<cui::colours::manager>()->deregister_common_callback(this);
 		}
-		catch (...)
-		{
-		}
+		catch (...) {}
 		break;
 
 	case UWM_SIZE_LIMIT_CHANGED:

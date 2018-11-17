@@ -63,7 +63,7 @@ public:
 
 	preferences_page_instance::ptr instantiate(HWND parent, preferences_page_callback::ptr callback)
 	{
-		service_impl_t<CDialogPref>* p = new service_impl_t<CDialogPref>(callback);
+		auto p = fb2k::service_new<CDialogPref>(callback);
 		p->Create(parent);
 		return p;
 	}

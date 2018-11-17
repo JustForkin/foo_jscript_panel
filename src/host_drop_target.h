@@ -1,6 +1,5 @@
 #pragma once
-
-#include "drop_target_impl.h"
+#include "drop_impl.h"
 #include "script_interface_impl.h"
 
 class js_panel_window;
@@ -8,9 +7,7 @@ class js_panel_window;
 class HostDropTarget : public IDropTargetImpl
 {
 protected:
-	virtual void FinalRelease()
-	{
-	}
+	virtual void FinalRelease() {}
 
 public:
 	HostDropTarget(js_panel_window* host);

@@ -78,9 +78,7 @@ static const IDToNameEntry g_idToNames[] =
 	DEFINE_ID_NAME_MAP_ENTRY(on_volume_change),
 };
 
-ScriptCallbackInvoker::ScriptCallbackInvoker()
-{
-}
+ScriptCallbackInvoker::ScriptCallbackInvoker() {}
 
 ScriptCallbackInvoker::~ScriptCallbackInvoker()
 {

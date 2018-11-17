@@ -6,12 +6,7 @@
 #include "ui_conf.h"
 #include "ui_property.h"
 
-js_panel_window::js_panel_window() :
-	m_script_host(new ScriptHost(this)),
-	m_is_mouse_tracked(false),
-	m_is_droptarget_registered(false)
-{
-}
+js_panel_window::js_panel_window() : m_script_host(new ScriptHost(this)), m_is_mouse_tracked(false), m_is_droptarget_registered(false) {}
 
 js_panel_window::~js_panel_window()
 {

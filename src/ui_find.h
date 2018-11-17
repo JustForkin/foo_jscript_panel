@@ -1,13 +1,10 @@
 #pragma once
-
 #include "resource.h"
 
 class CDialogFind : public CDialogImpl<CDialogFind>, public CDialogResize<CDialogFind>
 {
 public:
-	CDialogFind(HWND p_hedit) : m_hedit(p_hedit), m_flags(0)
-	{
-	}
+	CDialogFind(HWND p_hedit) : m_hedit(p_hedit), m_flags(0) {}
 
 	BEGIN_DLGRESIZE_MAP(CDialogFind)
 		DLGRESIZE_CONTROL(IDC_EDIT_FINDWHAT, DLSZ_SIZE_X)

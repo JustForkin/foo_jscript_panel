@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "ui_replace.h"
 #include "ui_conf.h"
+#include "ui_replace.h"
 
 CHARRANGE CDialogReplace::GetSelection()
 {

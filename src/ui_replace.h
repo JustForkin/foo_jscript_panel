@@ -1,13 +1,10 @@
 #pragma once
-
 #include "resource.h"
 
 class CDialogReplace : public CDialogImpl<CDialogReplace>, public CDialogResize<CDialogReplace>
 {
 public:
-	CDialogReplace(HWND p_hedit) : m_hedit(p_hedit), m_flags(0), m_havefound(false)
-	{
-	}
+	CDialogReplace(HWND p_hedit) : m_hedit(p_hedit), m_flags(0), m_havefound(false) {}
 
 	BEGIN_DLGRESIZE_MAP(CDialogReplace)
 		DLGRESIZE_CONTROL(IDC_EDIT_FINDWHAT, DLSZ_SIZE_X)
