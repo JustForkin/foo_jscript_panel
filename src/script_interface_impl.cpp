@@ -27,7 +27,7 @@ STDMETHODIMP ContextMenuManager::BuildMenu(IMenuObj* p, int base_id, int max_id)
 	if (m_cm.is_empty()) return E_POINTER;
 
 	t_size menuid;
-	p->get_ID(&menuid);
+	p->get__ID(&menuid);
 	contextmenu_node* parent = m_cm->get_root();
 	m_cm->win32_build_menu((HMENU)menuid, parent, base_id, max_id);
 	return S_OK;
@@ -144,6 +144,14 @@ void FbFileInfo::FinalRelease()
 	}
 }
 
+STDMETHODIMP FbFileInfo::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = m_info_ptr;
+	return S_OK;
+}
+
 STDMETHODIMP FbFileInfo::InfoFind(BSTR name, int* p)
 {
 	if (!m_info_ptr || !p) return E_POINTER;
@@ -152,25 +160,25 @@ STDMETHODIMP FbFileInfo::InfoFind(BSTR name, int* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbFileInfo::InfoName(UINT idx, BSTR* pp)
+STDMETHODIMP FbFileInfo::InfoName(UINT idx, BSTR* p)
 {
-	if (!m_info_ptr || !pp) return E_POINTER;
+	if (!m_info_ptr || !p) return E_POINTER;
 
 	if (idx < m_info_ptr->info_get_count())
 	{
-		*pp = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->info_enum_name(idx)));
+		*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->info_enum_name(idx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbFileInfo::InfoValue(UINT idx, BSTR* pp)
+STDMETHODIMP FbFileInfo::InfoValue(UINT idx, BSTR* p)
 {
-	if (!m_info_ptr || !pp) return E_POINTER;
+	if (!m_info_ptr || !p) return E_POINTER;
 
 	if (idx < m_info_ptr->info_get_count())
 	{
-		*pp = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->info_enum_value(idx)));
+		*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->info_enum_value(idx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -184,27 +192,26 @@ STDMETHODIMP FbFileInfo::MetaFind(BSTR name, int* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbFileInfo::MetaName(UINT idx, BSTR* pp)
+STDMETHODIMP FbFileInfo::MetaName(UINT idx, BSTR* p)
 {
-	if (!m_info_ptr || !pp) return E_POINTER;
+	if (!m_info_ptr || !p) return E_POINTER;
 
 	if (idx < m_info_ptr->meta_get_count())
 	{
-		*pp = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->meta_enum_name(idx)));
+		*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->meta_enum_name(idx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbFileInfo::MetaValue(UINT idx, UINT vidx, BSTR* pp)
+STDMETHODIMP FbFileInfo::MetaValue(UINT idx, UINT vidx, BSTR* p)
 {
-	if (!m_info_ptr || !pp) return E_POINTER;
+	if (!m_info_ptr || !p) return E_POINTER;
 
-	*pp = NULL;
-
+	*p = NULL;
 	if (idx < m_info_ptr->meta_get_count() && vidx < m_info_ptr->meta_enum_value_count(idx))
 	{
-		*pp = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->meta_enum_value(idx, vidx)));
+		*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->meta_enum_value(idx, vidx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -238,14 +245,6 @@ STDMETHODIMP FbFileInfo::get_MetaCount(UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbFileInfo::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = m_info_ptr;
-	return S_OK;
-}
-
 FbMetadbHandle::FbMetadbHandle(const metadb_handle_ptr& src) : m_handle(src) {}
 FbMetadbHandle::FbMetadbHandle(metadb_handle* src) : m_handle(src) {}
 FbMetadbHandle::~FbMetadbHandle() {}
@@ -253,6 +252,14 @@ FbMetadbHandle::~FbMetadbHandle() {}
 void FbMetadbHandle::FinalRelease()
 {
 	m_handle.release();
+}
+
+STDMETHODIMP FbMetadbHandle::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = m_handle.get_ptr();
+	return S_OK;
 }
 
 STDMETHODIMP FbMetadbHandle::ClearStats()
@@ -402,19 +409,19 @@ STDMETHODIMP FbMetadbHandle::get_Length(double* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbMetadbHandle::get_Path(BSTR* pp)
+STDMETHODIMP FbMetadbHandle::get_Path(BSTR* p)
 {
-	if (m_handle.is_empty() || !pp) return E_POINTER;
+	if (m_handle.is_empty() || !p) return E_POINTER;
 
-	*pp = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(file_path_display(m_handle->get_path())));
+	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(file_path_display(m_handle->get_path())));
 	return S_OK;
 }
 
-STDMETHODIMP FbMetadbHandle::get_RawPath(BSTR* pp)
+STDMETHODIMP FbMetadbHandle::get_RawPath(BSTR* p)
 {
-	if (m_handle.is_empty() || !pp) return E_POINTER;
+	if (m_handle.is_empty() || !p) return E_POINTER;
 
-	*pp = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_handle->get_path()));
+	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_handle->get_path()));
 	return S_OK;
 }
 
@@ -426,20 +433,20 @@ STDMETHODIMP FbMetadbHandle::get_SubSong(UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbMetadbHandle::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = m_handle.get_ptr();
-	return S_OK;
-}
-
 FbMetadbHandleList::FbMetadbHandleList(metadb_handle_list_cref handles) : m_handles(handles) {}
 FbMetadbHandleList::~FbMetadbHandleList() {}
 
 void FbMetadbHandleList::FinalRelease()
 {
 	m_handles.remove_all();
+}
+
+STDMETHODIMP FbMetadbHandleList::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = &m_handles;
+	return S_OK;
 }
 
 STDMETHODIMP FbMetadbHandleList::Add(IFbMetadbHandle* handle)
@@ -904,14 +911,6 @@ STDMETHODIMP FbMetadbHandleList::get_Item(UINT index, IFbMetadbHandle** pp)
 	return E_INVALIDARG;
 }
 
-STDMETHODIMP FbMetadbHandleList::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = &m_handles;
-	return S_OK;
-}
-
 STDMETHODIMP FbMetadbHandleList::put_Item(UINT index, IFbMetadbHandle* handle)
 {
 	if (index < m_handles.get_count())
@@ -942,6 +941,14 @@ void FbPlaybackQueueItem::FinalRelease()
 	m_playback_queue_item.m_item = 0;
 }
 
+STDMETHODIMP FbPlaybackQueueItem::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = &m_playback_queue_item;
+	return S_OK;
+}
+
 STDMETHODIMP FbPlaybackQueueItem::get_Handle(IFbMetadbHandle** outHandle)
 {
 	if (!outHandle) return E_POINTER;
@@ -963,14 +970,6 @@ STDMETHODIMP FbPlaybackQueueItem::get_PlaylistItemIndex(int* outPlaylistItemInde
 	if (!outPlaylistItemIndex) return E_POINTER;
 
 	*outPlaylistItemIndex = m_playback_queue_item.m_item;
-	return S_OK;
-}
-
-STDMETHODIMP FbPlaybackQueueItem::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = &m_playback_queue_item;
 	return S_OK;
 }
 
@@ -1723,7 +1722,7 @@ STDMETHODIMP FbProfiler::Reset()
 	return S_OK;
 }
 
-STDMETHODIMP FbProfiler::get_Time(INT* p)
+STDMETHODIMP FbProfiler::get_Time(int* p)
 {
 	if (!p) return E_POINTER;
 
@@ -1742,6 +1741,14 @@ FbTitleFormat::~FbTitleFormat() {}
 void FbTitleFormat::FinalRelease()
 {
 	m_obj.release();
+}
+
+STDMETHODIMP FbTitleFormat::get__ptr(void** pp)
+{
+	if (!pp) return E_POINTER;
+
+	*pp = m_obj.get_ptr();
+	return S_OK;
 }
 
 STDMETHODIMP FbTitleFormat::Eval(BSTR* p)
@@ -1794,14 +1801,6 @@ STDMETHODIMP FbTitleFormat::EvalWithMetadbs(IFbMetadbHandleList* handles, VARIAN
 	return S_OK;
 }
 
-STDMETHODIMP FbTitleFormat::get__ptr(void** pp)
-{
-	if (!pp) return E_POINTER;
-
-	*pp = m_obj.get_ptr();
-	return S_OK;
-}
-
 FbTooltip::FbTooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_ptr) : m_wndparent(p_wndparent), m_panel_tooltip_param_ptr(p_param_ptr), m_tip_buffer(SysAllocString(PFC_WIDESTRING(JSP_NAME)))
 {
 	m_wndtooltip = CreateWindowEx(
@@ -1832,7 +1831,7 @@ FbTooltip::FbTooltip(HWND p_wndparent, const panel_tooltip_param_ptr& p_param_pt
 	m_ti.lpszText = m_tip_buffer;
 
 	HFONT font = CreateFont(
-		-(INT)m_panel_tooltip_param_ptr->font_size,
+		-(int)m_panel_tooltip_param_ptr->font_size,
 		0,
 		0,
 		0,
@@ -1873,11 +1872,11 @@ void FbTooltip::FinalRelease()
 	}
 }
 
-STDMETHODIMP FbTooltip::get_Text(BSTR* pp)
+STDMETHODIMP FbTooltip::get_Text(BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	*pp = SysAllocString(m_tip_buffer);
+	*p = SysAllocString(m_tip_buffer);
 	return S_OK;
 }
 
@@ -2510,12 +2509,11 @@ STDMETHODIMP FbUtils::get_AlwaysOnTop(VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::get_ComponentPath(BSTR* pp)
+STDMETHODIMP FbUtils::get_ComponentPath(BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	static pfc::stringcvt::string_wide_from_utf8 path(helpers::get_fb2k_component_path());
-	*pp = SysAllocString(path.get_ptr());
+	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8(helpers::get_fb2k_component_path()));
 	return S_OK;
 }
 
@@ -2527,13 +2525,11 @@ STDMETHODIMP FbUtils::get_CursorFollowPlayback(VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::get_FoobarPath(BSTR* pp)
+STDMETHODIMP FbUtils::get_FoobarPath(BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	static pfc::stringcvt::string_wide_from_utf8 path(helpers::get_fb2k_path());
-
-	*pp = SysAllocString(path.get_ptr());
+	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8(helpers::get_fb2k_path()));
 	return S_OK;
 }
 
@@ -2577,12 +2573,11 @@ STDMETHODIMP FbUtils::get_PlaybackTime(double* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::get_ProfilePath(BSTR* pp)
+STDMETHODIMP FbUtils::get_ProfilePath(BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	static pfc::stringcvt::string_wide_from_utf8 path(helpers::get_profile_path());
-	*pp = SysAllocString(path.get_ptr());
+	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8(helpers::get_profile_path()));
 	return S_OK;
 }
 
@@ -2900,7 +2895,7 @@ STDMETHODIMP FbWindow::ShowProperties()
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::get_Height(INT* p)
+STDMETHODIMP FbWindow::get_Height(int* p)
 {
 	if (!p) return E_POINTER;
 
@@ -2986,7 +2981,7 @@ STDMETHODIMP FbWindow::get_Name(BSTR* p)
 	return S_OK;
 }
 
-STDMETHODIMP FbWindow::get_Width(INT* p)
+STDMETHODIMP FbWindow::get_Width(int* p)
 {
 	if (!p) return E_POINTER;
 
@@ -3384,7 +3379,7 @@ void GdiFont::FinalRelease()
 	GdiObj<IGdiFont, Gdiplus::Font>::FinalRelease();
 }
 
-STDMETHODIMP GdiFont::get_HFont(UINT* p)
+STDMETHODIMP GdiFont::get__HFont(UINT* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
@@ -3402,31 +3397,31 @@ STDMETHODIMP GdiFont::get_Height(UINT* p)
 	return S_OK;
 }
 
-STDMETHODIMP GdiFont::get_Name(LANGID langId, BSTR* outName)
+STDMETHODIMP GdiFont::get_Name(BSTR* p)
 {
-	if (!m_ptr || !outName) return E_POINTER;
+	if (!m_ptr || !p) return E_POINTER;
 
 	Gdiplus::FontFamily fontFamily;
 	WCHAR name[LF_FACESIZE] = { 0 };
 	m_ptr->GetFamily(&fontFamily);
-	fontFamily.GetFamilyName(name, langId);
-	*outName = SysAllocString(name);
+	fontFamily.GetFamilyName(name, LANG_NEUTRAL);
+	*p = SysAllocString(name);
 	return S_OK;
 }
 
-STDMETHODIMP GdiFont::get_Size(float* outSize)
+STDMETHODIMP GdiFont::get_Size(float* p)
 {
-	if (!m_ptr || !outSize) return E_POINTER;
+	if (!m_ptr || !p) return E_POINTER;
 
-	*outSize = m_ptr->GetSize();
+	*p = m_ptr->GetSize();
 	return S_OK;
 }
 
-STDMETHODIMP GdiFont::get_Style(INT* outStyle)
+STDMETHODIMP GdiFont::get_Style(int* p)
 {
-	if (!m_ptr || !outStyle) return E_POINTER;
+	if (!m_ptr || !p) return E_POINTER;
 
-	*outStyle = m_ptr->GetStyle();
+	*p = m_ptr->GetStyle();
 	return S_OK;
 }
 
@@ -3460,12 +3455,18 @@ void GdiGraphics::GetRoundRectPath(Gdiplus::GraphicsPath& gp, Gdiplus::RectF& re
 	gp.CloseFigure();
 }
 
+STDMETHODIMP GdiGraphics::put__ptr(void* p)
+{
+	m_ptr = (Gdiplus::Graphics *)p;
+	return S_OK;
+}
+
 STDMETHODIMP GdiGraphics::CalcTextHeight(BSTR str, IGdiFont* font, UINT* p)
 {
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get_HFont((UINT *)&hFont);
+	font->get__HFont((UINT *)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	oldfont = SelectFont(dc, hFont);
@@ -3480,7 +3481,7 @@ STDMETHODIMP GdiGraphics::CalcTextWidth(BSTR str, IGdiFont* font, UINT* p)
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get_HFont((UINT *)&hFont);
+	font->get__HFont((UINT *)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	oldfont = SelectFont(dc, hFont);
@@ -3633,7 +3634,7 @@ STDMETHODIMP GdiGraphics::EstimateLineWrap(BSTR str, IGdiFont* font, int max_wid
 	if (!m_ptr || !p) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get_HFont((UINT *)&hFont);
+	font->get__HFont((UINT *)&hFont);
 	HDC dc = m_ptr->GetHDC();
 	HFONT oldfont = SelectFont(dc, hFont);
 
@@ -3773,7 +3774,7 @@ STDMETHODIMP GdiGraphics::GdiDrawText(BSTR str, IGdiFont* font, VARIANT colour, 
 	if (!m_ptr) return E_POINTER;
 
 	HFONT hFont = NULL;
-	font->get_HFont((UINT *)&hFont);
+	font->get__HFont((UINT *)&hFont);
 	HFONT oldfont;
 	HDC dc = m_ptr->GetHDC();
 	RECT rc = { x, y, x + w, y + h };
@@ -3865,12 +3866,6 @@ STDMETHODIMP GdiGraphics::SetTextRenderingHint(UINT mode)
 	if (!m_ptr) return E_POINTER;
 
 	m_ptr->SetTextRenderingHint((Gdiplus::TextRenderingHint)mode);
-	return S_OK;
-}
-
-STDMETHODIMP GdiGraphics::put__ptr(void* p)
-{
-	m_ptr = (Gdiplus::Graphics *)p;
 	return S_OK;
 }
 
@@ -4216,23 +4211,21 @@ STDMETHODIMP JSUtils::FileTest(BSTR path, BSTR mode, VARIANT* p)
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::FormatDuration(double p, BSTR* pp)
+STDMETHODIMP JSUtils::FormatDuration(double seconds, BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	pfc::string8_fast str;
-	str = pfc::format_time_ex(p, 0);
-	*pp = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(str));
+	pfc::string8_fast str = pfc::format_time_ex(seconds, 0);
+	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(str));
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::FormatFileSize(LONGLONG p, BSTR* pp)
+STDMETHODIMP JSUtils::FormatFileSize(LONGLONG bytes, BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
-	pfc::string8_fast str;
-	str = pfc::format_file_size_short(p);
-	*pp = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(str));
+	pfc::string8_fast str = pfc::format_file_size_short(bytes);
+	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(str));
 	return S_OK;
 }
 
@@ -4397,15 +4390,15 @@ STDMETHODIMP JSUtils::IsKeyPressed(UINT vkey, VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::MapString(BSTR str, UINT lcid, UINT flags, BSTR* pp)
+STDMETHODIMP JSUtils::MapString(BSTR str, UINT lcid, UINT flags, BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	int r = ::LCMapStringW(lcid, flags, str, wcslen(str) + 1, NULL, 0);
 	if (!r) return E_FAIL;
 	wchar_t* dst = new wchar_t[r];
 	r = ::LCMapStringW(lcid, flags, str, wcslen(str) + 1, dst, r);
-	if (r) *pp = SysAllocString(dst);
+	if (r) *p = SysAllocString(dst);
 	delete[] dst;
 	return S_OK;
 }
@@ -4418,9 +4411,9 @@ STDMETHODIMP JSUtils::PathWildcardMatch(BSTR pattern, BSTR str, VARIANT_BOOL* p)
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* pp)
+STDMETHODIMP JSUtils::ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
 	enum
 	{
@@ -4436,27 +4429,24 @@ STDMETHODIMP JSUtils::ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT def
 
 		if (SUCCEEDED(VariantChangeType(&var, &defaultval, 0, VT_BSTR)))
 		{
-			*pp = SysAllocString(var.bstrVal);
+			*p = SysAllocString(var.bstrVal);
 			return S_OK;
 		}
 	}
-
-	*pp = SysAllocString(buff);
+	*p = SysAllocString(buff);
 	return S_OK;
 }
 
-STDMETHODIMP JSUtils::ReadTextFile(BSTR filename, UINT codepage, BSTR* pp)
+STDMETHODIMP JSUtils::ReadTextFile(BSTR filename, UINT codepage, BSTR* p)
 {
-	if (!pp) return E_POINTER;
+	if (!p) return E_POINTER;
 
+	*p = NULL;
 	pfc::array_t<wchar_t> content;
-	*pp = NULL;
-
 	if (helpers::read_file_wide(codepage, filename, content))
 	{
-		*pp = SysAllocString(content.get_ptr());
+		*p = SysAllocString(content.get_ptr());
 	}
-
 	return S_OK;
 }
 
@@ -4507,7 +4497,7 @@ STDMETHODIMP MainMenuManager::BuildMenu(IMenuObj* p, int base_id, int count)
 	if (m_mm.is_empty()) return E_POINTER;
 
 	t_size menuid;
-	p->get_ID(&menuid);
+	p->get__ID(&menuid);
 
 	// HACK: workaround for foo_menu_addons
 	try
@@ -4630,6 +4620,14 @@ void MenuObj::FinalRelease()
 	}
 }
 
+STDMETHODIMP MenuObj::get__ID(UINT* p)
+{
+	if (!m_hMenu || !p) return E_POINTER;
+
+	*p = (UINT)m_hMenu;
+	return S_OK;
+}
+
 STDMETHODIMP MenuObj::AppendMenuItem(UINT flags, UINT item_id, BSTR text)
 {
 	if (!m_hMenu) return E_POINTER;
@@ -4675,9 +4673,9 @@ STDMETHODIMP MenuObj::CheckMenuRadioItem(UINT first, UINT last, UINT selected)
 	return S_OK;
 }
 
-STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* item_id)
+STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* p)
 {
-	if (!m_hMenu || !item_id) return E_POINTER;
+	if (!m_hMenu || !p) return E_POINTER;
 
 	POINT pt = { x, y };
 
@@ -4686,15 +4684,7 @@ STDMETHODIMP MenuObj::TrackPopupMenu(int x, int y, UINT flags, UINT* item_id)
 	flags &= ~TPM_RECURSE;
 
 	ClientToScreen(m_wnd_parent, &pt);
-	*item_id = ::TrackPopupMenu(m_hMenu, flags, pt.x, pt.y, 0, m_wnd_parent, 0);
-	return S_OK;
-}
-
-STDMETHODIMP MenuObj::get_ID(UINT* p)
-{
-	if (!m_hMenu || !p) return E_POINTER;
-
-	*p = (UINT)m_hMenu;
+	*p = ::TrackPopupMenu(m_hMenu, flags, pt.x, pt.y, 0, m_wnd_parent, 0);
 	return S_OK;
 }
 

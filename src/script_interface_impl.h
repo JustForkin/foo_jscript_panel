@@ -10,9 +10,7 @@ struct panel_tooltip_param
 	float font_size;
 	int font_style;
 
-	panel_tooltip_param() : tooltip_hwnd(0)
-	{
-	}
+	panel_tooltip_param() : tooltip_hwnd(0) {}
 };
 
 typedef std::shared_ptr<panel_tooltip_param> panel_tooltip_param_ptr;
@@ -70,16 +68,16 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP InfoFind(BSTR name, int* p);
-	STDMETHODIMP InfoName(UINT idx, BSTR* pp);
-	STDMETHODIMP InfoValue(UINT idx, BSTR* pp);
+	STDMETHODIMP InfoName(UINT idx, BSTR* p);
+	STDMETHODIMP InfoValue(UINT idx, BSTR* p);
 	STDMETHODIMP MetaFind(BSTR name, int* p);
-	STDMETHODIMP MetaName(UINT idx, BSTR* pp);
-	STDMETHODIMP MetaValue(UINT idx, UINT vidx, BSTR* pp);
+	STDMETHODIMP MetaName(UINT idx, BSTR* p);
+	STDMETHODIMP MetaValue(UINT idx, UINT vidx, BSTR* p);
 	STDMETHODIMP MetaValueCount(UINT idx, UINT* p);
 	STDMETHODIMP get_InfoCount(UINT* p);
 	STDMETHODIMP get_MetaCount(UINT* p);
-	STDMETHODIMP get__ptr(void** pp);
 };
 
 class FbMetadbHandle : public IDisposableImpl4<IFbMetadbHandle>
@@ -93,6 +91,7 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP ClearStats();
 	STDMETHODIMP Compare(IFbMetadbHandle* handle, VARIANT_BOOL* p);
 	STDMETHODIMP GetFileInfo(IFbFileInfo** pp);
@@ -104,10 +103,9 @@ public:
 	STDMETHODIMP SetRating(UINT rating);
 	STDMETHODIMP get_FileSize(LONGLONG* p);
 	STDMETHODIMP get_Length(double* p);
-	STDMETHODIMP get_Path(BSTR* pp);
-	STDMETHODIMP get_RawPath(BSTR* pp);
+	STDMETHODIMP get_Path(BSTR* p);
+	STDMETHODIMP get_RawPath(BSTR* p);
 	STDMETHODIMP get_SubSong(UINT* p);
-	STDMETHODIMP get__ptr(void** pp);
 };
 
 class FbMetadbHandleList : public IDisposableImpl4<IFbMetadbHandleList>
@@ -120,6 +118,7 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP Add(IFbMetadbHandle* handle);
 	STDMETHODIMP AddRange(IFbMetadbHandleList* handles);
 	STDMETHODIMP AttachImage(BSTR image_path, UINT art_id);
@@ -149,7 +148,6 @@ public:
 	STDMETHODIMP UpdateFileInfoFromJSON(BSTR str);
 	STDMETHODIMP get_Count(UINT* p);
 	STDMETHODIMP get_Item(UINT index, IFbMetadbHandle** pp);
-	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP put_Item(UINT index, IFbMetadbHandle* handle);
 };
 
@@ -164,10 +162,10 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP get_Handle(IFbMetadbHandle** outHandle);
 	STDMETHODIMP get_PlaylistIndex(int* outPlaylistIndex);
 	STDMETHODIMP get_PlaylistItemIndex(int* outPlaylistItemIndex);
-	STDMETHODIMP get__ptr(void** pp);
 };
 
 class FbPlaylistManager : public IDispatchImpl3<IFbPlaylistManager>
@@ -272,7 +270,7 @@ protected:
 public:
 	STDMETHODIMP Print();
 	STDMETHODIMP Reset();
-	STDMETHODIMP get_Time(INT* p);
+	STDMETHODIMP get_Time(int* p);
 };
 
 class FbTitleFormat : public IDisposableImpl4<IFbTitleFormat>
@@ -285,10 +283,10 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ptr(void** pp);
 	STDMETHODIMP Eval(BSTR* p);
 	STDMETHODIMP EvalWithMetadb(IFbMetadbHandle* handle, BSTR* p);
 	STDMETHODIMP EvalWithMetadbs(IFbMetadbHandleList* handles, VARIANT* p);
-	STDMETHODIMP get__ptr(void** pp);
 };
 
 class FbTooltip : public IDisposableImpl4<IFbTooltip>
@@ -311,7 +309,7 @@ public:
 	STDMETHODIMP SetDelayTime(int type, int time);
 	STDMETHODIMP SetMaxWidth(int width);
 	STDMETHODIMP TrackPosition(int x, int y);
-	STDMETHODIMP get_Text(BSTR* pp);
+	STDMETHODIMP get_Text(BSTR* p);
 	STDMETHODIMP put_Text(BSTR text);
 	STDMETHODIMP put_TrackActivate(VARIANT_BOOL activate);
 };
@@ -385,15 +383,15 @@ public:
 	STDMETHODIMP VolumeMute();
 	STDMETHODIMP VolumeUp();
 	STDMETHODIMP get_AlwaysOnTop(VARIANT_BOOL* p);
-	STDMETHODIMP get_ComponentPath(BSTR* pp);
+	STDMETHODIMP get_ComponentPath(BSTR* p);
 	STDMETHODIMP get_CursorFollowPlayback(VARIANT_BOOL* p);
-	STDMETHODIMP get_FoobarPath(BSTR* pp);
+	STDMETHODIMP get_FoobarPath(BSTR* p);
 	STDMETHODIMP get_IsPaused(VARIANT_BOOL* p);
 	STDMETHODIMP get_IsPlaying(VARIANT_BOOL* p);
 	STDMETHODIMP get_PlaybackFollowCursor(VARIANT_BOOL* p);
 	STDMETHODIMP get_PlaybackLength(double* p);
 	STDMETHODIMP get_PlaybackTime(double* p);
-	STDMETHODIMP get_ProfilePath(BSTR* pp);
+	STDMETHODIMP get_ProfilePath(BSTR* p);
 	STDMETHODIMP get_ReplaygainMode(UINT* p);
 	STDMETHODIMP get_StopAfterCurrent(VARIANT_BOOL* p);
 	STDMETHODIMP get_Volume(float* p);
@@ -435,7 +433,7 @@ public:
 	STDMETHODIMP SetTimeout(IDispatch* func, int delay, UINT* outTimeoutID);
 	STDMETHODIMP ShowConfigure();
 	STDMETHODIMP ShowProperties();
-	STDMETHODIMP get_Height(INT* p);
+	STDMETHODIMP get_Height(int* p);
 	STDMETHODIMP get_ID(UINT* p);
 	STDMETHODIMP get_InstanceType(UINT* p);
 	STDMETHODIMP get_IsTransparent(VARIANT_BOOL* p);
@@ -445,7 +443,7 @@ public:
 	STDMETHODIMP get_MinHeight(UINT* p);
 	STDMETHODIMP get_MinWidth(UINT* p);
 	STDMETHODIMP get_Name(BSTR* p);
-	STDMETHODIMP get_Width(INT* p);
+	STDMETHODIMP get_Width(int* p);
 	STDMETHODIMP put_MaxHeight(UINT height);
 	STDMETHODIMP put_MaxWidth(UINT width);
 	STDMETHODIMP put_MinHeight(UINT height);
@@ -488,11 +486,11 @@ protected:
 	virtual void FinalRelease();
 
 public:
-	STDMETHODIMP get_HFont(UINT* p);
+	STDMETHODIMP get__HFont(UINT* p);
 	STDMETHODIMP get_Height(UINT* p);
-	STDMETHODIMP get_Name(LANGID langId, BSTR* outName);
-	STDMETHODIMP get_Size(float* outSize);
-	STDMETHODIMP get_Style(INT* outStyle);
+	STDMETHODIMP get_Name(BSTR* p);
+	STDMETHODIMP get_Size(float* p);
+	STDMETHODIMP get_Style(int* p);
 };
 
 class GdiGraphics : public GdiObj<IGdiGraphics, Gdiplus::Graphics>
@@ -507,6 +505,7 @@ public:
 		return E_NOTIMPL;
 	}
 
+	STDMETHODIMP put__ptr(void* p);
 	STDMETHODIMP CalcTextHeight(BSTR str, IGdiFont* font, UINT* p);
 	STDMETHODIMP CalcTextWidth(BSTR str, IGdiFont* font, UINT* p);
 	STDMETHODIMP DrawEllipse(float x, float y, float w, float h, float line_width, VARIANT colour);
@@ -529,7 +528,6 @@ public:
 	STDMETHODIMP SetInterpolationMode(int mode);
 	STDMETHODIMP SetSmoothingMode(int mode);
 	STDMETHODIMP SetTextRenderingHint(UINT mode);
-	STDMETHODIMP put__ptr(void* p);
 };
 
 class GdiRawBitmap : public IDisposableImpl4<IGdiRawBitmap>
@@ -544,9 +542,9 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__Handle(HDC* p);
 	STDMETHODIMP get_Height(UINT* p);
 	STDMETHODIMP get_Width(UINT* p);
-	STDMETHODIMP get__Handle(HDC* p);
 };
 
 class GdiUtils : public IDispatchImpl3<IGdiUtils>
@@ -583,8 +581,8 @@ public:
 	STDMETHODIMP CheckFont(BSTR name, VARIANT_BOOL* p);
 	STDMETHODIMP ColourPicker(UINT window_id, int default_colour, int* out_colour);
 	STDMETHODIMP FileTest(BSTR path, BSTR mode, VARIANT* p);
-	STDMETHODIMP FormatDuration(double p, BSTR* pp);
-	STDMETHODIMP FormatFileSize(LONGLONG p, BSTR* pp);
+	STDMETHODIMP FormatDuration(double seconds, BSTR* p);
+	STDMETHODIMP FormatFileSize(LONGLONG bytes, BSTR* p);
 	STDMETHODIMP GetAlbumArtAsync(UINT window_id, IFbMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, VARIANT_BOOL only_embed, VARIANT_BOOL no_load, UINT* p);
 	STDMETHODIMP GetAlbumArtEmbedded(BSTR rawpath, UINT art_id, IGdiBitmap** pp);
 	STDMETHODIMP GetAlbumArtV2(IFbMetadbHandle* handle, UINT art_id, VARIANT_BOOL need_stub, IGdiBitmap** pp);
@@ -593,10 +591,10 @@ public:
 	STDMETHODIMP Glob(BSTR pattern, UINT exc_mask, UINT inc_mask, VARIANT* p);
 	STDMETHODIMP InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR def, VARIANT_BOOL error_on_cancel, BSTR* out);
 	STDMETHODIMP IsKeyPressed(UINT vkey, VARIANT_BOOL* p);
-	STDMETHODIMP MapString(BSTR str, UINT lcid, UINT flags, BSTR* pp);
+	STDMETHODIMP MapString(BSTR str, UINT lcid, UINT flags, BSTR* p);
 	STDMETHODIMP PathWildcardMatch(BSTR pattern, BSTR str, VARIANT_BOOL* p);
-	STDMETHODIMP ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* pp);
-	STDMETHODIMP ReadTextFile(BSTR filename, UINT codepage, BSTR* pp);
+	STDMETHODIMP ReadINI(BSTR filename, BSTR section, BSTR key, VARIANT defaultval, BSTR* p);
+	STDMETHODIMP ReadTextFile(BSTR filename, UINT codepage, BSTR* p);
 	STDMETHODIMP WriteINI(BSTR filename, BSTR section, BSTR key, VARIANT val, VARIANT_BOOL* p);
 	STDMETHODIMP WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL write_bom, VARIANT_BOOL* p);
 	STDMETHODIMP get_Version(UINT* v);
@@ -647,13 +645,13 @@ protected:
 	virtual void FinalRelease();
 
 public:
+	STDMETHODIMP get__ID(UINT* p);
 	STDMETHODIMP AppendMenuItem(UINT flags, UINT item_id, BSTR text);
 	STDMETHODIMP AppendMenuSeparator();
 	STDMETHODIMP AppendTo(IMenuObj* parent, UINT flags, BSTR text);
 	STDMETHODIMP CheckMenuItem(UINT item_id, VARIANT_BOOL check);
 	STDMETHODIMP CheckMenuRadioItem(UINT first, UINT last, UINT selected);
-	STDMETHODIMP TrackPopupMenu(int x, int y, UINT flags, UINT* item_id);
-	STDMETHODIMP get_ID(UINT* p);
+	STDMETHODIMP TrackPopupMenu(int x, int y, UINT flags, UINT* p);
 };
 
 class ThemeManager : public IDisposableImpl4<IThemeManager>
