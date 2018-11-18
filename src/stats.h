@@ -87,10 +87,7 @@ namespace stats
 				reader >> ret.loved;
 				reader >> ret.first_played;
 				reader >> ret.last_played;
-				if (reader.get_remaining() > 0) // check needed here for compatibility with v2 Beta4
-				{
-					reader >> ret.rating;
-				}
+				reader >> ret.rating;
 				return ret;
 			}
 			catch (exception_io_data) {}
@@ -121,19 +118,19 @@ namespace stats
 			switch (index)
 			{
 			case 0:
-				out = "jsp_playcount";
+				out = "js_playcount";
 				break;
 			case 1:
-				out = "jsp_loved";
+				out = "js_loved";
 				break;
 			case 2:
-				out = "jsp_first_played";
+				out = "js_first_played";
 				break;
 			case 3:
-				out = "jsp_last_played";
+				out = "js_last_played";
 				break;
 			case 4:
-				out = "jsp_rating";
+				out = "js_rating";
 				break;
 			}
 		}
