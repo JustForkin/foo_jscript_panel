@@ -6,7 +6,6 @@ namespace
 	initquit_factory_t<my_initquit> g_my_initquit;
 	library_callback_factory_t<my_library_callback> g_my_library_callback;
 	play_callback_static_factory_t<my_play_callback_static> g_my_play_callback_static;
-	play_callback_static_factory_t<my_playback_queue_callback> g_my_playback_queue_callback;
 	playback_statistics_collector_factory_t<my_playback_statistics_collector> g_my_playback_statistics_collector;
 	service_factory_single_t<my_config_object_notify> g_my_config_object_notify;
 	service_factory_single_t<my_dsp_config_callback> g_my_dsp_config_callback;
@@ -204,11 +203,6 @@ void my_play_callback_static::on_volume_change(float newval)
 	panel_manager::instance().post_msg_to_all_pointer(CALLBACK_UWM_ON_VOLUME_CHANGE, on_volume_change_data);
 }
 
-void my_playback_queue_callback::on_changed(t_change_origin p_origin)
-{
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYBACK_QUEUE_CHANGED, (WPARAM)p_origin);
-}
-
 void my_playback_statistics_collector::on_item_played(metadb_handle_ptr p_item)
 {
 	simple_callback_data<metadb_handle_ptr>* on_item_played_data = new simple_callback_data<metadb_handle_ptr>(p_item);
@@ -219,20 +213,12 @@ GUID my_config_object_notify::get_watched_object(t_size p_index)
 {
 	switch (p_index)
 	{
-	case 0:
-		return standard_config_objects::bool_playlist_stop_after_current;
-
-	case 1:
-		return standard_config_objects::bool_cursor_follows_playback;
-
-	case 2:
-		return standard_config_objects::bool_playback_follows_cursor;
-
-	case 3:
-		return standard_config_objects::bool_ui_always_on_top;
+	case 0: return standard_config_objects::bool_playlist_stop_after_current;
+	case 1:	return standard_config_objects::bool_cursor_follows_playback;
+	case 2:	return standard_config_objects::bool_playback_follows_cursor;
+	case 3:	return standard_config_objects::bool_ui_always_on_top;
+	default: return pfc::guid_null;
 	}
-
-	return pfc::guid_null;
 }
 
 t_size my_config_object_notify::get_watched_object_count()
@@ -263,14 +249,9 @@ void my_config_object_notify::on_watched_object_changed(const config_object::ptr
 unsigned my_playlist_callback_static::get_flags()
 {
 	return flag_on_items_added | flag_on_items_reordered | flag_on_items_removed |
-		flag_on_items_selection_change | flag_on_item_focus_change | flag_on_item_ensure_visible |
-		flag_on_playlist_activate | flag_on_playlist_created | flag_on_playlists_reorder |
-		flag_on_playlists_removed | flag_on_playlist_renamed | flag_on_playback_order_changed | flag_on_playlist_locked;
-}
-
-void my_playlist_callback_static::on_item_ensure_visible(t_size p_playlist, t_size p_idx)
-{
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYLIST_ITEM_ENSURE_VISIBLE, p_playlist, p_idx);
+		flag_on_items_selection_change | flag_on_item_focus_change | flag_on_playlist_activate |
+		flag_on_playlist_created | flag_on_playlists_reorder | flag_on_playlists_removed |
+		flag_on_playlist_renamed | flag_on_playback_order_changed | flag_on_playlist_locked;
 }
 
 void my_playlist_callback_static::on_item_focus_change(t_size p_playlist, t_size p_from, t_size p_to)

@@ -100,27 +100,15 @@ class my_initquit : public initquit, public ui_selection_callback, public replay
 public:
 	virtual void on_init()
 	{
-		if (static_api_test_t<replaygain_manager_v2>())
-		{
-			replaygain_manager_v2::get()->add_notify(this);
-		}
-		if (static_api_test_t<output_manager_v2>())
-		{
-			output_manager_v2::get()->addCallback(this);
-		}
+		replaygain_manager_v2::get()->add_notify(this);
+		output_manager_v2::get()->addCallback(this);
 		ui_selection_manager_v2::get()->register_callback(this, 0);
 	}
 
 	virtual void on_quit()
 	{
-		if (static_api_test_t<replaygain_manager_v2>())
-		{
-			replaygain_manager_v2::get()->remove_notify(this);
-		}
-		if (static_api_test_t<output_manager_v2>())
-		{
-			output_manager_v2::get()->removeCallback(this);
-		}
+		replaygain_manager_v2::get()->remove_notify(this);
+		output_manager_v2::get()->removeCallback(this);
 		ui_selection_manager_v2::get()->unregister_callback(this);
 	}
 
@@ -159,12 +147,6 @@ public:
 	virtual void on_volume_change(float newval);
 };
 
-class my_playback_queue_callback : public playback_queue_callback
-{
-public:
-	void on_changed(t_change_origin p_origin);
-};
-
 class my_playback_statistics_collector : public playback_statistics_collector
 {
 public:
@@ -183,6 +165,7 @@ class my_playlist_callback_static : public playlist_callback_static
 {
 public:
 	virtual void on_default_format_changed() {}
+	virtual void on_item_ensure_visible(t_size p_playlist, t_size p_idx) {}
 	virtual void on_items_modified(t_size p_playlist, const pfc::bit_array& p_mask) {}
 	virtual void on_items_modified_fromplayback(t_size p_playlist, const pfc::bit_array& p_mask, play_control::t_display_level p_level) {}
 	virtual void on_items_removing(t_size p_playlist, const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count) {}
@@ -190,7 +173,6 @@ public:
 	virtual void on_playlists_removing(const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count) {}
 
 	virtual unsigned get_flags();
-	virtual void on_item_ensure_visible(t_size p_playlist, t_size p_idx);
 	virtual void on_item_focus_change(t_size p_playlist, t_size p_from, t_size p_to);
 	virtual void on_items_added(t_size p_playlist, t_size p_start, metadb_handle_list_cref p_data, const pfc::bit_array& p_selection);
 	virtual void on_items_removed(t_size p_playlist, const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count);
