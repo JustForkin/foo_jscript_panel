@@ -280,9 +280,8 @@ void script_preprocessor::process_import(const t_script_info& info, t_script_lis
 		if (wcscmp(val.directive.get_ptr(), L"import") == 0)
 		{
 			expand_var(val.value);
-
 			pfc::array_t<wchar_t> code;
-			if (helpers::read_file_wide(CP_ACP, val.value.get_ptr(), code))
+			if (helpers::read_file_wide(val.value.get_ptr(), code))
 			{
 				t_script_code script;
 				script.path = val.value;
@@ -328,6 +327,10 @@ void script_preprocessor::process_script_info(t_script_info& info)
 			if (strcmp(value.get_ptr(), "dragdrop") == 0)
 			{
 				info.feature_mask |= t_script_info::kFeatureDragDrop;
+			}
+			else if (strcmp(value.get_ptr(), "grabfocus") == 0)
+			{
+				info.feature_mask |= t_script_info::kFeatureGrabFocus;
 			}
 		}
 	}

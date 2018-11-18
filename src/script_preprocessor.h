@@ -15,7 +15,8 @@ struct t_script_info
 {
 	enum
 	{
-		kFeatureDragDrop = 1 << 1
+		kFeatureDragDrop = 1 << 0,
+		kFeatureGrabFocus = 1 << 1
 	};
 
 	pfc::string_simple name;
