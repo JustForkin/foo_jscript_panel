@@ -1,7 +1,7 @@
 #pragma once
 #include "config.h"
-#include "resource.h"
 #include "js_panel_window.h"
+#include "resource.h"
 
 #include <PropertyList.h>
 
@@ -9,7 +9,6 @@ class CDialogProperty : public CDialogImpl<CDialogProperty>, public CDialogResiz
 {
 public:
 	CDialogProperty(js_panel_window* p_parent) : m_parent(p_parent) {}
-
 	virtual ~CDialogProperty() {}
 
 	BEGIN_DLGRESIZE_MAP(CDialogProperty)

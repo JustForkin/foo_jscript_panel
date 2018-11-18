@@ -77,38 +77,6 @@ LRESULT CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	m_editorctrl.SetContent(m_parent->get_script_code(), true);
 	m_editorctrl.SetSavePoint();
 
-	// Script Engine
-	HWND combo_engine = GetDlgItem(IDC_COMBO_ENGINE);
-	ComboBox_AddString(combo_engine, _T("Chakra"));
-	ComboBox_AddString(combo_engine, _T("JScript"));
-
-	if (helpers::supports_chakra())
-	{
-		uComboBox_SelectString(combo_engine, m_parent->get_script_engine());
-	}
-	else
-	{
-		uComboBox_SelectString(combo_engine, "JScript");
-		GetDlgItem(IDC_COMBO_ENGINE).EnableWindow(false);
-	}
-
-	// Edge Style
-	HWND combo_edge = GetDlgItem(IDC_COMBO_EDGE);
-	ComboBox_AddString(combo_edge, _T("None"));
-	ComboBox_AddString(combo_edge, _T("Sunken"));
-	ComboBox_AddString(combo_edge, _T("Grey"));
-
-	if (core_version_info_v2::get()->test_version(1, 4, 0, 0) && m_parent->GetInstanceType() == HostComm::KInstanceTypeDUI)
-	{
-		// disable in default UI fb2k v1.4 and above
-		ComboBox_SetCurSel(combo_edge, 0);
-		GetDlgItem(IDC_COMBO_EDGE).EnableWindow(false);
-	}
-	else
-	{
-		ComboBox_SetCurSel(combo_edge, m_parent->get_edge_style());
-	}
-
 	// Pseudo Transparent
 	if (m_parent->GetInstanceType() == HostComm::KInstanceTypeCUI)
 	{
@@ -118,10 +86,8 @@ LRESULT CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 	{
 		uButton_SetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT, false);
 		GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT).EnableWindow(false);
+		GetDlgItem(IDC_CHECK_PSEUDO_TRANSPARENT).ShowWindow(false);
 	}
-
-	// Grab Focus
-	uButton_SetCheck(m_hWnd, IDC_CHECK_GRABFOCUS, m_parent->get_grab_focus());
 
 	return TRUE; // set focus to default control
 }
@@ -329,21 +295,16 @@ bool CDialogConf::FindResult(HWND hWnd, HWND hWndEdit, int pos, const char* whic
 
 void CDialogConf::Apply()
 {
-	pfc::string8 name;
 	pfc::array_t<char> code;
 	int len = 0;
 
-	// Get engine name
-	uGetWindowText(GetDlgItem(IDC_COMBO_ENGINE), name);
 	// Get script text
 	len = m_editorctrl.GetTextLength();
 	code.set_size(len + 1);
 	m_editorctrl.GetText(code.get_ptr(), len + 1);
 
-	m_parent->get_edge_style() = static_cast<t_edge_style>(ComboBox_GetCurSel(GetDlgItem(IDC_COMBO_EDGE)));
-	m_parent->get_grab_focus() = uButton_GetCheck(m_hWnd, IDC_CHECK_GRABFOCUS);
 	m_parent->get_pseudo_transparent() = uButton_GetCheck(m_hWnd, IDC_CHECK_PSEUDO_TRANSPARENT);
-	m_parent->update_script(name, code.get_ptr());
+	m_parent->update_script(code.get_ptr());
 
 	// Wndow position
 	GetWindowPlacement(&m_parent->get_windowplacement());
@@ -374,25 +335,19 @@ void CDialogConf::OnImport()
 
 	if (uGetOpenFileName(m_hWnd, "Text files|*.txt|JScript files|*.js|All files|*.*", 0, "txt", "Import from", NULL, filename, FALSE))
 	{
-		// Open file
-		pfc::string8_fast text;
-
-		helpers::read_file(filename, text);
-		m_editorctrl.SetContent(text);
+		pfc::array_t<wchar_t> text;
+		helpers::read_file_wide(pfc::stringcvt::string_wide_from_utf8_fast(filename), text);
+		m_editorctrl.SetContent(pfc::stringcvt::string_utf8_from_wide(text.get_ptr()));
 	}
 }
 
 void CDialogConf::OnResetCurrent()
 {
-	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
-	uComboBox_SelectString(combo, m_parent->get_script_engine());
 	m_editorctrl.SetContent(m_parent->get_script_code());
 }
 
 void CDialogConf::OnResetDefault()
 {
-	HWND combo = GetDlgItem(IDC_COMBO_ENGINE);
-	uComboBox_SelectString(combo, "Chakra");
 	pfc::string8 code;
 	js_panel_vars::get_default_script_code(code);
 	m_editorctrl.SetContent(code);

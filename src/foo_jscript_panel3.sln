@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "columns_ui_sdk", "..\column
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scintilla", "..\scintilla\win32\scintilla.vcxproj", "{641A7D58-C47D-4110-B800-E18E8A5D818F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "foo_jscript_panel", "foo_jscript_panel.vcxproj", "{43DF6037-DBE4-4468-9A50-4311495F3C86}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "foo_jscript_panel3", "foo_jscript_panel3.vcxproj", "{43DF6037-DBE4-4468-9A50-4311495F3C86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,7 +50,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {04D470B3-3881-4A19-A99F-5E04F5978FB4}
 		SolutionNewStyle = 1
+		SolutionGuid = {04D470B3-3881-4A19-A99F-5E04F5978FB4}
 	EndGlobalSection
 EndGlobal

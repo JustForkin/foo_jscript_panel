@@ -40,18 +40,16 @@ struct t_prop_set_init_table
 };
 
 typedef pfc::list_t<t_sci_prop_set> t_sci_prop_set_list;
-typedef pfc::map_t<pfc::string_simple, pfc::string_simple, pfc::comparator_stricmp_ascii> t_str_to_str_map;
 
-class cfg_sci_prop_sets : public cfg_var
+class cfg_sci_prop_sets
 {
 private:
 	t_sci_prop_set_list m_data;
 
 	void init_data(const t_prop_set_init_table* p_default);
-	void merge_data(const t_str_to_str_map& data_map);
 
 public:
-	explicit inline cfg_sci_prop_sets(const GUID& p_guid, const t_prop_set_init_table* p_default) : cfg_var(p_guid)
+	explicit inline cfg_sci_prop_sets(const t_prop_set_init_table* p_default)
 	{
 		init_data(p_default);
 	}
@@ -64,13 +62,6 @@ public:
 	{
 		return m_data;
 	}
-
-	void get_data_raw(stream_writer* p_stream, abort_callback& p_abort);
-	void set_data_raw(stream_reader* p_stream, t_size p_sizehint, abort_callback& p_abort);
-
-	void reset();
-	void export_to_file(const char* filename);
-	void import_from_file(const char* filename);
 };
 
 extern cfg_sci_prop_sets g_sci_prop_sets;

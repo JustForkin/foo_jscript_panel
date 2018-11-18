@@ -15,12 +15,7 @@
 #define IDC_STATIC_GUID                 111
 #define IDC_EDIT                        112
 #define IDC_TOOLS                       113
-#define IDC_STATIC_ENGINE               114
-#define IDC_COMBO_ENGINE                115
-#define IDC_STATIC_EDGE                 116
-#define IDC_COMBO_EDGE                  117
-#define IDC_CHECK_PSEUDO_TRANSPARENT    118
-#define IDC_CHECK_GRABFOCUS             119
+#define IDC_CHECK_PSEUDO_TRANSPARENT    114
 
 //ui_find
 #define IDD_DIALOG_FIND                 120
@@ -33,17 +28,6 @@
 #define IDD_DIALOG_INPUT                140
 #define IDC_INPUT_PROMPT                141
 #define IDC_INPUT_VALUE                 142
-
-//ui_name_value_edit
-#define IDD_DIALOG_NAME_VALUE_EDIT      150
-#define IDC_EDIT_NAME                   151
-#define IDC_EDIT_VALUE                  152
-
-//ui_pref
-#define IDD_DIALOG_PREF                 160
-#define IDC_LIST_EDITOR_PROP            161
-#define IDC_BUTTON_IMPORT               162
-#define IDC_BUTTON_EXPORT               163
 
 //ui_property
 #define IDD_DIALOG_PROPERTY             170

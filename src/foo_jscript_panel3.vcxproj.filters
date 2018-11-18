@@ -21,7 +21,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="foo_jscript_panel.cpp">
+    <ClCompile Include="foo_jscript_panel3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="host.cpp">
@@ -91,12 +91,6 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="config.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="ui_name_value_edit.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="ui_pref.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="ui_input_box.cpp">
@@ -185,12 +179,6 @@
     <ClInclude Include="stats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ui_name_value_edit.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="ui_pref.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="component_defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -210,7 +198,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="foo_jscript_panel.rc">
+    <ResourceCompile Include="foo_jscript_panel3.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
