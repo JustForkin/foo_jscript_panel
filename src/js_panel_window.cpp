@@ -41,7 +41,9 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		script_unload();
 		panel_manager::instance().remove_window(m_hwnd);
 		if (m_gr_wrap)
+		{
 			m_gr_wrap.Release();
+		}
 		delete_context();
 		ReleaseDC(m_hwnd, m_hdc);
 		return 0;
@@ -287,10 +289,6 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		on_playback_pause(wp != 0);
 		return 0;
 
-	case CALLBACK_UWM_ON_PLAYBACK_QUEUE_CHANGED:
-		on_playback_queue_changed(wp);
-		return 0;
-
 	case CALLBACK_UWM_ON_PLAYBACK_SEEK:
 		on_playback_seek(wp);
 		return 0;
@@ -305,10 +303,6 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 	case CALLBACK_UWM_ON_PLAYBACK_TIME:
 		on_playback_time(wp);
-		return 0;
-
-	case CALLBACK_UWM_ON_PLAYLIST_ITEM_ENSURE_VISIBLE:
-		on_playlist_item_ensure_visible(wp, lp);
 		return 0;
 
 	case CALLBACK_UWM_ON_PLAYLIST_ITEMS_ADDED:
@@ -435,9 +429,7 @@ bool js_panel_window::on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp)
 		{
 			result.ChangeType(VT_BOOL);
 			if (result.boolVal != VARIANT_FALSE)
-			{
 				ret = true;
-			}
 		}
 	}
 	break;
@@ -454,7 +446,6 @@ bool js_panel_window::script_load()
 
 	DWORD extstyle = GetWindowLongPtr(m_hwnd, GWL_EXSTYLE);
 	extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
-	extstyle |= edge_style_from_config(get_edge_style());
 	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
 	SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
@@ -514,7 +505,7 @@ ui_helpers::container_window::class_data& js_panel_window::get_class_data() cons
 		false,
 		0,
 		WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-		edge_style_from_config(get_edge_style()),
+		0,
 		CS_DBLCLKS,
 		true, true, true, IDC_ARROW
 	};
@@ -779,8 +770,10 @@ void js_panel_window::on_mouse_button_dblclk(UINT msg, WPARAM wp, LPARAM lp)
 
 void js_panel_window::on_mouse_button_down(UINT msg, WPARAM wp, LPARAM lp)
 {
-	if (get_grab_focus())
+	if (ScriptInfo().feature_mask & t_script_info::kFeatureGrabFocus)
+	{
 		SetFocus(m_hwnd);
+	}
 
 	SetCapture(m_hwnd);
 
@@ -1055,14 +1048,6 @@ void js_panel_window::on_playback_pause(bool state)
 	script_invoke_v(CallbackIds::on_playback_pause, args, _countof(args));
 }
 
-void js_panel_window::on_playback_queue_changed(WPARAM wp)
-{
-	VARIANTARG args[1];
-	args[0].vt = VT_I4;
-	args[0].lVal = wp;
-	script_invoke_v(CallbackIds::on_playback_queue_changed, args, _countof(args));
-}
-
 void js_panel_window::on_playback_seek(WPARAM wp)
 {
 	simple_callback_data_scope_releaser<simple_callback_data<double>> data(wp);
@@ -1099,16 +1084,6 @@ void js_panel_window::on_playback_time(WPARAM wp)
 	args[0].vt = VT_R8;
 	args[0].dblVal = data->m_item;
 	script_invoke_v(CallbackIds::on_playback_time, args, _countof(args));
-}
-
-void js_panel_window::on_playlist_item_ensure_visible(WPARAM wp, LPARAM lp)
-{
-	VARIANTARG args[2];
-	args[0].vt = VT_UI4;
-	args[0].ulVal = lp;
-	args[1].vt = VT_UI4;
-	args[1].ulVal = wp;
-	script_invoke_v(CallbackIds::on_playlist_item_ensure_visible, args, _countof(args));
 }
 
 void js_panel_window::on_playlist_items_added(WPARAM wp)
@@ -1208,11 +1183,10 @@ void js_panel_window::script_unload()
 	m_selection_holder.release();
 }
 
-void js_panel_window::update_script(const char* name, const char* code)
+void js_panel_window::update_script(const char* code)
 {
-	if (name && code)
+	if (code)
 	{
-		get_script_engine() = name;
 		get_script_code() = code;
 	}
 

@@ -11,7 +11,7 @@ public:
 	virtual ~js_panel_window();
 
 	HRESULT script_invoke_v(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
-	void update_script(const char* name = NULL, const char* code = NULL);
+	void update_script(const char* code = NULL);
 
 protected:
 	LRESULT on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
@@ -60,12 +60,10 @@ private:
 	void on_playback_new_track(WPARAM wp);
 	void on_playback_order_changed(WPARAM wp);
 	void on_playback_pause(bool state);
-	void on_playback_queue_changed(WPARAM wp);
 	void on_playback_seek(WPARAM wp);
 	void on_playback_starting(play_control::t_track_command cmd, bool paused);
 	void on_playback_stop(play_control::t_stop_reason reason);
 	void on_playback_time(WPARAM wp);
-	void on_playlist_item_ensure_visible(WPARAM wp, LPARAM lp);
 	void on_playlist_items_added(WPARAM wp);
 	void on_playlist_items_removed(WPARAM wp, LPARAM lp);
 	void on_playlist_items_reordered(WPARAM wp);
