@@ -24,19 +24,17 @@ namespace helpers
 	DWORD convert_colorref_to_argb(COLORREF color);
 	GUID convert_artid_to_guid(t_size art_id);
 	HBITMAP create_hbitmap_from_gdiplus_bitmap(Gdiplus::Bitmap* bitmap_ptr);
-	HRESULT get_album_art_embedded(BSTR rawpath, IGdiBitmap** pp, t_size art_id);
-	HRESULT get_album_art_v2(const metadb_handle_ptr& handle, IGdiBitmap** pp, t_size art_id, bool need_stub, bool no_load = false, pfc::string_base* image_path_ptr = NULL);
+	HRESULT get_album_art(const metadb_handle_ptr& handle, t_size art_id, IGdiBitmap** pp, pfc::string_base* image_path_ptr);
+	HRESULT get_album_art_embedded(const metadb_handle_ptr& handle, t_size art_id, IGdiBitmap** pp);
 	IGdiBitmap* load_image(BSTR path);
-	IGdiBitmap* query_album_art(album_art_extractor_instance_v2::ptr extractor, GUID& what, bool no_load = false, pfc::string_base* image_path_ptr = NULL);
-	bool execute_context_command_by_name(const char* p_name, metadb_handle_list_cref p_handles, unsigned flags);
+	IGdiBitmap* query_album_art(album_art_extractor_instance_v2::ptr extractor, GUID& what, pfc::string_base* image_path_ptr);
+	bool execute_context_command_by_name(const char* p_name, metadb_handle_list_cref p_handles);
 	bool execute_mainmenu_command_by_name(const char* p_name);
 	bool execute_mainmenu_command_recur_v2(mainmenu_node::ptr node, pfc::string8_fast path, const char* p_name, t_size p_name_len);
 	bool find_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent, contextmenu_node*& p_out);
 	bool match_menu_command(const pfc::string_base& path, const char* command, t_size command_len = ~0);
 	bool read_album_art_into_bitmap(const album_art_data_ptr& data, Gdiplus::Bitmap** bitmap);
-	bool read_file(const char* path, pfc::string_base& content);
-	bool read_file_wide(unsigned codepage, const wchar_t* path, pfc::array_t<wchar_t>& content);
-	bool supports_chakra();
+	bool read_file_wide(const wchar_t* path, pfc::array_t<wchar_t>& content);
 	bool write_file(const char* path, const char* content, bool write_bom = true);
 	int get_encoder_clsid(const WCHAR* format, CLSID* pClsid);
 	int get_text_height(HDC hdc, const wchar_t* text, int len);
@@ -67,13 +65,13 @@ namespace helpers
 		return ret;
 	}
 
-	__declspec(noinline) static bool execute_context_command_by_name_SEH(const char* p_name, metadb_handle_list_cref p_handles, unsigned flags)
+	__declspec(noinline) static bool execute_context_command_by_name_SEH(const char* p_name, metadb_handle_list_cref p_handles)
 	{
 		bool ret = false;
 
 		__try
 		{
-			ret = execute_context_command_by_name(p_name, p_handles, flags);
+			ret = execute_context_command_by_name(p_name, p_handles);
 		}
 		__except (EXCEPTION_EXECUTE_HANDLER)
 		{
@@ -167,37 +165,33 @@ namespace helpers
 		struct t_param
 		{
 			IFbMetadbHandle* handle;
-			t_size art_id;
 			IGdiBitmap* bitmap;
 			pfc::stringcvt::string_wide_from_utf8 image_path;
+			t_size art_id;
 
 			t_param(IFbMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path) {}
 
 			~t_param()
 			{
 				if (handle)
+				{
 					handle->Release();
+				}
 
 				if (bitmap)
+				{
 					bitmap->Release();
+				}
 			}
 		};
 
-		album_art_async(HWND notify_hwnd, metadb_handle* handle, t_size art_id, bool need_stub, bool only_embed, bool no_load) : m_notify_hwnd(notify_hwnd), m_handle(handle), m_art_id(art_id), m_need_stub(need_stub), m_only_embed(only_embed), m_no_load(no_load)
-		{
-			if (m_handle.is_valid())
-				m_rawpath = pfc::stringcvt::string_wide_from_utf8(m_handle->get_path());
-		}
+		album_art_async(HWND notify_hwnd, metadb_handle* handle, t_size art_id) : m_notify_hwnd(notify_hwnd), m_handle(handle), m_art_id(art_id) {}
 
 	private:
 		virtual void run();
-		metadb_handle_ptr m_handle;
-		_bstr_t m_rawpath;
-		t_size m_art_id;
-		bool m_need_stub;
-		bool m_only_embed;
-		bool m_no_load;
 		HWND m_notify_hwnd;
+		metadb_handle_ptr m_handle;
+		t_size m_art_id;
 	};
 
 	class load_image_async : public simple_thread_task
@@ -205,16 +199,18 @@ namespace helpers
 	public:
 		struct t_param
 		{
-			unsigned cookie;
 			IGdiBitmap* bitmap;
 			_bstr_t path;
+			unsigned cookie;
 
 			t_param(int p_cookie, IGdiBitmap* p_bitmap, BSTR p_path) : cookie(p_cookie), bitmap(p_bitmap), path(p_path) {}
 
 			~t_param()
 			{
 				if (bitmap)
+				{
 					bitmap->Release();
+				}
 			}
 		};
 
