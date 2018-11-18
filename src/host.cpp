@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "helpers.h"
 #include "host.h"
 #include "popup_msg.h"
 #include "user_message.h"
@@ -148,7 +147,6 @@ void HostComm::RefreshBackground(LPRECT lprcUpdate)
 	DeleteRgn(rgn_child);
 	SetWindowRgn(m_hwnd, NULL, FALSE);
 	m_suppress_drawing = false;
-	if (get_edge_style()) SendMessage(m_hwnd, WM_NCPAINT, 1, 0);
 	m_paint_pending = true;
 	RedrawWindow(m_hwnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 }
@@ -197,33 +195,25 @@ bool ScriptHost::Ready()
 	return m_engine_inited && m_script_engine;
 }
 
-HRESULT ScriptHost::InitScriptEngineByName(const char* name)
+HRESULT ScriptHost::InitScriptEngine()
 {
-	HRESULT hr = E_FAIL;
 	const DWORD classContext = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
 
-	if (helpers::supports_chakra() && strcmp(name, "Chakra") == 0)
-	{
-		static const CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
-		hr = m_script_engine.CreateInstance(jscript9clsid, NULL, classContext);
-	}
+	static const CLSID jscript9clsid = { 0x16d51579, 0xa30b, 0x4c8b,{ 0xa2, 0x76, 0x0f, 0xf4, 0xdc, 0x41, 0xe7, 0x55 } };
+	HRESULT hr = m_script_engine.CreateInstance(jscript9clsid, NULL, classContext);
 
 	if (FAILED(hr))
 	{
-		hr = m_script_engine.CreateInstance("jscript", NULL, classContext);
+		return hr;
 	}
 
-	if (SUCCEEDED(hr))
-	{
-		IActiveScriptProperty* pActScriProp = NULL;
-		m_script_engine->QueryInterface(IID_IActiveScriptProperty, (void**)&pActScriProp);
-		VARIANT scriptLangVersion;
-		scriptLangVersion.vt = VT_I4;
-		scriptLangVersion.lVal = SCRIPTLANGUAGEVERSION_5_8 + 1;
-		pActScriProp->SetProperty(SCRIPTPROP_INVOKEVERSIONING, NULL, &scriptLangVersion);
-		pActScriProp->Release();
-	}
-
+	IActiveScriptProperty* pActScriProp = NULL;
+	m_script_engine->QueryInterface(IID_IActiveScriptProperty, (void**)&pActScriProp);
+	VARIANT scriptLangVersion;
+	scriptLangVersion.vt = VT_I4;
+	scriptLangVersion.lVal = SCRIPTLANGUAGEVERSION_5_8 + 1;
+	pActScriProp->SetProperty(SCRIPTPROP_INVOKEVERSIONING, NULL, &scriptLangVersion);
+	pActScriProp->Release();
 	return hr;
 }
 
@@ -238,7 +228,7 @@ HRESULT ScriptHost::Initialize()
 	preprocessor.process_script_info(m_host->ScriptInfo());
 
 	IActiveScriptParsePtr parser;
-	HRESULT hr = InitScriptEngineByName(m_host->get_script_engine());
+	HRESULT hr = InitScriptEngine();
 
 	if (SUCCEEDED(hr)) hr = m_script_engine->SetScriptSite(this);
 	if (SUCCEEDED(hr)) hr = m_script_engine->QueryInterface(&parser);

@@ -61,7 +61,7 @@ public:
 	bool HasError();
 	bool Ready();
 
-	HRESULT InitScriptEngineByName(const char* name);
+	HRESULT InitScriptEngine();
 	HRESULT Initialize();
 	HRESULT InvokeCallback(int callbackId, VARIANTARG* argv = NULL, UINT argc = 0, VARIANT* ret = NULL);
 	HRESULT ProcessImportedScripts(script_preprocessor& preprocessor, IActiveScriptParsePtr& parser);
