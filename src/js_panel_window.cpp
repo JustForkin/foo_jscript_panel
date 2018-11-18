@@ -17,18 +17,6 @@ HRESULT js_panel_window::script_invoke_v(int callbackId, VARIANTARG* argv, UINT 
 	return m_script_host->InvokeCallback(callbackId, argv, argc, ret);
 }
 
-void js_panel_window::update_script(const char* name, const char* code)
-{
-	if (name && code)
-	{
-		get_script_engine() = name;
-		get_script_code() = code;
-	}
-
-	script_unload();
-	script_load();
-}
-
 LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
@@ -411,6 +399,90 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	return uDefWindowProc(hwnd, msg, wp, lp);
 }
 
+bool js_panel_window::on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp)
+{
+	bool ret = false;
+
+	VARIANTARG args[3];
+	args[0].vt = VT_I4;
+	args[0].lVal = wp;
+	args[1].vt = VT_I4;
+	args[1].lVal = GET_Y_LPARAM(lp);
+	args[2].vt = VT_I4;
+	args[2].lVal = GET_X_LPARAM(lp);
+
+	switch (msg)
+	{
+	case WM_LBUTTONUP:
+		script_invoke_v(CallbackIds::on_mouse_lbtn_up, args, _countof(args));
+		break;
+
+	case WM_MBUTTONUP:
+		script_invoke_v(CallbackIds::on_mouse_mbtn_up, args, _countof(args));
+		break;
+
+	case WM_RBUTTONUP:
+	{
+		_variant_t result;
+
+		// Bypass the user code.
+		if (IsKeyPressed(VK_LSHIFT) && IsKeyPressed(VK_LWIN))
+		{
+			break;
+		}
+
+		if (SUCCEEDED(script_invoke_v(CallbackIds::on_mouse_rbtn_up, args, _countof(args), &result)))
+		{
+			result.ChangeType(VT_BOOL);
+			if (result.boolVal != VARIANT_FALSE)
+			{
+				ret = true;
+			}
+		}
+	}
+	break;
+	}
+
+	ReleaseCapture();
+	return ret;
+}
+
+bool js_panel_window::script_load()
+{
+	pfc::hires_timer timer;
+	timer.start();
+
+	DWORD extstyle = GetWindowLongPtr(m_hwnd, GWL_EXSTYLE);
+	extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
+	extstyle |= edge_style_from_config(get_edge_style());
+	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
+	SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+
+	m_max_size.x = INT_MAX;
+	m_max_size.y = INT_MAX;
+	m_min_size.x = 0;
+	m_min_size.y = 0;
+	PostMessage(m_hwnd, UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_all);
+
+	if (FAILED(m_script_host->Initialize()))
+	{
+		return false;
+	}
+
+	if (ScriptInfo().feature_mask & t_script_info::kFeatureDragDrop)
+	{
+		m_drop_target.Attach(new com_object_impl_t<HostDropTarget>(this));
+		m_drop_target->RegisterDragDrop();
+		m_is_droptarget_registered = true;
+	}
+
+	// HACK: Script update will not call on_size, so invoke it explicitly
+	SendMessage(m_hwnd, UWM_SIZE, 0, 0);
+
+	FB2K_console_formatter() << JSP_NAME_VERSION " (" << ScriptInfo().build_info_string() << "): initialised in " << (int)(timer.query() * 1000) << " ms";
+	return true;
+}
+
 bool js_panel_window::show_configure_popup(HWND parent)
 {
 	modal_dialog_scope scope;
@@ -431,75 +503,6 @@ bool js_panel_window::show_property_popup(HWND parent)
 	return (dlg.DoModal(parent) == IDOK);
 }
 
-void js_panel_window::build_context_menu(HMENU menu, int x, int y, int id_base)
-{
-	::AppendMenu(menu, MF_STRING, id_base + 1, _T("&Reload"));
-	::AppendMenu(menu, MF_SEPARATOR, 0, 0);
-	::AppendMenu(menu, MF_STRING, id_base + 2, _T("&Open component folder"));
-	::AppendMenu(menu, MF_SEPARATOR, 0, 0);
-	::AppendMenu(menu, MF_STRING, id_base + 3, _T("&Properties"));
-	::AppendMenu(menu, MF_STRING, id_base + 4, _T("&Configure..."));
-}
-
-void js_panel_window::execute_context_menu_command(int id, int id_base)
-{
-	switch (id - id_base)
-	{
-	case 1:
-		update_script();
-		break;
-	case 2:
-	{
-		pfc::stringcvt::string_os_from_utf8 folder(helpers::get_fb2k_component_path());
-		ShellExecute(NULL, _T("open"), folder, NULL, NULL, SW_SHOW);
-	}
-	break;
-	case 3:
-		show_property_popup(m_hwnd);
-		break;
-	case 4:
-		show_configure_popup(m_hwnd);
-		break;
-	}
-}
-
-bool js_panel_window::script_load()
-{
-	pfc::hires_timer timer;
-	timer.start();
-
-	DWORD extstyle = GetWindowLongPtr(m_hwnd, GWL_EXSTYLE);
-	extstyle &= ~WS_EX_CLIENTEDGE & ~WS_EX_STATICEDGE;
-	extstyle |= edge_style_from_config(get_edge_style());
-	SetWindowLongPtr(m_hwnd, GWL_EXSTYLE, extstyle);
-	SetWindowPos(m_hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-	
-	m_max_size.x = INT_MAX;
-	m_max_size.y = INT_MAX;
-	m_min_size.x = 0;
-	m_min_size.y = 0;
-	PostMessage(m_hwnd, UWM_SIZE_LIMIT_CHANGED, 0, uie::size_limit_all);
-
-	HRESULT hr = m_script_host->Initialize();
-	if (FAILED(hr))
-	{
-		return false;
-	}
-
-	if (ScriptInfo().feature_mask & t_script_info::kFeatureDragDrop)
-	{
-		m_drop_target.Attach(new com_object_impl_t<HostDropTarget>(this));
-		m_drop_target->RegisterDragDrop();
-		m_is_droptarget_registered = true;
-	}
-
-	// HACK: Script update will not call on_size, so invoke it explicitly
-	SendMessage(m_hwnd, UWM_SIZE, 0, 0);
-
-	FB2K_console_formatter() << JSP_NAME_VERSION " (" << ScriptInfo().build_info_string() << "): initialised in " << (int)(timer.query() * 1000) << " ms";
-	return true;
-}
-
 ui_helpers::container_window::class_data& js_panel_window::get_class_data() const
 {
 	static class_data my_class_data =
@@ -517,6 +520,16 @@ ui_helpers::container_window::class_data& js_panel_window::get_class_data() cons
 	};
 
 	return my_class_data;
+}
+
+void js_panel_window::build_context_menu(HMENU menu, int x, int y, int id_base)
+{
+	::AppendMenu(menu, MF_STRING, id_base + 1, _T("&Reload"));
+	::AppendMenu(menu, MF_SEPARATOR, 0, 0);
+	::AppendMenu(menu, MF_STRING, id_base + 2, _T("&Open component folder"));
+	::AppendMenu(menu, MF_SEPARATOR, 0, 0);
+	::AppendMenu(menu, MF_STRING, id_base + 3, _T("&Properties"));
+	::AppendMenu(menu, MF_STRING, id_base + 4, _T("&Configure..."));
 }
 
 void js_panel_window::create_context()
@@ -546,6 +559,28 @@ void js_panel_window::delete_context()
 	{
 		DeleteBitmap(m_gr_bmp_bk);
 		m_gr_bmp_bk = NULL;
+	}
+}
+
+void js_panel_window::execute_context_menu_command(int id, int id_base)
+{
+	switch (id - id_base)
+	{
+	case 1:
+		update_script();
+		break;
+	case 2:
+	{
+		pfc::stringcvt::string_os_from_utf8 folder(helpers::get_fb2k_component_path());
+		ShellExecute(NULL, _T("open"), folder, NULL, NULL, SW_SHOW);
+	}
+	break;
+	case 3:
+		show_property_popup(m_hwnd);
+		break;
+	case 4:
+		show_configure_popup(m_hwnd);
+		break;
 	}
 }
 
@@ -773,52 +808,6 @@ void js_panel_window::on_mouse_button_down(UINT msg, WPARAM wp, LPARAM lp)
 	}
 }
 
-bool js_panel_window::on_mouse_button_up(UINT msg, WPARAM wp, LPARAM lp)
-{
-	bool ret = false;
-
-	VARIANTARG args[3];
-	args[0].vt = VT_I4;
-	args[0].lVal = wp;
-	args[1].vt = VT_I4;
-	args[1].lVal = GET_Y_LPARAM(lp);
-	args[2].vt = VT_I4;
-	args[2].lVal = GET_X_LPARAM(lp);
-
-	switch (msg)
-	{
-	case WM_LBUTTONUP:
-		script_invoke_v(CallbackIds::on_mouse_lbtn_up, args, _countof(args));
-		break;
-
-	case WM_MBUTTONUP:
-		script_invoke_v(CallbackIds::on_mouse_mbtn_up, args, _countof(args));
-		break;
-
-	case WM_RBUTTONUP:
-	{
-		_variant_t result;
-
-		// Bypass the user code.
-		if (IsKeyPressed(VK_LSHIFT) && IsKeyPressed(VK_LWIN))
-		{
-			break;
-		}
-
-		if (SUCCEEDED(script_invoke_v(CallbackIds::on_mouse_rbtn_up, args, _countof(args), &result)))
-		{
-			result.ChangeType(VT_BOOL);
-			if (result.boolVal != VARIANT_FALSE)
-				ret = true;
-		}
-	}
-	break;
-	}
-
-	ReleaseCapture();
-	return ret;
-}
-
 void js_panel_window::on_mouse_leave()
 {
 	m_is_mouse_tracked = false;
@@ -978,6 +967,7 @@ void js_panel_window::on_paint_error(HDC memdc)
 
 	SelectObject(memdc, oldfont);
 }
+
 void js_panel_window::on_paint_user(HDC memdc, LPRECT lpUpdateRect)
 {
 	if (m_script_host->Ready())
@@ -1216,4 +1206,16 @@ void js_panel_window::script_unload()
 
 	HostTimerDispatcher::Get().onPanelUnload(m_hwnd);
 	m_selection_holder.release();
+}
+
+void js_panel_window::update_script(const char* name, const char* code)
+{
+	if (name && code)
+	{
+		get_script_engine() = name;
+		get_script_code() = code;
+	}
+
+	script_unload();
+	script_load();
 }
