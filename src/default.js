@@ -45,7 +45,7 @@ var IDC_HAND = 32649;
 
 var g_is_default_ui = window.InstanceType;
 var g_font = null;
-var g_text = get_version_string() + "\n\nClick here to open the editor.";
+var g_text = "JScript Panel 3\n\nClick here to open the editor.";
 var ww = 0, wh = 0;
 var g_textcolour = 0, g_textcolour_hl = 0;
 var g_backcolour = 0;
@@ -71,14 +71,6 @@ function get_colours() {
 		g_textcolour_hl = window.GetColourCUI(ColourTypeCUI.text);
 		g_backcolour = window.GetColourCUI(ColourTypeCUI.background);
 	}
-}
-
-function get_version_string() {
-	var tmp = utils.Version.toString().split("");
-	if (tmp[3] == 0) {
-		tmp.pop();
-	}
-	return "JScript Panel v" + tmp.join(".") + ".";
 }
 
 function on_size() {
