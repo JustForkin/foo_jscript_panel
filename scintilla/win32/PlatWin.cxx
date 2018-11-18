@@ -2032,7 +2032,7 @@ public:
 	}
 };
 
-const TCHAR ListBoxX_ClassName[] = TEXT("JScriptListBoxX");
+const TCHAR ListBoxX_ClassName[] = TEXT("JScript3ListBoxX");
 
 ListBox::ListBox() {
 }
