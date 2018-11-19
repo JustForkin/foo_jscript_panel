@@ -11,6 +11,8 @@
 
 #include <stackblur.h>
 
+using namespace pfc::stringcvt;
+
 ContextMenuManager::ContextMenuManager() {}
 ContextMenuManager::~ContextMenuManager() {}
 void ContextMenuManager::FinalRelease()
@@ -123,7 +125,7 @@ STDMETHODIMP FbFileInfo::InfoFind(BSTR name, int* p)
 {
 	if (!m_info_ptr || !p) return E_POINTER;
 
-	*p = m_info_ptr->info_find(pfc::stringcvt::string_utf8_from_wide(name));
+	*p = m_info_ptr->info_find(string_utf8_from_wide(name));
 	return S_OK;
 }
 
@@ -133,7 +135,7 @@ STDMETHODIMP FbFileInfo::InfoName(UINT idx, BSTR* p)
 
 	if (idx < m_info_ptr->info_get_count())
 	{
-		*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->info_enum_name(idx)));
+		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->info_enum_name(idx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -145,7 +147,7 @@ STDMETHODIMP FbFileInfo::InfoValue(UINT idx, BSTR* p)
 
 	if (idx < m_info_ptr->info_get_count())
 	{
-		*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->info_enum_value(idx)));
+		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->info_enum_value(idx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -155,7 +157,7 @@ STDMETHODIMP FbFileInfo::MetaFind(BSTR name, int* p)
 {
 	if (!m_info_ptr || !p) return E_POINTER;
 
-	*p = m_info_ptr->meta_find(pfc::stringcvt::string_utf8_from_wide(name));
+	*p = m_info_ptr->meta_find(string_utf8_from_wide(name));
 	return S_OK;
 }
 
@@ -165,7 +167,7 @@ STDMETHODIMP FbFileInfo::MetaName(UINT idx, BSTR* p)
 
 	if (idx < m_info_ptr->meta_get_count())
 	{
-		*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->meta_enum_name(idx)));
+		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->meta_enum_name(idx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -177,7 +179,7 @@ STDMETHODIMP FbFileInfo::MetaValue(UINT idx, UINT vidx, BSTR* p)
 
 	if (idx < m_info_ptr->meta_get_count() && vidx < m_info_ptr->meta_enum_value_count(idx))
 	{
-		*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_info_ptr->meta_enum_value(idx, vidx)));
+		*p = SysAllocString(string_wide_from_utf8_fast(m_info_ptr->meta_enum_value(idx, vidx)));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -268,7 +270,7 @@ STDMETHODIMP FbMetadbHandle::GetAlbumArt(UINT art_id, VARIANT* p)
 	if (SUCCEEDED(helpers::get_album_art(m_handle, art_id, &bitmap, &image_path)))
 	{
 		var1.pdispVal = bitmap;
-		var2.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(image_path));
+		var2.bstrVal = SysAllocString(string_wide_from_utf8_fast(image_path));
 		if (!helper.put_item(0, var1)) return E_OUTOFMEMORY;
 		if (!helper.put_item(1, var2)) return E_OUTOFMEMORY;
 	}
@@ -318,7 +320,7 @@ STDMETHODIMP FbMetadbHandle::RunContextCommand(BSTR command, VARIANT_BOOL* p)
 {
 	if (m_handle.is_empty() || !p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name_SEH(pfc::stringcvt::string_utf8_from_wide(command), pfc::list_single_ref_t<metadb_handle_ptr>(m_handle)));
+	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name_SEH(string_utf8_from_wide(command), pfc::list_single_ref_t<metadb_handle_ptr>(m_handle)));
 	return S_OK;
 }
 
@@ -330,7 +332,7 @@ STDMETHODIMP FbMetadbHandle::SetFirstPlayed(BSTR first_played)
 	if (stats::g_client->hashHandle(m_handle, hash))
 	{
 		stats::fields tmp = stats::get(hash);
-		pfc::stringcvt::string_utf8_from_wide fp(first_played);
+		string_utf8_from_wide fp(first_played);
 		if (!tmp.first_played.equals(fp))
 		{
 			tmp.first_played = fp;
@@ -348,7 +350,7 @@ STDMETHODIMP FbMetadbHandle::SetLastPlayed(BSTR last_played)
 	if (stats::g_client->hashHandle(m_handle, hash))
 	{
 		stats::fields tmp = stats::get(hash);
-		pfc::stringcvt::string_utf8_from_wide lp(last_played);
+		string_utf8_from_wide lp(last_played);
 		if (!tmp.last_played.equals(lp))
 		{
 			tmp.last_played = lp;
@@ -429,7 +431,7 @@ STDMETHODIMP FbMetadbHandle::get_Path(BSTR* p)
 {
 	if (m_handle.is_empty() || !p) return E_POINTER;
 
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(file_path_display(m_handle->get_path())));
+	*p = SysAllocString(string_wide_from_utf8_fast(file_path_display(m_handle->get_path())));
 	return S_OK;
 }
 
@@ -437,7 +439,7 @@ STDMETHODIMP FbMetadbHandle::get_RawPath(BSTR* p)
 {
 	if (m_handle.is_empty() || !p) return E_POINTER;
 
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(m_handle->get_path()));
+	*p = SysAllocString(string_wide_from_utf8_fast(m_handle->get_path()));
 	return S_OK;
 }
 
@@ -491,7 +493,7 @@ STDMETHODIMP FbMetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
 	try
 	{
 		file::ptr file;
-		pfc::stringcvt::string_utf8_from_wide path(image_path);
+		string_utf8_from_wide path(image_path);
 		if (!filesystem::g_is_remote_or_unrecognized(path))
 		{
 			filesystem::g_open(file, path, filesystem::open_mode_read, abort);
@@ -629,7 +631,7 @@ STDMETHODIMP FbMetadbHandleList::GetLibraryRelativePaths(VARIANT* p)
 		if (!api->get_relative_path(item, temp)) temp = "";
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(temp));
+		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(temp));
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;
@@ -646,7 +648,7 @@ STDMETHODIMP FbMetadbHandleList::GetQueryItems(BSTR query, IFbMetadbHandleList**
 
 	try
 	{
-		filter = search_filter_manager_v2::get()->create_ex(pfc::stringcvt::string_utf8_from_wide(query), fb2k::service_new<completion_notify_dummy>(), search_filter_manager_v2::KFlagSuppressNotify);
+		filter = search_filter_manager_v2::get()->create_ex(string_utf8_from_wide(query), fb2k::service_new<completion_notify_dummy>(), search_filter_manager_v2::KFlagSuppressNotify);
 	}
 	catch (...)
 	{
@@ -826,7 +828,7 @@ STDMETHODIMP FbMetadbHandleList::RunContextCommand(BSTR command, VARIANT_BOOL* p
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name_SEH(pfc::stringcvt::string_utf8_from_wide(command), m_handles));
+	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name_SEH(string_utf8_from_wide(command), m_handles));
 	return S_OK;
 }
 
@@ -839,7 +841,7 @@ STDMETHODIMP FbMetadbHandleList::Sort()
 STDMETHODIMP FbMetadbHandleList::SortByFormat(BSTR pattern, int direction)
 {
 	titleformat_object::ptr obj;
-	titleformat_compiler::get()->compile_safe(obj, pfc::stringcvt::string_utf8_from_wide(pattern));
+	titleformat_compiler::get()->compile_safe(obj, string_utf8_from_wide(pattern));
 	m_handles.sort_by_format(obj, NULL, direction);
 	return S_OK;
 }
@@ -894,7 +896,7 @@ STDMETHODIMP FbMetadbHandleList::UpdateFileInfo(BSTR str)
 
 	try
 	{
-		j = json::parse(pfc::stringcvt::string_utf8_from_wide(str).get_ptr());
+		j = json::parse(string_utf8_from_wide(str).get_ptr());
 	}
 	catch (...)
 	{
@@ -1040,7 +1042,7 @@ STDMETHODIMP FbPlaylistManager::AddLocations(UINT playlistIndex, VARIANT locatio
 		{
 			_variant_t var;
 			if (!helper.get_item(i, var, VT_BSTR)) return E_INVALIDARG;
-			list.add_item(pfc::stringcvt::string_utf8_from_wide(var.bstrVal));
+			list.add_item(string_utf8_from_wide(var.bstrVal));
 		}
 
 		playlist_incoming_item_filter_v2::get()->process_locations_async(
@@ -1082,7 +1084,7 @@ STDMETHODIMP FbPlaylistManager::CreateAutoPlaylist(UINT playlistIndex, BSTR name
 	{
 		try
 		{
-			autoplaylist_manager::get()->add_client_simple(pfc::stringcvt::string_utf8_from_wide(query), pfc::stringcvt::string_utf8_from_wide(sort), pos, flags);
+			autoplaylist_manager::get()->add_client_simple(string_utf8_from_wide(query), string_utf8_from_wide(sort), pos, flags);
 			*p = pos;
 		}
 		catch (...)
@@ -1099,7 +1101,7 @@ STDMETHODIMP FbPlaylistManager::CreatePlaylist(UINT playlistIndex, BSTR name, in
 	if (!p) return E_POINTER;
 
 	auto api = playlist_manager::get();
-	pfc::stringcvt::string_utf8_from_wide uname(name);
+	string_utf8_from_wide uname(name);
 
 	if (uname.is_empty())
 	{
@@ -1123,7 +1125,7 @@ STDMETHODIMP FbPlaylistManager::DuplicatePlaylist(UINT from, BSTR name, UINT* p)
 		metadb_handle_list contents;
 		api->playlist_get_all_items(from, contents);
 
-		pfc::string8_fast uname = pfc::stringcvt::string_utf8_from_wide(name);
+		pfc::string8_fast uname = string_utf8_from_wide(name);
 		if (uname.is_empty())
 		{
 			api->playlist_get_name(from, uname);
@@ -1149,7 +1151,7 @@ STDMETHODIMP FbPlaylistManager::FindOrCreatePlaylist(BSTR name, VARIANT_BOOL unl
 	if (!p) return E_POINTER;
 
 	auto api = playlist_manager::get();
-	pfc::stringcvt::string_utf8_from_wide uname(name);
+	string_utf8_from_wide uname(name);
 
 	if (unlocked != VARIANT_FALSE)
 	{
@@ -1166,7 +1168,7 @@ STDMETHODIMP FbPlaylistManager::FindPlaylist(BSTR name, int* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = playlist_manager::get()->find_playlist(pfc::stringcvt::string_utf8_from_wide(name));
+	*p = playlist_manager::get()->find_playlist(string_utf8_from_wide(name));
 	return S_OK;
 }
 
@@ -1213,7 +1215,7 @@ STDMETHODIMP FbPlaylistManager::GetPlaylistName(UINT playlistIndex, BSTR* p)
 
 	pfc::string8_fast temp;
 	playlist_manager::get()->playlist_get_name(playlistIndex, temp);
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(temp));
+	*p = SysAllocString(string_wide_from_utf8_fast(temp));
 	return S_OK;
 }
 
@@ -1251,7 +1253,7 @@ STDMETHODIMP FbPlaylistManager::GetRecyclerName(UINT index, BSTR* p)
 	{
 		pfc::string8_fast name;
 		api->recycler_get_name(index, name);
-		*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(name));
+		*p = SysAllocString(string_wide_from_utf8_fast(name));
 		return S_OK;
 	}
 	return E_INVALIDARG;
@@ -1390,7 +1392,7 @@ STDMETHODIMP FbPlaylistManager::RenamePlaylist(UINT playlistIndex, BSTR name, VA
 {
 	if (!p) return E_POINTER;
 
-	pfc::stringcvt::string_utf8_from_wide uname(name);
+	string_utf8_from_wide uname(name);
 	*p = TO_VARIANT_BOOL(playlist_manager::get()->playlist_rename(playlistIndex, uname, uname.length()));
 	return S_OK;
 }
@@ -1463,7 +1465,7 @@ STDMETHODIMP FbPlaylistManager::SortByFormat(UINT playlistIndex, BSTR pattern, V
 {
 	if (!p) return E_POINTER;
 
-	pfc::stringcvt::string_utf8_from_wide upattern(pattern);
+	string_utf8_from_wide upattern(pattern);
 	*p = TO_VARIANT_BOOL(playlist_manager::get()->playlist_sort_by_format(playlistIndex, upattern.is_empty() ? NULL : upattern.get_ptr(), selOnly != VARIANT_FALSE));
 	return S_OK;
 }
@@ -1480,7 +1482,7 @@ STDMETHODIMP FbPlaylistManager::SortByFormatV2(UINT playlistIndex, BSTR pattern,
 	order.set_count(handles.get_count());
 
 	titleformat_object::ptr obj;
-	titleformat_compiler::get()->compile_safe(obj, pfc::stringcvt::string_utf8_from_wide(pattern));
+	titleformat_compiler::get()->compile_safe(obj, string_utf8_from_wide(pattern));
 
 	metadb_handle_list_helper::sort_by_format_get_order_v2(handles, order.get_ptr(), obj, NULL, direction, abort_callback_dummy());
 
@@ -1616,7 +1618,7 @@ STDMETHODIMP FbProfiler::get_Time(int* p)
 
 FbTitleFormat::FbTitleFormat(BSTR pattern)
 {
-	titleformat_compiler::get()->compile_safe(m_obj, pfc::stringcvt::string_utf8_from_wide(pattern));
+	titleformat_compiler::get()->compile_safe(m_obj, string_utf8_from_wide(pattern));
 }
 
 FbTitleFormat::~FbTitleFormat() {}
@@ -1640,7 +1642,7 @@ STDMETHODIMP FbTitleFormat::Eval(BSTR* p)
 
 	pfc::string8_fast text;
 	playback_control::get()->playback_format_title(NULL, text, m_obj, NULL, playback_control::display_level_all);
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(text));
+	*p = SysAllocString(string_wide_from_utf8_fast(text));
 	return S_OK;
 }
 
@@ -1654,7 +1656,7 @@ STDMETHODIMP FbTitleFormat::EvalWithMetadb(IFbMetadbHandle* handle, BSTR* p)
 	pfc::string8_fast text;
 	ptr->format_title(NULL, text, m_obj, NULL);
 
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(text));
+	*p = SysAllocString(string_wide_from_utf8_fast(text));
 	return S_OK;
 }
 
@@ -1676,7 +1678,7 @@ STDMETHODIMP FbTitleFormat::EvalWithMetadbs(IFbMetadbHandleList* handles, VARIAN
 		handles_ref[i]->format_title(NULL, text, m_obj, NULL);
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(text));
+		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(text));
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;
@@ -1931,7 +1933,7 @@ STDMETHODIMP FbUtils::CreateProfiler(BSTR name, IFbProfiler** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = new com_object_impl_t<FbProfiler>(pfc::stringcvt::string_utf8_from_wide(name));
+	*pp = new com_object_impl_t<FbProfiler>(string_utf8_from_wide(name));
 	return S_OK;
 }
 
@@ -1985,7 +1987,7 @@ STDMETHODIMP FbUtils::GetDSPPresets(VARIANT* p)
 		api->get_preset_name(i, name);
 		_variant_t var;
 		var.vt = VT_BSTR;
-		var.bstrVal = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(name));
+		var.bstrVal = SysAllocString(string_wide_from_utf8_fast(name));
 		if (!helper.put_item(i, var)) return E_OUTOFMEMORY;
 	}
 	p->vt = VT_ARRAY | VT_VARIANT;
@@ -2050,7 +2052,7 @@ STDMETHODIMP FbUtils::GetOutputDevices(BSTR* p)
 			{ "active", config.m_output == output_id && config.m_device == device_id }
 		});
 	});
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast((j.dump()).c_str()));
+	*p = SysAllocString(string_wide_from_utf8_fast((j.dump()).c_str()));
 	return S_OK;
 }
 
@@ -2162,7 +2164,7 @@ STDMETHODIMP FbUtils::RunContextCommand(BSTR command, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name_SEH(pfc::stringcvt::string_utf8_from_wide(command), metadb_handle_list()));
+	*p = TO_VARIANT_BOOL(helpers::execute_context_command_by_name_SEH(string_utf8_from_wide(command), metadb_handle_list()));
 	return S_OK;
 }
 
@@ -2170,7 +2172,7 @@ STDMETHODIMP FbUtils::RunMainMenuCommand(BSTR command, VARIANT_BOOL* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = TO_VARIANT_BOOL(helpers::execute_mainmenu_command_by_name_SEH(pfc::stringcvt::string_utf8_from_wide(command)));
+	*p = TO_VARIANT_BOOL(helpers::execute_mainmenu_command_by_name_SEH(string_utf8_from_wide(command)));
 	return S_OK;
 }
 
@@ -2214,13 +2216,13 @@ STDMETHODIMP FbUtils::ShowLibrarySearchUI(BSTR query)
 {
 	if (!query) return E_INVALIDARG;
 
-	library_search_ui::get()->show(pfc::stringcvt::string_utf8_from_wide(query));
+	library_search_ui::get()->show(string_utf8_from_wide(query));
 	return S_OK;
 }
 
 STDMETHODIMP FbUtils::ShowPopupMessage(BSTR msg, BSTR title)
 {
-	popup_msg::g_show(pfc::stringcvt::string_utf8_from_wide(msg), pfc::stringcvt::string_utf8_from_wide(title));
+	popup_msg::g_show(string_utf8_from_wide(msg), string_utf8_from_wide(title));
 	return S_OK;
 }
 
@@ -2274,7 +2276,7 @@ STDMETHODIMP FbUtils::get_ComponentPath(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8(helpers::get_fb2k_component_path()));
+	*p = SysAllocString(string_wide_from_utf8_fast(helpers::get_fb2k_component_path()));
 	return S_OK;
 }
 
@@ -2298,7 +2300,7 @@ STDMETHODIMP FbUtils::get_FoobarPath(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8(helpers::get_fb2k_path()));
+	*p = SysAllocString(string_wide_from_utf8_fast(helpers::get_fb2k_path()));
 	return S_OK;
 }
 
@@ -2346,7 +2348,7 @@ STDMETHODIMP FbUtils::get_ProfilePath(BSTR* p)
 {
 	if (!p) return E_POINTER;
 
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8(helpers::get_profile_path()));
+	*p = SysAllocString(string_wide_from_utf8_fast(helpers::get_profile_path()));
 	return S_OK;
 }
 
@@ -2576,7 +2578,7 @@ STDMETHODIMP FbWindow::GetProperty(BSTR name, VARIANT defaultval, VARIANT* p)
 
 	HRESULT hr;
 	_variant_t var;
-	pfc::stringcvt::string_utf8_from_wide uname(name);
+	string_utf8_from_wide uname(name);
 
 	if (m_host->get_config_prop().get_config_item(uname, var))
 	{
@@ -2641,7 +2643,7 @@ STDMETHODIMP FbWindow::SetInterval(IDispatch* func, int delay, UINT* p)
 
 STDMETHODIMP FbWindow::SetProperty(BSTR name, VARIANT val)
 {
-	m_host->get_config_prop().set_config_item(pfc::stringcvt::string_utf8_from_wide(name), val);
+	m_host->get_config_prop().set_config_item(string_utf8_from_wide(name), val);
 	return S_OK;
 }
 
@@ -2746,7 +2748,7 @@ STDMETHODIMP FbWindow::get_Name(BSTR* p)
 	{
 		name = pfc::print_guid(m_host->GetGUID());
 	}
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(name));
+	*p = SysAllocString(string_wide_from_utf8_fast(name));
 	return S_OK;
 }
 
@@ -3624,7 +3626,7 @@ STDMETHODIMP JSConsole::Log(SAFEARRAY* p)
 		if (FAILED(hr = VariantChangeType(&var, &var, VARIANT_ALPHABOOL, VT_BSTR)))
 			continue;
 
-		str.add_string(pfc::stringcvt::string_utf8_from_wide(var.bstrVal));
+		str.add_string(string_utf8_from_wide(var.bstrVal));
 
 		if (i < nUBound)
 		{
@@ -3645,7 +3647,7 @@ STDMETHODIMP JSUtils::CheckComponent(BSTR name, VARIANT_BOOL is_dll, VARIANT_BOO
 
 	service_enum_t<componentversion> e;
 	componentversion::ptr ptr;
-	pfc::stringcvt::string_utf8_from_wide uname(name);
+	string_utf8_from_wide uname(name);
 	pfc::string8_fast temp;
 
 	*p = VARIANT_FALSE;
@@ -3722,7 +3724,7 @@ STDMETHODIMP JSUtils::FormatDuration(double seconds, BSTR* p)
 	if (!p) return E_POINTER;
 
 	pfc::string8_fast str = pfc::format_time_ex(seconds, 0);
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(str));
+	*p = SysAllocString(string_wide_from_utf8_fast(str));
 	return S_OK;
 }
 
@@ -3731,7 +3733,7 @@ STDMETHODIMP JSUtils::FormatFileSize(LONGLONG bytes, BSTR* p)
 	if (!p) return E_POINTER;
 
 	pfc::string8_fast str = pfc::format_file_size_short(bytes);
-	*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(str));
+	*p = SysAllocString(string_wide_from_utf8_fast(str));
 	return S_OK;
 }
 
@@ -3801,9 +3803,9 @@ STDMETHODIMP JSUtils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR d
 	modal_dialog_scope scope;
 	if (scope.can_create())
 	{
-		pfc::stringcvt::string_utf8_from_wide uprompt(prompt);
-		pfc::stringcvt::string_utf8_from_wide ucaption(caption);
-		pfc::stringcvt::string_utf8_from_wide udef(def);
+		string_utf8_from_wide uprompt(prompt);
+		string_utf8_from_wide ucaption(caption);
+		string_utf8_from_wide udef(def);
 
 		scope.initialize(HWND(window_id));
 		CInputBox dlg(uprompt, ucaption, udef);
@@ -3812,7 +3814,7 @@ STDMETHODIMP JSUtils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR d
 		{
 			pfc::string8 val;
 			dlg.GetValue(val);
-			*p = SysAllocString(pfc::stringcvt::string_wide_from_utf8_fast(val));
+			*p = SysAllocString(string_wide_from_utf8_fast(val));
 		}
 		else if (status == IDCANCEL)
 		{
@@ -3899,7 +3901,7 @@ STDMETHODIMP JSUtils::WriteTextFile(BSTR filename, BSTR content, VARIANT_BOOL wr
 	*p = VARIANT_FALSE;
 	if (content != NULL)
 	{
-		*p = TO_VARIANT_BOOL(helpers::write_file(pfc::stringcvt::string_utf8_from_wide(filename), pfc::stringcvt::string_utf8_from_wide(content), write_bom != VARIANT_FALSE));
+		*p = TO_VARIANT_BOOL(helpers::write_file(string_utf8_from_wide(filename), string_utf8_from_wide(content), write_bom != VARIANT_FALSE));
 	}
 	return S_OK;
 }
