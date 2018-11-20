@@ -40,8 +40,6 @@ bool script_preprocessor::scan_directive_and_value(const wchar_t*& p, const wcha
 
 bool script_preprocessor::scan_value(const wchar_t*& p, const wchar_t* pend)
 {
-	const t_size delta = 32;
-
 	m_value_buffer.force_reset();
 
 	// Skip leading spaces
@@ -147,7 +145,6 @@ void script_preprocessor::expand_var(pfc::array_t<wchar_t>& out)
 		const wchar_t* which;
 		t_func func;
 	} expand_table[] = {
-		{L"fb2k_path", helpers::get_fb2k_path},
 		{L"fb2k_component_path", helpers::get_fb2k_component_path},
 		{L"fb2k_profile_path", helpers::get_profile_path},
 	};
@@ -156,7 +153,6 @@ void script_preprocessor::expand_var(pfc::array_t<wchar_t>& out)
 
 	wchar_t* pscan = out.get_ptr();
 	const wchar_t* pready = NULL;
-	const t_size delta = 32;
 
 	int state = KStateInNormal;
 
