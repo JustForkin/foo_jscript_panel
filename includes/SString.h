@@ -253,8 +253,6 @@ public:
 		s = StringAllocate(s_ + first, last - first);
 		sSize = sLen = (s) ? last - first : 0;
 	}
-	SString(int i);
-	SString(double d, int precision);
 	~SString()
 	{
 		sLen = 0;
@@ -294,16 +292,6 @@ public:
 		}
 		return *this;
 	}
-	bool operator==(const SString &sOther) const;
-	bool operator!=(const SString &sOther) const
-	{
-		return !operator==(sOther);
-	}
-	bool operator==(const char* sOther) const;
-	bool operator!=(const char* sOther) const
-	{
-		return !operator==(sOther);
-	}
 	bool contains(char ch) const
 	{
 		return (s && *s) ? strchr(s, ch) != 0 : false;
@@ -325,9 +313,6 @@ public:
 		sLen = 0;
 		return sRet;
 	}
-	SString substr(lenpos_t subPos, lenpos_t subLen = measure_length) const;
-	SString &lowercase(lenpos_t subPos = 0, lenpos_t subLen = measure_length);
-	SString &uppercase(lenpos_t subPos = 0, lenpos_t subLen = measure_length);
 	SString &append(const char* sOther, lenpos_t sLenOther = measure_length, char sep = '\0')
 	{
 		if (!sOther)
@@ -374,16 +359,6 @@ public:
 	{
 		return append(sOther, strlen(sOther), sep);
 	}
-	SString &insert(lenpos_t pos, const char* sOther, lenpos_t sLenOther = measure_length);
-
-	/**
-	 * Remove @a len characters from the @a pos position, included.
-	 * Characters at pos + len and beyond replace characters at pos.
-	 * If @a len is 0, or greater than the length of the string
-	 * starting at @a pos, the string is just truncated at @a pos.
-	 */
-	void remove(lenpos_t pos, lenpos_t len);
-
 	SString &change(lenpos_t pos, char ch)
 	{
 		if (pos < sLen)
@@ -397,36 +372,6 @@ public:
 	{
 		return s ? atoi(s) : 0;
 	}
-	bool startswith(const char* prefix);
-	bool endswith(const char* suffix);
-	int search(const char* sFind, lenpos_t start = 0) const;
-	bool contains(const char* sFind) const
-	{
-		return search(sFind) >= 0;
-	}
-	int substitute(char chFind, char chReplace);
-	int substitute(const char* sFind, const char* sReplace);
-	int remove(const char* sFind)
-	{
-		return substitute(sFind, "");
-	}
 };
-
-/**
- * Duplicate a C string.
- * Allocate memory of the given size, or big enough to fit the string if length isn't given;
- * then copy the given string in the allocated memory.
- * @return the pointer to the new string
- */
-inline char* StringDup(
-	const char* s, ///< The string to duplicate
-	SContainer::lenpos_t len = SContainer::measure_length) ///< The length of memory to allocate. Optional.
-{
-	return SContainer::StringAllocate(s, len);
-}
-
-bool isprefix(const char* target, const char* prefix);
-int CompareNoCase(const char* a, const char* b);
-bool EqualCaseInsensitive(const char* a, const char* b);
 
 #endif
