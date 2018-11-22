@@ -13,8 +13,7 @@
 // An SString may contain embedded nul characters.
 
 /**
- * Base class from which the two other classes (SBuffer & SString)
- * are derived.
+ * Base class from which SString is derived.
  */
 class SContainer
 {
@@ -25,7 +24,7 @@ public:
 	enum { measure_length = 0xffffffffU };
 
 protected:
-	char *s; ///< The C string
+	char* s; ///< The C string
 	lenpos_t sSize; ///< The size of the buffer, less 1: ie. the maximum size of the string
 
 	SContainer() : s(0), sSize(0) {}
@@ -52,7 +51,7 @@ public:
 	 * Allocate uninitialized memory big enough to fit a string of the given length.
 	 * @return the pointer to the new string
 	 */
-	static char *StringAllocate(lenpos_t len)
+	static char* StringAllocate(lenpos_t len)
 	{
 		if (len != measure_length)
 		{
@@ -69,7 +68,7 @@ public:
 	 * then copy the given string in the allocated memory.
 	 * @return the pointer to the new string
 	 */
-	static char *StringAllocate(const char* s, lenpos_t len = measure_length)
+	static char* StringAllocate(const char* s, lenpos_t len = measure_length)
 	{
 		if (s == 0)
 		{
@@ -79,79 +78,13 @@ public:
 		{
 			len = strlen(s);
 		}
-		char *sNew = new char[len + 1];
+		char* sNew = new char[len + 1];
 		if (sNew)
 		{
 			memcpy(sNew, s, len);
 			sNew[len] = '\0';
 		}
 		return sNew;
-	}
-};
-
-/**
- * @brief A string buffer class.
- *
- * Main use is to ask an API the length of a string it can provide,
- * then to allocate a buffer of the given size, and to provide this buffer
- * to the API to put the string.
- * This class is intended to be shortlived, to be transformed as SString
- * as soon as it holds the string, so it has little members.
- * Note: we assume the buffer is filled by the API. If the length can be shorter,
- * we should set sLen to strlen(sb.ptr()) in related SString constructor and assignment.
- */
-class SBuffer : protected SContainer
-{
-public:
-	SBuffer(lenpos_t len)
-	{
-		s = StringAllocate(len);
-		if (s)
-		{
-			*s = '\0';
-			sSize = len;
-		}
-		else
-		{
-			sSize = 0;
-		}
-	}
-private:
-	/// Copy constructor
-	// Here only to be on the safe size, user should avoid returning SBuffer values.
-	SBuffer(const SBuffer &source) : SContainer()
-	{
-		s = StringAllocate(source.s, source.sSize);
-		sSize = (s) ? source.sSize : 0;
-	}
-	/// Default assignment operator
-	// Same here, shouldn't be used
-	SBuffer &operator=(const SBuffer &source)
-	{
-		if (this != &source)
-		{
-			delete[]s;
-			s = StringAllocate(source.s, source.sSize);
-			sSize = (s) ? source.sSize : 0;
-		}
-		return *this;
-	}
-public:
-	/** Provide direct read/write access to buffer. */
-	char *ptr()
-	{
-		return s;
-	}
-	/** Ownership of the buffer have been taken, so release it. */
-	void reset()
-	{
-		s = 0;
-		sSize = 0;
-	}
-	/** Size of buffer. */
-	lenpos_t size() const
-	{
-		return SContainer::size();
 	}
 };
 
@@ -175,7 +108,7 @@ class SString : protected SContainer
 		{
 			sizeGrowth *= 2;
 		}
-		char *sNew = new char[lenNew + sizeGrowth + 1];
+		char* sNew = new char[lenNew + sizeGrowth + 1];
 		if (sNew)
 		{
 			if (s)
@@ -240,13 +173,6 @@ public:
 		s = StringAllocate(s_);
 		sSize = sLen = (s) ? strlen(s) : 0;
 	}
-	SString(SBuffer &buf) : sizeGrowth(sizeGrowthDefault)
-	{
-		s = buf.ptr();
-		sSize = sLen = buf.size();
-		// Consumes the given buffer!
-		buf.reset();
-	}
 	SString(const char* s_, lenpos_t first, lenpos_t last) : sizeGrowth(sizeGrowthDefault)
 	{
 		// note: expects the "last" argument to point one beyond the range end (a la STL iterators)
@@ -305,9 +231,9 @@ public:
 		return s ? s : "";
 	}
 	/** Give ownership of buffer to caller which must use delete[] to free buffer. */
-	char *detach()
+	char* detach()
 	{
-		char *sRet = s;
+		char* sRet = s;
 		s = 0;
 		sSize = 0;
 		sLen = 0;
