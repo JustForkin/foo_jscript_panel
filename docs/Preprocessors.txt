@@ -15,7 +15,7 @@ Directives should be started with "@", and placed into a single comment.
 IMPORT
 @import "path"
 Load external script from "path".
-You can place %fb2k_component_path% and %fb2k_profile_path% into "path", they
+You can place %fb2k_component_path% or %fb2k_profile_path% into "path" and they
 will be expanded while parsing.
 
 FEATURE

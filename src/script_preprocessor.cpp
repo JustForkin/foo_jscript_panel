@@ -303,7 +303,6 @@ void script_preprocessor::process_script_info(t_script_info& info)
 	for (t_size i = 0; i < m_directive_value_list.get_count(); ++i)
 	{
 		t_directive_value& v = m_directive_value_list[i];
-		expand_var(v.value);
 		pfc::string_simple value = pfc::stringcvt::string_utf8_from_wide(v.value.get_ptr());
 
 		if (wcscmp(v.directive.get_ptr(), L"name") == 0)
