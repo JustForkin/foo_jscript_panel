@@ -1913,11 +1913,22 @@ STDMETHODIMP FbUtils::CreateContextMenuManager(IContextMenuManager** pp)
 	return S_OK;
 }
 
-STDMETHODIMP FbUtils::CreateHandleList(IFbMetadbHandleList** pp)
+STDMETHODIMP FbUtils::CreateHandleList(VARIANT handle, IFbMetadbHandleList** pp)
 {
 	if (!pp) return E_POINTER;
 
-	*pp = new com_object_impl_t<FbMetadbHandleList>(metadb_handle_list());
+	metadb_handle_list items;
+	IDispatch* temp = NULL;
+
+	if (handle.vt == VT_DISPATCH && handle.pdispVal && SUCCEEDED(handle.pdispVal->QueryInterface(__uuidof(IFbMetadbHandle), (void**)&temp)))
+	{
+		IDispatchPtr handle_s = temp;
+		void* ptr = NULL;
+		reinterpret_cast<IFbMetadbHandle *>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
+		if (!ptr) return E_INVALIDARG;
+		items = pfc::list_single_ref_t<metadb_handle_ptr>(reinterpret_cast<metadb_handle *>(ptr));
+	}
+	*pp = new com_object_impl_t<FbMetadbHandleList>(items);
 	return S_OK;
 }
 

@@ -336,7 +336,7 @@ public:
 	STDMETHODIMP CheckClipboardContents(UINT window_id, VARIANT_BOOL* p);
 	STDMETHODIMP ClearPlaylist();
 	STDMETHODIMP CreateContextMenuManager(IContextMenuManager** pp);
-	STDMETHODIMP CreateHandleList(IFbMetadbHandleList** pp);
+	STDMETHODIMP CreateHandleList(VARIANT handle, IFbMetadbHandleList** pp);
 	STDMETHODIMP CreateMainMenuManager(IMainMenuManager** pp);
 	STDMETHODIMP CreateProfiler(BSTR name, IFbProfiler** pp);
 	STDMETHODIMP Exit();

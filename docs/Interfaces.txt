@@ -166,8 +166,11 @@ interface IFbUtils {
 					InitNowPlaying(); (void)
 			}
 
-		fb.CreateHandleList(); (IFbMetadbHandleList)
-		// Returns an empty handle list.
+		fb.CreateHandleList([handle]); (IFbMetadbHandleList)
+		/*
+		Returns an empty handle list or a list containing a single item if you pass the optional
+		handle argument.
+		*/
 
 		fb.CreateMainMenuManager(); (IMainMenuManager)
 
