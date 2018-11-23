@@ -1926,7 +1926,7 @@ STDMETHODIMP FbUtils::CreateHandleList(VARIANT handle, IFbMetadbHandleList** pp)
 		void* ptr = NULL;
 		reinterpret_cast<IFbMetadbHandle *>(handle_s.GetInterfacePtr())->get__ptr(&ptr);
 		if (!ptr) return E_INVALIDARG;
-		items = pfc::list_single_ref_t<metadb_handle_ptr>(reinterpret_cast<metadb_handle *>(ptr));
+		items.add_item(reinterpret_cast<metadb_handle*>(ptr));
 	}
 	*pp = new com_object_impl_t<FbMetadbHandleList>(items);
 	return S_OK;
