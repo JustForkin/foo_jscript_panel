@@ -21,7 +21,6 @@ LRESULT CDialogConf::OnCloseCmd(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	case IDCANCEL:
 		if (m_editorctrl.GetModify())
 		{
-			// Prompt?
 			int ret = uMessageBox(m_hWnd, "Do you want to apply your changes?", m_caption, MB_ICONWARNING | MB_SETFOREGROUND | MB_YESNOCANCEL);
 
 			switch (ret)
@@ -94,23 +93,16 @@ LRESULT CDialogConf::OnInitDialog(HWND hwndFocus, LPARAM lParam)
 
 LRESULT CDialogConf::OnNotify(int idCtrl, LPNMHDR pnmh)
 {
-	SCNotification* notification = (SCNotification *)pnmh;
+	pfc::string8 caption = m_caption;
 
 	switch (pnmh->code)
 	{
-		// dirty
-	case SCN_SAVEPOINTLEFT:
-	{
-		pfc::string8 caption = m_caption;
-
+	case SCN_SAVEPOINTLEFT: // dirty
 		caption += " *";
 		uSetWindowText(m_hWnd, caption);
-	}
-	break;
-
-	// not dirty
-	case SCN_SAVEPOINTREACHED:
-		uSetWindowText(m_hWnd, m_caption);
+		break;
+	case SCN_SAVEPOINTREACHED: // not dirty
+		uSetWindowText(m_hWnd, caption);
 		break;
 	}
 
@@ -129,19 +121,16 @@ LRESULT CDialogConf::OnTools(WORD wNotifyCode, WORD wID, HWND hWndCtl)
 	};
 
 	HMENU menu = CreatePopupMenu();
-	int ret = 0;
-	int flags = TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD;
-	RECT rc = { 0 };
-
 	AppendMenu(menu, MF_STRING, kImport, _T("&Import"));
 	AppendMenu(menu, MF_STRING, kExport, _T("E&xport"));
 	AppendMenu(menu, MF_SEPARATOR, 0, 0);
 	AppendMenu(menu, MF_STRING, kResetDefault, _T("Reset &Default"));
 	AppendMenu(menu, MF_STRING, kResetCurrent, _T("Reset &Current"));
 
+	RECT rc = { 0 };
 	::GetWindowRect(::GetDlgItem(m_hWnd, IDC_TOOLS), &rc);
 
-	ret = TrackPopupMenu(menu, flags, rc.left, rc.bottom, 0, m_hWnd, 0);
+	int ret = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, rc.left, rc.bottom, 0, m_hWnd, 0);
 
 	switch (ret)
 	{
@@ -357,7 +346,6 @@ void CDialogConf::OpenFindDialog()
 {
 	if (!m_dlgfind)
 	{
-		// Create it on request.
 		m_dlgfind = new CDialogFind(GetDlgItem(IDC_EDIT));
 		m_dlgfind->Create(m_hWnd);
 	}

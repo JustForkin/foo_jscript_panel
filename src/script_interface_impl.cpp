@@ -3785,17 +3785,11 @@ STDMETHODIMP JSUtils::GetSysColour(UINT index, int* p)
 {
 	if (!p) return E_POINTER;
 
-	if (::GetSysColorBrush(index) == NULL)
+	*p = 0;
+	if (::GetSysColorBrush(index) != NULL)
 	{
-		// invalid index
-		*p = 0;
+		*p = helpers::convert_colorref_to_argb(::GetSysColor(index));
 	}
-	else
-	{
-		int col = ::GetSysColor(index);
-		*p = helpers::convert_colorref_to_argb(col);
-	}
-
 	return S_OK;
 }
 

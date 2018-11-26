@@ -562,7 +562,7 @@ void js_panel_window::execute_context_menu_command(int id, int id_base)
 		break;
 	case 2:
 	{
-		pfc::stringcvt::string_os_from_utf8 folder(helpers::get_fb2k_component_path());
+		pfc::stringcvt::string_wide_from_utf8_fast folder(helpers::get_fb2k_component_path());
 		ShellExecute(NULL, _T("open"), folder, NULL, NULL, SW_SHOW);
 	}
 	break;
@@ -590,12 +590,10 @@ void js_panel_window::on_colours_changed()
 
 void js_panel_window::on_context_menu(int x, int y)
 {
-	const int base_id = 0;
 	HMENU menu = CreatePopupMenu();
-	int ret = 0;
-
+	const int base_id = 0;
 	build_context_menu(menu, x, y, base_id);
-	ret = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, x, y, 0, m_hwnd, 0);
+	int ret = TrackPopupMenu(menu, TPM_RIGHTBUTTON | TPM_NONOTIFY | TPM_RETURNCMD, x, y, 0, m_hwnd, 0);
 	execute_context_menu_command(ret, base_id);
 	DestroyMenu(menu);
 }

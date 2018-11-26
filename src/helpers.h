@@ -166,7 +166,7 @@ namespace helpers
 		{
 			IFbMetadbHandle* handle;
 			IGdiBitmap* bitmap;
-			pfc::stringcvt::string_wide_from_utf8 image_path;
+			pfc::stringcvt::string_wide_from_utf8_fast image_path;
 			t_size art_id;
 
 			t_param(IFbMetadbHandle* p_handle, t_size p_art_id, IGdiBitmap* p_bitmap, const char* p_image_path) : handle(p_handle), art_id(p_art_id), bitmap(p_bitmap), image_path(p_image_path) {}
