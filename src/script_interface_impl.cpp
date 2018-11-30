@@ -487,22 +487,22 @@ STDMETHODIMP FbMetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
 	if (m_handles.get_count() == 0) return E_POINTER;
 
 	GUID what = helpers::convert_artid_to_guid(art_id);
-	abort_callback_dummy abort;
 	album_art_data_ptr data;
 
 	try
 	{
-		file::ptr file;
 		string_utf8_from_wide path(image_path);
 		if (!filesystem::g_is_remote_or_unrecognized(path))
 		{
+			file::ptr file;
+			abort_callback_dummy abort;
 			filesystem::g_open(file, path, filesystem::open_mode_read, abort);
-		}
-		if (file.is_valid())
-		{
-			auto tmp = fb2k::service_new<album_art_data_impl>();
-			tmp->from_stream(file.get_ptr(), t_size(file->get_size_ex(abort)), abort);
-			data = tmp;
+			if (file.is_valid())
+			{
+				auto tmp = fb2k::service_new<album_art_data_impl>();
+				tmp->from_stream(file.get_ptr(), t_size(file->get_size_ex(abort)), abort);
+				data = tmp;
+			}
 		}
 	}
 	catch (...) {}
@@ -510,7 +510,7 @@ STDMETHODIMP FbMetadbHandleList::AttachImage(BSTR image_path, UINT art_id)
 	if (data.is_valid())
 	{
 		auto cb = fb2k::service_new<helpers::embed_thread>(0, data, m_handles, what);
-		threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Embedding images...");
+		threaded_process::get()->run_modeless(cb, threaded_process::flag_show_progress | threaded_process::flag_show_delayed | threaded_process::flag_show_item, core_api::get_main_window(), "Embedding image...");
 	}
 	return S_OK;
 }

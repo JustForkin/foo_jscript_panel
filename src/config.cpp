@@ -240,19 +240,19 @@ void js_panel_vars::get_default_script_code(pfc::string_base& out)
 	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_SCRIPT), "SCRIPT");
 
 	if (pures)
-		out.set_string(reinterpret_cast<const char*>(pures->GetPointer()), pures->GetSize());
+	{
+		out.set_string(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
+	}
 }
 
 void js_panel_vars::load_config(stream_reader* reader, t_size size, abort_callback& abort)
 {
 	reset_config();
 
-	if (size > sizeof(unsigned))
+	if (size > 0)
 	{
-		unsigned ver = 0;
 		try
 		{
-			reader->read_object_t(ver, abort);
 			reader->read_object_t(m_config_guid, abort);
 			m_config_prop.load(reader, abort);
 			reader->read_object(&m_wndpl, sizeof(m_wndpl), abort);
@@ -277,12 +277,8 @@ void js_panel_vars::reset_config()
 
 void js_panel_vars::save_config(stream_writer* writer, abort_callback& abort) const
 {
-	unsigned const VERSION_CURRENT = CONFIG_VERSION_CURRENT;
-
 	try
 	{
-		// Write version
-		writer->write_object_t(VERSION_CURRENT, abort);
 		writer->write_object_t(m_config_guid, abort);
 		m_config_prop.save(writer, abort);
 		writer->write_object(&m_wndpl, sizeof(m_wndpl), abort);

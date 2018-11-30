@@ -1132,22 +1132,23 @@ void CScriptEditorCtrl::LoadProperties(const pfc::list_t<t_sci_prop_set>& data)
 void CScriptEditorCtrl::ReadAPI()
 {
 	m_apis.remove_all();
-	pfc::string8_fast content;
 	puResource pures = uLoadResource(core_api::get_my_instance(), uMAKEINTRESOURCE(IDR_API), "TEXT");
 
 	if (pures)
-		content = reinterpret_cast<const char*>(pures->GetPointer()), pures->GetSize();
-
-	pfc::string_list_impl temp;
-	pfc::splitStringByLines(temp, content);
-
-	for (t_size i = 0; i < temp.get_count(); ++i)
 	{
-		if (IsIdentifierChar(*temp[i]))
-			m_apis.add_item(temp[i]);
-	}
+		pfc::string8_fast content(static_cast<const char*>(pures->GetPointer()), pures->GetSize());
+		pfc::string_list_impl temp;
+		pfc::splitStringByLines(temp, content);
 
-	m_apis.sort_remove_duplicates_t(StringCompareSpecial());
+		for (t_size i = 0; i < temp.get_count(); ++i)
+		{
+			if (IsIdentifierChar(*temp[i]))
+			{
+				m_apis.add_item(temp[i]);
+			}
+		}
+		m_apis.sort_remove_duplicates_t(StringCompareSpecial());
+	}
 }
 
 void CScriptEditorCtrl::RestoreDefaultStyle()

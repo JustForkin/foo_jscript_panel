@@ -1,15 +1,8 @@
 #pragma once
 
-enum t_version_info
-{
-	JSP_VERSION_100 = 123, // must start with 123 so we don't break component upgrades
-	CONFIG_VERSION_CURRENT = JSP_VERSION_100
-};
-
 class prop_kv_config
 {
 public:
-	typedef prop_kv_config t_self;
 	typedef pfc::map_t<pfc::string_simple, _variant_t, pfc::comparator_stricmp_ascii> t_map;
 
 	t_map& get_val()
