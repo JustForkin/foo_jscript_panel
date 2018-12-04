@@ -6,6 +6,8 @@
 
 #define TO_VARIANT_BOOL(v) ((v) ? (VARIANT_TRUE) : (VARIANT_FALSE))
 
+#include <memory>
+
 #include <WinSock2.h>
 #include <Windows.h>
 #include <GdiPlus.h>
