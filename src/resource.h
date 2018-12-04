@@ -29,6 +29,17 @@
 #define IDC_INPUT_PROMPT                141
 #define IDC_INPUT_VALUE                 142
 
+//ui_name_value_edit
+#define IDD_DIALOG_NAME_VALUE_EDIT      150
+#define IDC_EDIT_NAME                   151
+#define IDC_EDIT_VALUE                  152
+
+//ui_pref
+#define IDD_DIALOG_PREF                 160
+#define IDC_LIST_EDITOR_PROP            161
+#define IDC_BUTTON_IMPORT               162
+#define IDC_BUTTON_EXPORT               163
+
 //ui_property
 #define IDD_DIALOG_PROPERTY             170
 #define IDC_DEL                         171

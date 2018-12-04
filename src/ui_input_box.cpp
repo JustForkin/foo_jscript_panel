@@ -20,7 +20,9 @@ LRESULT CInputBox::OnCommand(UINT codeNotify, int id, HWND hwndCtl)
 	if (id == IDOK || id == IDCANCEL)
 	{
 		if (id == IDOK)
+		{
 			uGetDlgItemText(m_hWnd, IDC_INPUT_VALUE, m_value);
+		}
 
 		EndDialog(id);
 	}

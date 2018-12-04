@@ -3808,11 +3808,12 @@ STDMETHODIMP JSUtils::InputBox(UINT window_id, BSTR prompt, BSTR caption, BSTR d
 	modal_dialog_scope scope;
 	if (scope.can_create())
 	{
+		scope.initialize(HWND(window_id));
+
 		string_utf8_from_wide uprompt(prompt);
 		string_utf8_from_wide ucaption(caption);
 		string_utf8_from_wide udef(def);
 
-		scope.initialize(HWND(window_id));
 		CInputBox dlg(uprompt, ucaption, udef);
 		int status = dlg.DoModal(HWND(window_id));
 		if (status == IDOK)
