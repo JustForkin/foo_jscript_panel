@@ -30,9 +30,9 @@ namespace helpers
 	IGdiBitmap* query_album_art(album_art_extractor_instance_v2::ptr extractor, GUID& what, pfc::string_base* image_path_ptr);
 	bool execute_context_command_by_name(const char* p_name, metadb_handle_list_cref p_handles);
 	bool execute_mainmenu_command_by_name(const char* p_name);
-	bool execute_mainmenu_command_recur_v2(mainmenu_node::ptr node, pfc::string8_fast path, const char* p_name, t_size p_name_len);
+	bool execute_mainmenu_command_recur_v2(mainmenu_node::ptr node, pfc::string8_fast path, const char* p_name);
 	bool find_context_command_recur(const char* p_command, pfc::string_base& p_path, contextmenu_node* p_parent, contextmenu_node*& p_out);
-	bool match_menu_command(const pfc::string_base& path, const char* command, t_size command_len = ~0);
+	bool match_menu_command(const pfc::string_base& path, const char* command);
 	bool read_album_art_into_bitmap(const album_art_data_ptr& data, Gdiplus::Bitmap** bitmap);
 	bool read_file_wide(const wchar_t* path, pfc::array_t<wchar_t>& content);
 	bool write_file(const char* path, const char* content, bool write_bom = true);

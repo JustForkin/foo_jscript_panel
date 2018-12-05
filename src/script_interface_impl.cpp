@@ -2811,15 +2811,11 @@ STDMETHODIMP GdiBitmap::ApplyAlpha(BYTE alpha, IGdiBitmap** pp)
 	Gdiplus::Graphics g(out);
 	Gdiplus::ImageAttributes ia;
 	Gdiplus::ColorMatrix cm = { 0.0 };
-	Gdiplus::Rect rc;
+	Gdiplus::Rect rc(0, 0, width, height);
 
 	cm.m[0][0] = cm.m[1][1] = cm.m[2][2] = cm.m[4][4] = 1.0;
 	cm.m[3][3] = static_cast<float>(alpha) / 255;
 	ia.SetColorMatrix(&cm);
-
-	rc.X = rc.Y = 0;
-	rc.Width = width;
-	rc.Height = height;
 
 	g.DrawImage(m_ptr, rc, 0, 0, width, height, Gdiplus::UnitPixel, &ia);
 
@@ -3141,7 +3137,6 @@ STDMETHODIMP GdiGraphics::DrawImage(IGdiBitmap* image, float dstX, float dstY, f
 	if (angle != 0.0)
 	{
 		Gdiplus::Matrix m;
-		Gdiplus::RectF rect;
 		Gdiplus::PointF pt;
 
 		pt.X = dstX + dstW / 2;

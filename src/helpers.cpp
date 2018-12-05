@@ -16,10 +16,7 @@ namespace helpers
 	{
 		// COLORREF : 0x00bbggrr
 		// ARGB : 0xaarrggbb
-		return (GetRValue(color) << RED_SHIFT) |
-			(GetGValue(color) << GREEN_SHIFT) |
-			(GetBValue(color) << BLUE_SHIFT) |
-			0xff000000;
+		return GetRValue(color) << RED_SHIFT | GetGValue(color) << GREEN_SHIFT | GetBValue(color) << BLUE_SHIFT | 0xff000000;
 	}
 
 	GUID convert_artid_to_guid(t_size art_id)
@@ -37,14 +34,8 @@ namespace helpers
 
 	HBITMAP create_hbitmap_from_gdiplus_bitmap(Gdiplus::Bitmap* bitmap_ptr)
 	{
-		BITMAP bm;
-		Gdiplus::Rect rect;
+		Gdiplus::Rect rect(0, 0, bitmap_ptr->GetWidth(), bitmap_ptr->GetHeight());
 		Gdiplus::BitmapData bmpdata;
-		HBITMAP hBitmap;
-
-		rect.X = rect.Y = 0;
-		rect.Width = bitmap_ptr->GetWidth();
-		rect.Height = bitmap_ptr->GetHeight();
 
 		if (bitmap_ptr->LockBits(&rect, Gdiplus::ImageLockModeRead, PixelFormat32bppPARGB, &bmpdata) != Gdiplus::Ok)
 		{
@@ -52,6 +43,7 @@ namespace helpers
 			return NULL;
 		}
 
+		BITMAP bm;
 		bm.bmType = 0;
 		bm.bmWidth = bmpdata.Width;
 		bm.bmHeight = bmpdata.Height;
@@ -60,7 +52,7 @@ namespace helpers
 		bm.bmBitsPixel = 32;
 		bm.bmBits = bmpdata.Scan0;
 
-		hBitmap = CreateBitmapIndirect(&bm);
+		HBITMAP hBitmap = CreateBitmapIndirect(&bm);
 		bitmap_ptr->UnlockBits(&bmpdata);
 		return hBitmap;
 	}
@@ -196,7 +188,6 @@ namespace helpers
 		// Second, generate a list of all mainmenu commands
 		service_enum_t<mainmenu_commands> e;
 		mainmenu_commands::ptr ptr;
-		t_size name_len = strlen(p_name);
 
 		while (e.next(ptr))
 		{
@@ -234,11 +225,11 @@ namespace helpers
 					if (v2_ptr->is_command_dynamic(idx))
 					{
 						mainmenu_node::ptr node = v2_ptr->dynamic_instantiate(idx);
-
-						if (execute_mainmenu_command_recur_v2(node, path, p_name, name_len))
+						if (execute_mainmenu_command_recur_v2(node, path, p_name))
+						{
 							return true;
-						else
-							continue;
+						}
+						continue;
 					}
 				}
 
@@ -247,7 +238,7 @@ namespace helpers
 				ptr->get_name(idx, command);
 				path.add_string(command);
 
-				if (match_menu_command(path, p_name, name_len))
+				if (match_menu_command(path, p_name))
 				{
 					ptr->execute(idx, NULL);
 					return true;
@@ -258,7 +249,7 @@ namespace helpers
 		return false;
 	}
 
-	bool execute_mainmenu_command_recur_v2(mainmenu_node::ptr node, pfc::string8_fast path, const char* p_name, t_size p_name_len)
+	bool execute_mainmenu_command_recur_v2(mainmenu_node::ptr node, pfc::string8_fast path, const char* p_name)
 	{
 		pfc::string8_fast text;
 		t_uint32 flags;
@@ -268,14 +259,16 @@ namespace helpers
 		{
 			node->get_display(text, flags);
 			if (!text.is_empty())
+			{
 				path.add_string(text);
+			}
 		}
 
 		switch (type)
 		{
 		case mainmenu_node::type_command:
 		{
-			if (match_menu_command(path, p_name, p_name_len))
+			if (match_menu_command(path, p_name))
 			{
 				node->execute(NULL);
 				return true;
@@ -286,14 +279,17 @@ namespace helpers
 		case mainmenu_node::type_group:
 		{
 			if (!text.is_empty())
+			{
 				path.add_char('/');
+			}
 
 			for (t_size i = 0; i < node->get_children_count(); ++i)
 			{
 				mainmenu_node::ptr child = node->get_child(i);
-
-				if (execute_mainmenu_command_recur_v2(child, path, p_name, p_name_len))
+				if (execute_mainmenu_command_recur_v2(child, path, p_name))
+				{
 					return true;
+				}
 			}
 		}
 		break;
@@ -322,7 +318,9 @@ namespace helpers
 						path += "/";
 
 						if (find_context_command_recur(p_command, path, child, p_out))
+						{
 							return true;
+						}
 
 						break;
 
@@ -341,23 +339,23 @@ namespace helpers
 		return false;
 	}
 
-	bool match_menu_command(const pfc::string_base& path, const char* command, t_size command_len)
+	bool match_menu_command(const pfc::string_base& path, const char* command)
 	{
-		if (command_len == ~0)
-			command_len = strlen(command);
-
+		t_size command_len = strlen(command);
 		if (command_len == path.get_length())
 		{
 			if (_stricmp(command, path) == 0)
+			{
 				return true;
+			}
 		}
 		else if (command_len < path.get_length())
 		{
-			if ((path[path.get_length() - command_len - 1] == '/') &&
-				(_stricmp(path.get_ptr() + path.get_length() - command_len, command) == 0))
+			if (path[path.get_length() - command_len - 1] == '/' && _stricmp(path.get_ptr() + path.get_length() - command_len, command) == 0)
+			{
 				return true;
+			}
 		}
-
 		return false;
 	}
 
@@ -672,7 +670,6 @@ namespace helpers
 				found = true;
 				codepage = 65001;
 				break;
-				// DBCS
 			case 932: // shift-jis
 			case 936: // gbk
 			case 949: // korean
@@ -680,19 +677,15 @@ namespace helpers
 			{
 				// '¡¯', <= special char
 				// "ve" "d" "ll" "m" 't' 're'
-				bool fallback = true;
-				t_size index;
-				if (index = text.find_first("\x92") != pfc_infinite)
+				t_size index = text.find_first("\x92");
+				if (index < (text.get_length() - 1) && strchr("vldmtr ", text[index + 1]))
 				{
-					if ((index < text.get_length() - 1) &&
-						(strchr("vldmtr ", text[index + 1])))
-					{
-						codepage = encodings[0].nCodePage;
-						fallback = false;
-					}
+					codepage = encodings[0].nCodePage;
 				}
-				if (fallback)
+				else
+				{
 					codepage = encodings[1].nCodePage;
+				}
 				found = true;
 			}
 			break;
@@ -700,11 +693,14 @@ namespace helpers
 		}
 
 		if (!found)
+		{
 			codepage = encodings[0].nCodePage;
+		}
 		// ASCII?
 		if (codepage == 20127)
+		{
 			codepage = 0;
-
+		}
 		return codepage;
 	}
 

@@ -468,8 +468,6 @@ LRESULT CScriptEditorCtrl::OnUpdateUI(LPNMHDR pnmn)
 	}
 	else
 	{
-		char chBrace = GetCharAt(braceAtCaret);
-
 		BraceHighlight(braceAtCaret, braceOpposite);
 
 		int columnAtCaret = GetColumn(braceAtCaret);
@@ -534,7 +532,6 @@ bool CScriptEditorCtrl::FindBraceMatchPos(int& braceAtCaret, int& braceOpposite)
 		// No brace found so check other side
 		// Check to ensure not matching brace that is part of a multibyte character
 		char charAfter = GetCharAt(caretPos);
-		char styleAfter = GetStyleAt(caretPos) & mask;
 
 		if (charAfter && IsBraceChar(charAfter))
 		{
@@ -903,7 +900,6 @@ void CScriptEditorCtrl::AutomaticIndentation(char ch)
 		pfc::array_t<char> linebuf;
 		bool foundBrace = false;
 		int prevLineLength = LineLength(curLine - 1);
-		int len = GetCurLine(0, 0);
 		int slen = 0;
 
 		linebuf.set_size(prevLineLength + 2);
