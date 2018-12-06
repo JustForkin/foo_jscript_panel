@@ -317,10 +317,6 @@ LRESULT js_panel_window::on_message(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		on_playlist_items_reordered(wp);
 		return 0;
 
-	case CALLBACK_UWM_ON_PLAYLIST_ITEMS_SELECTION_CHANGE:
-		on_playlist_items_selection_change();
-		return 0;
-
 	case CALLBACK_UWM_ON_PLAYLIST_STOP_AFTER_CURRENT_CHANGED:
 		on_playlist_stop_after_current_changed(wp);
 		return 0;
@@ -1108,11 +1104,6 @@ void js_panel_window::on_playlist_items_reordered(WPARAM wp)
 	args[0].vt = VT_UI4;
 	args[0].ulVal = wp;
 	script_invoke_v(CallbackIds::on_playlist_items_reordered, args, _countof(args));
-}
-
-void js_panel_window::on_playlist_items_selection_change()
-{
-	script_invoke_v(CallbackIds::on_playlist_items_selection_change);
 }
 
 void js_panel_window::on_playlist_stop_after_current_changed(WPARAM wp)

@@ -65,7 +65,6 @@ static const IDToNameEntry g_idToNames[] =
 	DEFINE_ID_NAME_MAP_ENTRY(on_playlist_items_added),
 	DEFINE_ID_NAME_MAP_ENTRY(on_playlist_items_removed),
 	DEFINE_ID_NAME_MAP_ENTRY(on_playlist_items_reordered),
-	DEFINE_ID_NAME_MAP_ENTRY(on_playlist_items_selection_change),
 	DEFINE_ID_NAME_MAP_ENTRY(on_playlist_stop_after_current_changed),
 	DEFINE_ID_NAME_MAP_ENTRY(on_playlist_switch),
 	DEFINE_ID_NAME_MAP_ENTRY(on_playlists_changed),

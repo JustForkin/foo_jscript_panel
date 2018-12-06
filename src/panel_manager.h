@@ -170,6 +170,7 @@ public:
 	virtual void on_items_modified_fromplayback(t_size p_playlist, const pfc::bit_array& p_mask, play_control::t_display_level p_level) {}
 	virtual void on_items_removing(t_size p_playlist, const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count) {}
 	virtual void on_items_replaced(t_size p_playlist, const pfc::bit_array& p_mask, const pfc::list_base_const_t<t_on_items_replaced_entry>& p_data) {}
+	virtual void on_items_selection_change(t_size p_playlist, const pfc::bit_array& p_affected, const pfc::bit_array& p_state) {}
 	virtual void on_playlists_removing(const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count) {}
 
 	virtual unsigned get_flags();
@@ -177,7 +178,6 @@ public:
 	virtual void on_items_added(t_size p_playlist, t_size p_start, metadb_handle_list_cref p_data, const pfc::bit_array& p_selection);
 	virtual void on_items_removed(t_size p_playlist, const pfc::bit_array& p_mask, t_size p_old_count, t_size p_new_count);
 	virtual void on_items_reordered(t_size p_playlist, const t_size* p_order, t_size p_count);
-	virtual void on_items_selection_change(t_size p_playlist, const pfc::bit_array& p_affected, const pfc::bit_array& p_state);
 	virtual void on_playback_order_changed(t_size p_new_index);
 	virtual void on_playlist_activate(t_size p_old, t_size p_new);
 	virtual void on_playlist_created(t_size p_index, const char* p_name, t_size p_name_len);

@@ -248,10 +248,8 @@ void my_config_object_notify::on_watched_object_changed(const config_object::ptr
 
 unsigned my_playlist_callback_static::get_flags()
 {
-	return flag_on_items_added | flag_on_items_reordered | flag_on_items_removed |
-		flag_on_items_selection_change | flag_on_item_focus_change | flag_on_playlist_activate |
-		flag_on_playlist_created | flag_on_playlists_reorder | flag_on_playlists_removed |
-		flag_on_playlist_renamed | flag_on_playback_order_changed | flag_on_playlist_locked;
+	return flag_on_items_added | flag_on_items_reordered | flag_on_items_removed | flag_on_item_focus_change | flag_on_playlist_activate | flag_on_playlist_created |
+		   flag_on_playlists_reorder | flag_on_playlists_removed | flag_on_playlist_renamed | flag_on_playback_order_changed | flag_on_playlist_locked;
 }
 
 void my_playlist_callback_static::on_item_focus_change(t_size p_playlist, t_size p_from, t_size p_to)
@@ -273,11 +271,6 @@ void my_playlist_callback_static::on_items_removed(t_size p_playlist, const pfc:
 void my_playlist_callback_static::on_items_reordered(t_size p_playlist, const t_size* p_order, t_size p_count)
 {
 	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYLIST_ITEMS_REORDERED, p_playlist);
-}
-
-void my_playlist_callback_static::on_items_selection_change(t_size p_playlist, const pfc::bit_array& p_affected, const pfc::bit_array& p_state)
-{
-	panel_manager::instance().post_msg_to_all(CALLBACK_UWM_ON_PLAYLIST_ITEMS_SELECTION_CHANGE);
 }
 
 void my_playlist_callback_static::on_playback_order_changed(t_size p_new_index)

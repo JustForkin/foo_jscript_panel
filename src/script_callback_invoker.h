@@ -56,7 +56,6 @@ struct CallbackIds
 		on_playlist_items_added,
 		on_playlist_items_removed,
 		on_playlist_items_reordered,
-		on_playlist_items_selection_change,
 		on_playlist_stop_after_current_changed,
 		on_playlist_switch,
 		on_playlists_changed,
