@@ -24,10 +24,10 @@ STDMETHODIMP ContextMenuManager::BuildMenu(IMenuObj* p, int base_id)
 {
 	if (m_cm.is_empty()) return E_POINTER;
 
-	t_size menuid;
+	HMENU menuid;
 	p->get__ID(&menuid);
 	contextmenu_node* parent = m_cm->get_root();
-	m_cm->win32_build_menu((HMENU)menuid, parent, base_id, -1);
+	m_cm->win32_build_menu(menuid, parent, base_id, -1);
 	return S_OK;
 }
 
@@ -3918,13 +3918,13 @@ STDMETHODIMP MainMenuManager::BuildMenu(IMenuObj* p, int base_id, int count)
 {
 	if (m_mm.is_empty()) return E_POINTER;
 
-	t_size menuid;
+	HMENU menuid;
 	p->get__ID(&menuid);
 
 	// HACK: workaround for foo_menu_addons
 	try
 	{
-		m_mm->generate_menu_win32((HMENU)menuid, base_id, count, mainmenu_manager::flag_show_shortcuts);
+		m_mm->generate_menu_win32(menuid, base_id, count, mainmenu_manager::flag_show_shortcuts);
 	}
 	catch (...) {}
 
@@ -3989,11 +3989,11 @@ void MenuObj::FinalRelease()
 	}
 }
 
-STDMETHODIMP MenuObj::get__ID(UINT* p)
+STDMETHODIMP MenuObj::get__ID(HMENU* p)
 {
 	if (!m_hMenu || !p) return E_POINTER;
 
-	*p = (UINT)m_hMenu;
+	*p = m_hMenu;
 	return S_OK;
 }
 

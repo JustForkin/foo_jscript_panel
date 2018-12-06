@@ -275,7 +275,7 @@ __interface IFbTitleFormat : IDisposable
 ]
 __interface IMenuObj : IDisposable
 {
-	STDMETHOD(get__ID)([out, retval] UINT* p);
+	STDMETHOD(get__ID)([out, retval] HMENU* p);
 	STDMETHOD(AppendMenuItem)(UINT flags, UINT item_id, BSTR text);
 	STDMETHOD(AppendMenuSeparator)();
 	STDMETHOD(AppendTo)(IMenuObj* parent, UINT flags, BSTR text);

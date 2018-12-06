@@ -609,7 +609,7 @@ protected:
 	bool m_has_detached;
 
 public:
-	STDMETHODIMP get__ID(UINT* p);
+	STDMETHODIMP get__ID(HMENU* p);
 	STDMETHODIMP AppendMenuItem(UINT flags, UINT item_id, BSTR text);
 	STDMETHODIMP AppendMenuSeparator();
 	STDMETHODIMP AppendTo(IMenuObj* parent, UINT flags, BSTR text);
